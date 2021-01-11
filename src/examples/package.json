@@ -1,0 +1,7 @@
+{
+    "dependencies": {
+        "clerk_server_sdk_node": "file:../../",
+        "dotenv": "^8.2.0",
+        "log-that-http": "^1.0.1"
+    }
+}
