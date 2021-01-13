@@ -1,6 +1,7 @@
 import got, { HTTPAlias } from 'got';
 import deserialize from './Deserializer';
 import snakecaseKeys from 'snakecase-keys';
+import * as querystring from 'querystring';
 
 // TODO Support setting timeout, retries
 
@@ -26,7 +27,13 @@ export class RestClient {
   }
 
   makeRequest(options: RequestOptions) {
-    const url = `${this.baseUrl}/${this.apiVersion}${options.path}`;
+    let url = `${this.baseUrl}/${this.apiVersion}${options.path}`;
+
+    if (options.queryParams) {
+      url = `${url}?${querystring.stringify(
+        snakecaseKeys(options.queryParams)
+      )}`;
+    }
 
     // FIXME remove any
     const gotOptions: any = {

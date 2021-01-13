@@ -1,4 +1,8 @@
+import { Session } from '../resources/Session';
 import { User } from '../resources/User';
+
+// TODO
+// Define type for object types we support
 
 // FIXME expect object or array of objects
 // FIXME don't return any
@@ -17,6 +21,8 @@ function jsonToObject(item: any): any {
     case 'user':
       return new User(item);
       break;
+    case 'session':
+      return new Session(item);
     default:
       console.log(`Unexpected object type: ${item.object}`);
       break;
