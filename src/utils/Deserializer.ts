@@ -1,3 +1,4 @@
+import { Client } from '../resources/Client';
 import { Session } from '../resources/Session';
 import { User } from '../resources/User';
 
@@ -18,11 +19,15 @@ export default function(data: any): any {
 // item must have 'object' key
 function jsonToObject(item: any): any {
   switch (item.object) {
+    case 'client':
+      return new Client(item);
+      break;
     case 'user':
       return new User(item);
       break;
     case 'session':
       return new Session(item);
+      break;
     default:
       console.log(`Unexpected object type: ${item.object}`);
       break;

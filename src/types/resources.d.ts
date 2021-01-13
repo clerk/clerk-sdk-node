@@ -5,18 +5,19 @@ export interface ClerkResourceJSON {
 
 export interface ClientJSON extends ClerkResourceJSON {
   object: 'client';
-  id: string;
-  status: any;
+  ended: boolean;
   sessions: SessionJSON[];
-  sign_in_attempt: SignInJSON | null;
-  sign_up_attempt: SignUpJSON | null;
+  sign_in_attempt_id: string | null;
+  sign_up_attempt_id: string | null;
   last_active_session_id: string | null;
 }
 
 export interface ClientResource {
+  id: string;
+  ended: boolean;
   sessions: SessionResource[];
-  signInAttempt: SignInResource;
-  signUpAttempt: SignUpResource;
+  signInAttemptId: string | null;
+  signUpAttemptId: string | null;
   lastActiveSessionId: string | null;
 }
 
@@ -111,8 +112,6 @@ export interface SignInResource {
   factorTwoVerification: VerificationResource;
   createdSessionId: string | null;
 }
-
-export type SignInResourceC = ClerkResourceC<SignInResource, SignInJSON | null>;
 
 export type SignUpStatus = 'missing_requirements' | 'complete' | 'abondoned';
 

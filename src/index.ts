@@ -1,8 +1,9 @@
 import { RestClient } from './utils/RestClient';
 
 // TODO import dynamically
-import { UserApi } from './apis/UserApi';
+import { ClientApi } from './apis/ClientApi';
 import { SessionApi } from './apis/SessionApi';
+import { UserApi } from './apis/UserApi';
 
 const defaultApiVersion = 'v1';
 const defaultBaseUrl = 'https://api.clerk.dev';
@@ -16,6 +17,7 @@ export class ClerkServerSDK {
   // private api instances
   private _userApi?: UserApi;
   private _sessionApi?: SessionApi;
+  private _clientApi?: ClientApi;
 
   constructor(
     accessToken: string,
@@ -52,5 +54,13 @@ export class ClerkServerSDK {
     }
 
     return this._sessionApi;
+  }
+
+  get clientApi(): ClientApi {
+    if (!this._clientApi) {
+      this._clientApi = new ClientApi(this.restClient);
+    }
+
+    return this._clientApi;
   }
 }
