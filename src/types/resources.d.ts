@@ -216,7 +216,6 @@ export interface SessionJSON extends ClerkResourceJSON {
   status: string;
   expire_at: number;
   abandon_at: number;
-  user: UserJSON;
 }
 
 export interface SessionResource {
@@ -224,7 +223,6 @@ export interface SessionResource {
   status: string;
   expireAt: Date;
   abandonAt: Date;
-  user: UserResource;
 }
 
 export interface VerificationJSON {
