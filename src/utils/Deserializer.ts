@@ -1,6 +1,7 @@
 import { Client } from '../resources/Client';
 import { Email } from '../resources/Email';
 import { Session } from '../resources/Session';
+import { SMSMessage } from '../resources/SMSMessage';
 import { User } from '../resources/User';
 
 // TODO
@@ -31,6 +32,9 @@ function jsonToObject(item: any): any {
       break;
     case 'session':
       return new Session(item);
+      break;
+    case 'sms_message':
+      return new SMSMessage(item);
       break;
     default:
       console.log(`Unexpected object type: ${item.object}`);
