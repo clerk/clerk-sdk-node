@@ -14,7 +14,6 @@ export class SessionApi extends AbstractApi {
       method: 'get',
       path: '/sessions',
       queryParams: queryParams,
-      collection: true,
     });
   }
 

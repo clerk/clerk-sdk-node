@@ -8,7 +8,7 @@ export class Verification implements VerificationResource {
   strategy: string | null;
   externalVerificationRedirectURL: URL | null;
   attempts: number | null;
-  expireAt: Date | null;
+  expireAt: number | null;
 
   constructor(data: VerificationJSON | null) {
     if (data) {
@@ -22,7 +22,7 @@ export class Verification implements VerificationResource {
         this.externalVerificationRedirectURL = null;
       }
       this.attempts = data.attempts;
-      this.expireAt = new Date(data.expire_at * 1000);
+      this.expireAt = data.expire_at;
     } else {
       this.status = null;
       this.strategy = null;

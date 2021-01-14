@@ -7,7 +7,6 @@ import { User } from '../resources/User';
 // TODO
 // Define type / enum for object types we support
 
-// FIXME expect object or array of objects
 // FIXME don't return any
 export default function(data: any): any {
   if (Array.isArray(data)) {
@@ -23,21 +22,15 @@ function jsonToObject(item: any): any {
   switch (item.object) {
     case 'client':
       return new Client(item);
-      break;
     case 'email':
       return new Email(item);
-      break;
     case 'user':
       return new User(item);
-      break;
     case 'session':
       return new Session(item);
-      break;
     case 'sms_message':
       return new SMSMessage(item);
-      break;
     default:
       console.log(`Unexpected object type: ${item.object}`);
-      break;
   }
 }

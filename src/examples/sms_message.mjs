@@ -11,5 +11,5 @@ const sdk = new ClerkServerSDK(accessToken, { baseUrl: baseUrl });
 
 console.log('Create SMS message');
 const message = "I'd buy that for a dollar";
-let smsMessage = await sdk.SMSMessageApi.createSMSMessage({ message, phoneNumberId });
+let smsMessage = await sdk.smsMessageApi.createSMSMessage({ message, phoneNumberId });
 console.log(JSON.stringify(smsMessage));

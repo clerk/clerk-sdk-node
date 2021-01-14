@@ -20,7 +20,7 @@ export class ClerkServerSDK {
   private _clientApi?: ClientApi;
   private _emailApi?: EmailApi;
   private _sessionApi?: SessionApi;
-  private _SMSMessageApi?: SMSMessageApi;
+  private _smsMessageApi?: SMSMessageApi;
   private _userApi?: UserApi;
 
   constructor(
@@ -68,12 +68,12 @@ export class ClerkServerSDK {
     return this._sessionApi;
   }
 
-  get SMSMessageApi(): SMSMessageApi {
-    if (!this._SMSMessageApi) {
-      this._SMSMessageApi = new SMSMessageApi(this.restClient);
+  get smsMessageApi(): SMSMessageApi {
+    if (!this._smsMessageApi) {
+      this._smsMessageApi = new SMSMessageApi(this.restClient);
     }
 
-    return this._SMSMessageApi;
+    return this._smsMessageApi;
   }
 
   get userApi(): UserApi {

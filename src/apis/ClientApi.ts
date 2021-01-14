@@ -6,7 +6,6 @@ export class ClientApi extends AbstractApi {
     return this.restClient.makeRequest({
       method: 'get',
       path: '/clients',
-      collection: true,
     });
   }
 

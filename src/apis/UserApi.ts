@@ -15,7 +15,6 @@ export class UserApi extends AbstractApi {
     return this.restClient.makeRequest({
       method: 'get',
       path: '/users',
-      collection: true,
     });
   }
 

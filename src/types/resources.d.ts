@@ -11,19 +11,21 @@ export interface ClerkResource {
 
 export interface ClientJSON extends ClerkResourceJSON {
   object: 'client';
-  ended: boolean;
-  sessions: SessionJSON[];
+  session_ids: string[];
   sign_in_attempt_id: string | null;
   sign_up_attempt_id: string | null;
   last_active_session_id: string | null;
+  created_at: number;
+  updated_at: number;
 }
 
 export interface ClientResource extends ClerkResource {
-  ended: boolean;
-  sessions: SessionResource[];
+  sessionIds: string[];
   signInAttemptId: string | null;
   signUpAttemptId: string | null;
   lastActiveSessionId: string | null;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface EmailJSON extends ClerkResourceJSON {
@@ -186,32 +188,43 @@ export interface SignUpResource {
 
 export interface UserJSON extends ClerkResourceJSON {
   object: 'user';
-  primary_email_address_id: string;
-  primary_phone_number_id: string;
-  profile_image_url: string;
   username: string;
-  email_addresses: EmailAddressJSON[];
-  phone_numbers: PhoneNumberJSON[];
-  external_accounts: any;
-  password_enabled: boolean;
   first_name: string;
   last_name: string;
+  gender: string;
+  birthday: string;
+  profile_image_url: string;
+  primary_email_address_id: string;
+  primary_phone_number_id: string;
+  password_enabled: boolean;
+  two_factor_enabled: boolean;
+  email_addresses: EmailAddressJSON[];
+  phone_numbers: PhoneNumberJSON[];
+  external_accounts: GoogleAccountJSON[];
+  metadata: object;
+  private_metadata: object;
+  created_at: number;
+  updated_at: number;
 }
 
 export interface UserResource extends ClerkResource {
-  primaryEmailAddressId: string | null;
-  primaryEmailAddress: EmailAddressResource | null;
-  primaryPhoneNumberId: string | null;
-  primaryPhoneNumber: PhoneNumberResource | null;
   username: string | null;
-  fullName: string | null;
   firstName: string | null;
   lastName: string | null;
+  gender: string | null;
+  birthday: string | null;
   profileImageUrl: string;
+  primaryEmailAddressId: string | null;
+  primaryPhoneNumberId: string | null;
+  passwordEnabled: boolean;
+  twoFactorEnabled: boolean;
   emailAddresses: EmailAddressResource[];
   phoneNumbers: PhoneNumberResource[];
   externalAccounts: GoogleAccountResource[];
-  passwordEnabled: boolean;
+  metadata: object;
+  privateMetadata: object;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface IdentificationLinkJSON {
@@ -226,15 +239,21 @@ export interface IdentificationLinkResource {
 
 export interface SessionJSON extends ClerkResourceJSON {
   object: 'session';
+  client_id: string;
+  user_id: string;
   status: string;
+  last_active_at: number;
   expire_at: number;
   abandon_at: number;
 }
 
 export interface SessionResource extends ClerkResource {
+  clientId: string;
+  userId: string;
   status: string;
-  expireAt: Date;
-  abandonAt: Date;
+  lastActiveAt: number;
+  expireAt: number;
+  abandonAt: number;
 }
 
 export interface SMSMessageJSON extends ClerkResourceJSON {

@@ -12,7 +12,6 @@ type RequestOptions = {
   path: string;
   queryParams?: object;
   bodyParams?: object;
-  collection?: boolean;
 };
 
 export class RestClient {

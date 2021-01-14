@@ -4,16 +4,21 @@ import type {
 } from "../types/resources";
 
 export class Session implements SessionResource {
-  id: string;
+  id: string
+  clientId: string;
+  userId: string;
   status: string;
-  expireAt: Date;
-  abandonAt: Date;
-  user: any;
+  lastActiveAt: number;
+  expireAt: number;
+  abandonAt: number;
 
   constructor(data: SessionJSON) {
     this.id = data.id;
+    this.clientId = data.client_id;
+    this.userId = data.user_id;
     this.status = data.status;
-    this.expireAt = new Date(data.expire_at * 1000);
-    this.abandonAt = new Date(data.abandon_at * 1000);
+    this.lastActiveAt = data.last_active_at;
+    this.expireAt = data.expire_at;
+    this.abandonAt = data.abandon_at;
   }
 }

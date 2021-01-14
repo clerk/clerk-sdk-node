@@ -12,48 +12,43 @@ import { GoogleAccount } from './GoogleAccount';
 import { PhoneNumber } from './PhoneNumber';
 
 export class User implements UserResource {
-  id: string;
+  id: string
   username: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  gender: string | null;
+  birthday: string | null;
+  profileImageUrl: string;
+  primaryEmailAddressId: string | null;
+  primaryPhoneNumberId: string | null;
+  passwordEnabled: boolean;
+  twoFactorEnabled: boolean;
   emailAddresses: EmailAddressResource[];
   phoneNumbers: PhoneNumberResource[];
   externalAccounts: GoogleAccountResource[];
-  passwordEnabled: boolean;
-  firstName: string | null;
-  lastName: string | null;
-  fullName: string | null = null;
-  primaryEmailAddressId: string | null = null;
-  primaryEmailAddress: EmailAddressResource | null = null;
-  primaryPhoneNumberId: string | null = null;
-  primaryPhoneNumber: PhoneNumberResource | null = null;
-  profileImageUrl: string;
+  metadata: object;
+  privateMetadata: object;
+  createdAt: number;
+  updatedAt: number;
 
   constructor(data: UserJSON) {
     this.id = data.id;
+    this.username = data.username;
     this.firstName = data.first_name;
     this.lastName = data.last_name;
-
-    if (this.firstName && this.lastName) {
-      this.fullName = this.firstName + ' ' + this.lastName;
-    }
-
+    this.gender = data.gender;
+    this.birthday = data.birthday;
     this.profileImageUrl = data.profile_image_url;
-    this.username = data.username;
-    this.passwordEnabled = data.password_enabled;
-    this.emailAddresses = data.email_addresses.map((x) => new EmailAddress(x));
-
     this.primaryEmailAddressId = data.primary_email_address_id;
-    this.primaryEmailAddress =
-      this.emailAddresses.find((x) => x.id === this.primaryEmailAddressId) ||
-      null;
-
-    this.phoneNumbers = data.phone_numbers.map((x) => new PhoneNumber(x));
-
     this.primaryPhoneNumberId = data.primary_phone_number_id;
-    this.primaryPhoneNumber =
-      this.phoneNumbers.find((x) => x.id === this.primaryPhoneNumberId) || null;
-
-    this.externalAccounts = data.external_accounts.map(
-      (extAcc: GoogleAccountJSON) => new GoogleAccount(extAcc)
-    );
+    this.passwordEnabled = data.password_enabled;
+    this.twoFactorEnabled = data.two_factor_enabled;
+    this.emailAddresses = data.email_addresses.map((x) => new EmailAddress(x));
+    this.phoneNumbers = data.phone_numbers.map((x) => new PhoneNumber(x));
+    this.externalAccounts = data.external_accounts.map((x: GoogleAccountJSON) => new GoogleAccount(x));
+    this.metadata = data.metadata;
+    this.privateMetadata = data.private_metadata;
+    this.createdAt = data.created_at;
+    this.updatedAt = data.updated_at;
   }
 }
