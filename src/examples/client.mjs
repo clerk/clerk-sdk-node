@@ -3,10 +3,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const baseUrl = process.env.BASE_URL
 const accessToken = process.env.ACCESS_TOKEN;
 const clientId = process.env.CLIENT_ID;
 
-const sdk = new ClerkServerSDK(accessToken);
+const sdk = new ClerkServerSDK(accessToken, { baseUrl: baseUrl });
 
 console.log('Get client list');
 let clients = await sdk.clientApi.getClientList();

@@ -1,5 +1,11 @@
+import { Client } from '../resources/Client';
+
 export interface ClerkResourceJSON {
   object: string;
+  id: string;
+}
+
+export interface ClerkResource {
   id: string;
 }
 
@@ -12,8 +18,7 @@ export interface ClientJSON extends ClerkResourceJSON {
   last_active_session_id: string | null;
 }
 
-export interface ClientResource {
-  id: string;
+export interface ClientResource extends ClerkResource {
   ended: boolean;
   sessions: SessionResource[];
   signInAttemptId: string | null;
@@ -21,16 +26,32 @@ export interface ClientResource {
   lastActiveSessionId: string | null;
 }
 
+export interface EmailJSON extends ClerkResourceJSON {
+  from_email_name: string;
+  to_email_address: string;
+  email_address_id: string;
+  subject: string;
+  body: string;
+  status: string;
+}
+
+export interface EmailResource extends ClerkResource {
+  fromEmailName: string;
+  toEmailAddress: string;
+  emailAddressId: string;
+  subject: string;
+  body: string;
+  status: string;
+}
+
 export interface EmailAddressJSON extends ClerkResourceJSON {
   object: 'email_address';
-  id: string;
   email_address: string;
   verification: VerificationJSON | null;
   linked_to: Array<IdentificationLinkJSON>;
 }
 
-export interface EmailAddressResource {
-  id: string;
+export interface EmailAddressResource extends ClerkResource {
   emailAddress: string;
   verification: VerificationResource;
   linkedTo: Array<IdentificationLinkResource>;
@@ -38,24 +59,21 @@ export interface EmailAddressResource {
 
 export interface PhoneNumberJSON extends ClerkResourceJSON {
   object: 'phone_number';
-  id: string;
   phone_number: string;
   reserved_for_second_factor: boolean;
   linked_to: Array<IdentificationLinkJSON>;
   verification: VerificationJSON | null;
 }
 
-export interface PhoneNumberResource {
-  id: string;
+export interface PhoneNumberResource extends ClerkResource {
   phoneNumber: string;
   verification: VerificationResource;
   reservedForSecondFactor: boolean;
   linkedTo: Array<IdentificationLinkResource>;
 }
 
-export interface GoogleAccountJSON {
+export interface GoogleAccountJSON extends ClerkResourceJSON {
   object: 'google_account';
-  id: string;
   google_id: string;
   approved_scopes: string;
   email_address: string;
@@ -64,8 +82,7 @@ export interface GoogleAccountJSON {
   picture: string;
 }
 
-export interface GoogleAccountResource {
-  id: string;
+export interface GoogleAccountResource extends ClerkResource {
   googleId: string;
   approvedScopes: string;
   emailAddress: string;
@@ -169,7 +186,6 @@ export interface SignUpResource {
 
 export interface UserJSON extends ClerkResourceJSON {
   object: 'user';
-  id: string;
   primary_email_address_id: string;
   primary_phone_number_id: string;
   profile_image_url: string;
@@ -182,8 +198,7 @@ export interface UserJSON extends ClerkResourceJSON {
   last_name: string;
 }
 
-export interface UserResource {
-  id: string;
+export interface UserResource extends ClerkResource {
   primaryEmailAddressId: string | null;
   primaryEmailAddress: EmailAddressResource | null;
   primaryPhoneNumberId: string | null;
@@ -211,14 +226,12 @@ export interface IdentificationLinkResource {
 
 export interface SessionJSON extends ClerkResourceJSON {
   object: 'session';
-  id: string;
   status: string;
   expire_at: number;
   abandon_at: number;
 }
 
-export interface SessionResource {
-  id: string;
+export interface SessionResource extends ClerkResource {
   status: string;
   expireAt: Date;
   abandonAt: Date;

@@ -1,9 +1,10 @@
 import { Client } from '../resources/Client';
+import { Email } from '../resources/Email';
 import { Session } from '../resources/Session';
 import { User } from '../resources/User';
 
 // TODO
-// Define type for object types we support
+// Define type / enum for object types we support
 
 // FIXME expect object or array of objects
 // FIXME don't return any
@@ -21,6 +22,9 @@ function jsonToObject(item: any): any {
   switch (item.object) {
     case 'client':
       return new Client(item);
+      break;
+    case 'email':
+      return new Email(item);
       break;
     case 'user':
       return new User(item);
