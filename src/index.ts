@@ -4,6 +4,7 @@ import { RestClient } from './utils/RestClient';
 import { ClientApi } from './apis/ClientApi';
 import { EmailApi } from './apis/EmailApi';
 import { SessionApi } from './apis/SessionApi';
+import { SMSMessageApi } from './apis/SMSMessageApi';
 import { UserApi } from './apis/UserApi';
 
 const defaultApiVersion = 'v1';
@@ -19,6 +20,7 @@ export class ClerkServerSDK {
   private _clientApi?: ClientApi;
   private _emailApi?: EmailApi;
   private _sessionApi?: SessionApi;
+  private _SMSMessageApi?: SMSMessageApi;
   private _userApi?: UserApi;
 
   constructor(
@@ -64,6 +66,14 @@ export class ClerkServerSDK {
     }
 
     return this._sessionApi;
+  }
+
+  get SMSMessageApi(): SMSMessageApi {
+    if (!this._SMSMessageApi) {
+      this._SMSMessageApi = new SMSMessageApi(this.restClient);
+    }
+
+    return this._SMSMessageApi;
   }
 
   get userApi(): UserApi {

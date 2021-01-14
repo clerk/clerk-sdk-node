@@ -237,6 +237,23 @@ export interface SessionResource extends ClerkResource {
   abandonAt: Date;
 }
 
+export interface SMSMessageJSON extends ClerkResourceJSON {
+  object: 'sms_message';
+  from_phone_number: string;
+  to_phone_number: string;
+  phone_number_id: string;
+  message: string;
+  status: string;
+}
+
+export interface SMSMessageResource extends ClerkResource {
+  fromPhoneNumber: string;
+  toPhoneNumber: string;
+  phoneNumberId: string;
+  message: string;
+  status: string;
+}
+
 export interface VerificationJSON {
   status: string;
   strategy: string;
