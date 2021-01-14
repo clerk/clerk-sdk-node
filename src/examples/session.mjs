@@ -3,13 +3,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const baseUrl = process.env.BASE_URL
 const accessToken = process.env.ACCESS_TOKEN;
 const clientId = process.env.CLIENT_ID;
 const userId = process.env.USER_ID;
 const sessionId = process.env.SESSION_ID;
 const sessionIdtoRevoke = process.env.SESSION_ID_TO_REVOKE;
 
-const sdk = new ClerkServerSDK(accessToken);
+const sdk = new ClerkServerSDK(accessToken, { baseUrl: baseUrl });
 
 console.log('Get session list');
 let sessions = await sdk.sessionApi.getSessionList();
