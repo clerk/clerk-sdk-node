@@ -9,6 +9,7 @@ const clientId = process.env.CLIENT_ID;
 const userId = process.env.USER_ID;
 const sessionId = process.env.SESSION_ID;
 const sessionIdtoRevoke = process.env.SESSION_ID_TO_REVOKE;
+const sessionToken = process.env.SESSION_TOKEN;
 
 const sdk = new ClerkServerSDK(accessToken, { baseUrl: baseUrl });
 
@@ -31,3 +32,7 @@ console.log(JSON.stringify(session));
 console.log('Revoke session');
 let revokedSession = await sdk.sessionApi.revokeSession(sessionIdtoRevoke);
 console.log(JSON.stringify(revokedSession));
+
+console.log('Verify session');
+let verifiedSession = await sdk.clientApi.verifySession(sessionId, sessionToken);
+console.log(JSON.stringify(verifiedSession));
