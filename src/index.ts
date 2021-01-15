@@ -1,6 +1,10 @@
 import { RestClient } from './utils/RestClient';
 
 // TODO import dynamically
+import { ClientApi } from './apis/ClientApi';
+import { EmailApi } from './apis/EmailApi';
+import { SessionApi } from './apis/SessionApi';
+import { SMSMessageApi } from './apis/SMSMessageApi';
 import { UserApi } from './apis/UserApi';
 
 const defaultApiVersion = 'v1';
@@ -13,6 +17,10 @@ export class ClerkServerSDK {
   restClient: RestClient;
 
   // private api instances
+  private _clientApi?: ClientApi;
+  private _emailApi?: EmailApi;
+  private _sessionApi?: SessionApi;
+  private _smsMessageApi?: SMSMessageApi;
   private _userApi?: UserApi;
 
   constructor(
@@ -34,6 +42,38 @@ export class ClerkServerSDK {
       this.baseUrl,
       this.apiVersion
     );
+  }
+
+  get clientApi(): ClientApi {
+    if (!this._clientApi) {
+      this._clientApi = new ClientApi(this.restClient);
+    }
+
+    return this._clientApi;
+  }
+
+  get emailApi(): EmailApi {
+    if (!this._emailApi) {
+      this._emailApi = new EmailApi(this.restClient);
+    }
+
+    return this._emailApi;
+  }
+
+  get sessionApi(): SessionApi {
+    if (!this._sessionApi) {
+      this._sessionApi = new SessionApi(this.restClient);
+    }
+
+    return this._sessionApi;
+  }
+
+  get smsMessageApi(): SMSMessageApi {
+    if (!this._smsMessageApi) {
+      this._smsMessageApi = new SMSMessageApi(this.restClient);
+    }
+
+    return this._smsMessageApi;
   }
 
   get userApi(): UserApi {

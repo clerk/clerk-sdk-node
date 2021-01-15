@@ -1,35 +1,59 @@
+import { Client } from '../resources/Client';
+
 export interface ClerkResourceJSON {
   object: string;
   id: string;
 }
 
-export interface ClientJSON extends ClerkResourceJSON {
-  object: 'client';
+export interface ClerkResource {
   id: string;
-  status: any;
-  sessions: SessionJSON[];
-  sign_in_attempt: SignInJSON | null;
-  sign_up_attempt: SignUpJSON | null;
-  last_active_session_id: string | null;
 }
 
-export interface ClientResource {
-  sessions: SessionResource[];
-  signInAttempt: SignInResource;
-  signUpAttempt: SignUpResource;
+export interface ClientJSON extends ClerkResourceJSON {
+  object: 'client';
+  session_ids: string[];
+  sign_in_attempt_id: string | null;
+  sign_up_attempt_id: string | null;
+  last_active_session_id: string | null;
+  created_at: number;
+  updated_at: number;
+}
+
+export interface ClientResource extends ClerkResource {
+  sessionIds: string[];
+  signInAttemptId: string | null;
+  signUpAttemptId: string | null;
   lastActiveSessionId: string | null;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface EmailJSON extends ClerkResourceJSON {
+  from_email_name: string;
+  to_email_address: string;
+  email_address_id: string;
+  subject: string;
+  body: string;
+  status: string;
+}
+
+export interface EmailResource extends ClerkResource {
+  fromEmailName: string;
+  toEmailAddress: string;
+  emailAddressId: string;
+  subject: string;
+  body: string;
+  status: string;
 }
 
 export interface EmailAddressJSON extends ClerkResourceJSON {
   object: 'email_address';
-  id: string;
   email_address: string;
   verification: VerificationJSON | null;
   linked_to: Array<IdentificationLinkJSON>;
 }
 
-export interface EmailAddressResource {
-  id: string;
+export interface EmailAddressResource extends ClerkResource {
   emailAddress: string;
   verification: VerificationResource;
   linkedTo: Array<IdentificationLinkResource>;
@@ -37,24 +61,21 @@ export interface EmailAddressResource {
 
 export interface PhoneNumberJSON extends ClerkResourceJSON {
   object: 'phone_number';
-  id: string;
   phone_number: string;
   reserved_for_second_factor: boolean;
   linked_to: Array<IdentificationLinkJSON>;
   verification: VerificationJSON | null;
 }
 
-export interface PhoneNumberResource {
-  id: string;
+export interface PhoneNumberResource extends ClerkResource {
   phoneNumber: string;
   verification: VerificationResource;
   reservedForSecondFactor: boolean;
   linkedTo: Array<IdentificationLinkResource>;
 }
 
-export interface GoogleAccountJSON {
+export interface GoogleAccountJSON extends ClerkResourceJSON {
   object: 'google_account';
-  id: string;
   google_id: string;
   approved_scopes: string;
   email_address: string;
@@ -63,8 +84,7 @@ export interface GoogleAccountJSON {
   picture: string;
 }
 
-export interface GoogleAccountResource {
-  id: string;
+export interface GoogleAccountResource extends ClerkResource {
   googleId: string;
   approvedScopes: string;
   emailAddress: string;
@@ -111,8 +131,6 @@ export interface SignInResource {
   factorTwoVerification: VerificationResource;
   createdSessionId: string | null;
 }
-
-export type SignInResourceC = ClerkResourceC<SignInResource, SignInJSON | null>;
 
 export type SignUpStatus = 'missing_requirements' | 'complete' | 'abondoned';
 
@@ -170,34 +188,43 @@ export interface SignUpResource {
 
 export interface UserJSON extends ClerkResourceJSON {
   object: 'user';
-  id: string;
-  primary_email_address_id: string;
-  primary_phone_number_id: string;
-  profile_image_url: string;
   username: string;
-  email_addresses: EmailAddressJSON[];
-  phone_numbers: PhoneNumberJSON[];
-  external_accounts: any;
-  password_enabled: boolean;
   first_name: string;
   last_name: string;
+  gender: string;
+  birthday: string;
+  profile_image_url: string;
+  primary_email_address_id: string;
+  primary_phone_number_id: string;
+  password_enabled: boolean;
+  two_factor_enabled: boolean;
+  email_addresses: EmailAddressJSON[];
+  phone_numbers: PhoneNumberJSON[];
+  external_accounts: GoogleAccountJSON[];
+  metadata: object;
+  private_metadata: object;
+  created_at: number;
+  updated_at: number;
 }
 
-export interface UserResource {
-  id: string;
-  primaryEmailAddressId: string | null;
-  primaryEmailAddress: EmailAddressResource | null;
-  primaryPhoneNumberId: string | null;
-  primaryPhoneNumber: PhoneNumberResource | null;
+export interface UserResource extends ClerkResource {
   username: string | null;
-  fullName: string | null;
   firstName: string | null;
   lastName: string | null;
+  gender: string | null;
+  birthday: string | null;
   profileImageUrl: string;
+  primaryEmailAddressId: string | null;
+  primaryPhoneNumberId: string | null;
+  passwordEnabled: boolean;
+  twoFactorEnabled: boolean;
   emailAddresses: EmailAddressResource[];
   phoneNumbers: PhoneNumberResource[];
   externalAccounts: GoogleAccountResource[];
-  passwordEnabled: boolean;
+  metadata: object;
+  privateMetadata: object;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface IdentificationLinkJSON {
@@ -212,19 +239,38 @@ export interface IdentificationLinkResource {
 
 export interface SessionJSON extends ClerkResourceJSON {
   object: 'session';
-  id: string;
+  client_id: string;
+  user_id: string;
   status: string;
+  last_active_at: number;
   expire_at: number;
   abandon_at: number;
-  user: UserJSON;
 }
 
-export interface SessionResource {
-  id: string;
+export interface SessionResource extends ClerkResource {
+  clientId: string;
+  userId: string;
   status: string;
-  expireAt: Date;
-  abandonAt: Date;
-  user: UserResource;
+  lastActiveAt: number;
+  expireAt: number;
+  abandonAt: number;
+}
+
+export interface SMSMessageJSON extends ClerkResourceJSON {
+  object: 'sms_message';
+  from_phone_number: string;
+  to_phone_number: string;
+  phone_number_id: string;
+  message: string;
+  status: string;
+}
+
+export interface SMSMessageResource extends ClerkResource {
+  fromPhoneNumber: string;
+  toPhoneNumber: string;
+  phoneNumberId: string;
+  message: string;
+  status: string;
 }
 
 export interface VerificationJSON {
