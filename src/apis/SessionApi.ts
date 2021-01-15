@@ -30,4 +30,15 @@ export class SessionApi extends AbstractApi {
       path: `/sessions/${sessionId}/revoke`,
     });
   }
+
+  public async verifySession(
+    sessionId: string,
+    token: string
+  ): Promise<Session> {
+    return this.restClient.makeRequest({
+      method: 'post',
+      path: `/sessions/${sessionId}/verify`,
+      bodyParams: { token },
+    });
+  }
 }

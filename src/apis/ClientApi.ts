@@ -16,5 +16,11 @@ export class ClientApi extends AbstractApi {
     });
   }
 
-  // TODO authenticate
+  public verifyClient(token: string): Promise<Client> {
+    return this.restClient.makeRequest({
+      method: 'post',
+      path: '/clients/verify',
+      bodyParams: { token },
+    });
+  }
 }
