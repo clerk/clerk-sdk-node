@@ -1,4 +1,4 @@
-import { ClerkServerSDK } from 'clerk_server_sdk_node';
+import { ClerkServerSDK } from 'clerk-sdk-node';
 import dotenv from 'dotenv';
 
 dotenv.config();

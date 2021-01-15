@@ -31,16 +31,16 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "clerk_server_sdk_node",
+  "name": "clerk-sdk-node",
   "author": "Mark Pitsilos",
-  "module": "dist/clerk_server_sdk_node.esm.js",
+  "module": "dist/clerk-sdk-node.esm.js",
   "size-limit": [
     {
-      "path": "dist/clerk_server_sdk_node.cjs.production.min.js",
+      "path": "dist/clerk-sdk-node.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/clerk_server_sdk_node.esm.js",
+      "path": "dist/clerk-sdk-node.esm.js",
       "limit": "10 KB"
     }
   ],
@@ -62,7 +62,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/clerkinc/clerk_server_sdk_node.git"
+    "url": "git+https://github.com/clerkinc/clerk-sdk-node.git"
   },
   "keywords": [
     "clerk",
@@ -70,7 +70,7 @@
     "node"
   ],
   "bugs": {
-    "url": "https://github.com/clerkinc/clerk_server_sdk_node/issues"
+    "url": "https://github.com/clerkinc/clerk-sdk-node/issues"
   },
-  "homepage": "https://github.com/clerkinc/clerk_server_sdk_node#readme"
+  "homepage": "https://github.com/clerkinc/clerk-sdk-node#readme"
 }

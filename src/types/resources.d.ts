@@ -286,5 +286,5 @@ export interface VerificationResource {
   strategy: string | null;
   externalVerificationRedirectURL: URL | null;
   attempts: number | null;
-  expireAt: Date | null;
+  expireAt: number | null;
 }
