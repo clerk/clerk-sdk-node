@@ -1,5 +1,6 @@
 import got, { HTTPAlias } from 'got';
-import deserialize from './Deserializer';
+import { deserialize } from './Deserializer';
+import { handleError } from './ErrorHandler';
 import snakecaseKeys from 'snakecase-keys';
 import * as querystring from 'querystring';
 
@@ -51,6 +52,6 @@ export class RestClient {
     // TODO improve error handling
     return got(url, gotOptions)
       .then(data => deserialize(data.body))
-      .catch(error => console.log(error));
+      .catch(error => handleError(error));
   }
 }
