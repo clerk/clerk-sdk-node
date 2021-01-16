@@ -11,28 +11,28 @@ const sessionId = process.env.SESSION_ID;
 const sessionIdtoRevoke = process.env.SESSION_ID_TO_REVOKE;
 const sessionToken = process.env.SESSION_TOKEN;
 
-const sdk = new ClerkServerSDK(accessToken, { baseUrl: baseUrl });
+const clerk = new ClerkServerSDK(accessToken, { baseUrl: baseUrl });
 
 console.log('Get session list');
-let sessions = await sdk.sessionApi.getSessionList();
+let sessions = await clerk.sessionApi.getSessionList();
 console.log(JSON.stringify(sessions));
 
 console.log('Get session list filtered by userId');
-let filteredSessions1 = await sdk.sessionApi.getSessionList({ userId });
+let filteredSessions1 = await clerk.sessionApi.getSessionList({ userId });
 console.log(JSON.stringify(filteredSessions1));
 
 console.log('Get session list filtered by clientId');
-let filteredSessions2 = await sdk.sessionApi.getSessionList({ clientId });
+let filteredSessions2 = await clerk.sessionApi.getSessionList({ clientId });
 console.log(JSON.stringify(filteredSessions2));
 
 console.log('Get single session');
-let session = await sdk.sessionApi.getSession(sessionId);
+let session = await clerk.sessionApi.getSession(sessionId);
 console.log(JSON.stringify(session));
 
 console.log('Revoke session');
-let revokedSession = await sdk.sessionApi.revokeSession(sessionIdtoRevoke);
+let revokedSession = await clerk.sessionApi.revokeSession(sessionIdtoRevoke);
 console.log(JSON.stringify(revokedSession));
 
 console.log('Verify session');
-let verifiedSession = await sdk.clientApi.verifySession(sessionId, sessionToken);
+let verifiedSession = await clerk.clientApi.verifySession(sessionId, sessionToken);
 console.log(JSON.stringify(verifiedSession));

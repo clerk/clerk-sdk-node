@@ -1,103 +1,218 @@
-# TSDX User Guide
+# Clerk node SDK
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
+Thank you for choosing [Clerk](https://clerk.dev/) for your authentication & user management needs!
 
-> This TSDX setup is meant for developing libraries (not apps!) that can be published to NPM. If you’re looking to build a Node app, you could use `ts-node-dev`, plain `ts-node`, or simple `tsc`.
+This SDK allows you to call the Clerk server API from node / JS / TS code without having to implement the calls yourself.
 
-> If you’re new to TypeScript, checkout [this handy cheatsheet](https://devhints.io/typescript)
+To gain a better understanding of the underlying API calls the SDK makes, feel free to consult the [official Clerk server API documentation](https://docs.clerk.dev/server-api/).
 
-## Commands
+## Internal implementation details
 
-TSDX scaffolds your new library inside `/src`.
+This project is written in [TypeScript](https://www.typescriptlang.org/) and built with [tsdx](https://github.com/formium/tsdx), thus CJS, ESModules, and UMD module formats are supported.
 
-To run TSDX, use:
+The http client used by the sdk is [got](https://github.com/sindresorhus/got).
 
-```bash
-npm start # or yarn start
+All resource operations are mounted as sub-APIs on a `ClerkServerSDK` object and return promises that either resolve with their expected resource types or reject with the error types described below.
+
+## Installation
+
+Using yarn:
+
+`yarn add clerk-sdk-node`
+
+Using npm:
+
+`npm install clerk-sdk-node --save`
+
+## Resource types
+
+The following types are of interest to the integrator:
+
+| Resource    | Description                                  |
+| ----------- | -------------------------------------------- |
+| Client      | unique browser or mobile app instance        |
+| Session     | a session for a given user on a given client |
+| User        | a person signed up via Clerk                 |
+| Email       | an email message sent to another user        |
+| SMS Message | an SMS message sent to another user          |
+
+## Usage
+
+Usage with ES modules:
+
+```
+import { ClerkServerSDK } from "clerk-sdk-node";
+
+const clerk = new ClerkServerSDK("my-clerk-server-api-key");
+
 ```
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
+Usage with CommonJS:
 
-To do a one-off build, use `npm run build` or `yarn build`.
+```
+const ClerkServerSDK = require('clerk-sdk-node');
 
-To run tests, use `npm test` or `yarn test`.
+const clerk = new ClerkServerSDK("my-clerk-server-api-key");
 
-## Configuration
-
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
-
-### Jest
-
-Jest tests are set up to run with `npm test` or `yarn test`.
-
-### Bundle Analysis
-
-[`size-limit`](https://github.com/ai/size-limit) is set up to calculate the real cost of your library with `npm run size` and visualize the bundle with `npm run analyze`.
-
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/src
-  index.tsx       # EDIT THIS
-/test
-  blah.test.tsx   # EDIT THIS
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
 ```
 
-### Rollup
+You can also consult the [examples folder](https://www.todo.com) for further hints on usage.
 
-TSDX uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
+### Client operations
 
-### TypeScript
+#### getClientList()
 
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
+Retrieves the list of clients:
 
-## Continuous Integration
-
-### GitHub Actions
-
-Two actions are added by default:
-
-- `main` which installs deps w/ cache, lints, tests, and builds on all pushes against a Node and OS matrix
-- `size` which comments cost comparison of your library on every pull request using [`size-limit`](https://github.com/ai/size-limit)
-
-## Optimizations
-
-Please see the main `tsdx` [optimizations docs](https://github.com/palmerhq/tsdx#optimizations). In particular, know that you can take advantage of development-only optimizations:
-
-```js
-// ./types/index.d.ts
-declare var __DEV__: boolean;
-
-// inside your code...
-if (__DEV__) {
-  console.log('foo');
-}
+```
+let clients = await clerk.clientApi.getClientList();
 ```
 
-You can also choose to install and use [invariant](https://github.com/palmerhq/tsdx#invariant) and [warning](https://github.com/palmerhq/tsdx#warning) functions.
+#### getClient(clientId)
 
-## Module Formats
+Retrieves a single clientby its id:
 
-CJS, ESModules, and UMD module formats are supported.
+```
+const clientID = "my-client-id";
+let client = await clerk.clientApi.getClient(clientId);
+```
 
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
+#### verifyClient(sessionToken)
 
-## Named Exports
+Retrieves a client for a given session token, if the session is active:
 
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
+```
+const sessionToken = "my-session-token";
+let client = await clerk.clientApi.verifyClient(sessionToken);
+```
 
-## Including Styles
+### Session operations
 
-There are many ways to ship styles, including with CSS-in-JS. TSDX has no opinion on this, configure how you like.
+#### getSessionList({ clientId, userId })
 
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
+Retrieves the list of sessions:
 
-## Publishing to NPM
+```
+let sessions = await clerk.sessionApi.getSessionList();
+```
 
-We recommend using [np](https://github.com/sindresorhus/np).
+Can also be filtered by a given client id, user id, or both:
+
+```
+const clientId = "my-client-id";
+const userId = "my- user-id";
+let sessions = await clerk.sessionApi.getSessionList({ clientId, sessionId });
+```
+
+#### getSession(sessionId)
+
+Retrieves a single session by its id:
+
+```
+let session = await clerk.sessionApi.getSession(sessionId);
+```
+
+#### revokeSession(sessionId)
+
+Revokes a session given its id. User will be signed out from the particular client the referred to:
+
+```
+const sessionId = "my-session-id";
+let session = await clerk.sessionApi.revokeSession(sessionId);
+```
+
+#### verifySession(sessionId, sessionToken)
+
+Verifies whether a session with a given id corresponds to the provided session token:
+
+```
+const sessionId = "my-session-id";
+const sessionToken = "my-session-token";
+let session = await clerk.sessionApi.verifySession(sessionId, sessionToken);
+```
+
+### User operations
+
+#### getUserList()
+
+Retrieves user list:
+
+```
+let users = await clerk.userApi.getUserList();
+```
+
+#### getUser(userId)
+
+Retrieves a single user by their id:
+
+```
+const userId = "my-user-id";
+const user = await clerk.userApi.getUser(userId);
+```
+
+#### updateUser(userId, params)
+
+Updates a user with a given id with attribute values provided in a params object:
+
+```
+const userId = "my-user-id";
+const params = { firstName = "John", lastName: "Wick" }; // See below for all supported keys
+const user = await clerk.userApi.update(userId, params)
+```
+
+Supported user attributes for update are:
+
+| Attribute             | Data type |
+| --------------------- | --------- |
+| firstName             | string    |
+| lastName              | string    |
+| password              | string    |
+| primaryEmailAddressID | string    |
+| primaryPhoneNumberID  | string    |
+
+#### deleteUser(userId)
+
+Deletes a user given their id:
+
+```
+const userId = "my-user-id";
+user = await clerk.userApi.deleteUser(userId);
+```
+
+### Email operations
+
+#### createEmail({ fromEmailName, subject, body, emailAddressId })
+
+Sends an email message to an email address id belonging to another user:
+
+```
+const fromEmailName = "sales"; // i.e. the "sales" in sales@example.com
+const subject = "Free tacos";
+const body = "Join us via Zoom for remote Taco Tuesday!";
+const emailAddressId = "recipient-email-address-id";
+let email = await clerk.emailApi.createEmail({ fromEmailName, subject, body, emailAddressId });
+```
+
+### SMS Message operations
+
+#### createSMSMessage({ message, phoneNumberId })
+
+Sends an SMS message to a phone number id belonging to another user:
+
+```
+const message = "All glory to the Hypnotoad!";
+const phoneNumberId = "recipient-phone-number-id";
+let smsMessage = await clerk.smsMessageApi.createSMSMessage({ message, phoneNumberId });
+```
+
+## Error handling
+
+TODO
+
+## Express middleware
+
+TODO
+
+## Feedback / Issue reporting
+
+Please open a [github issue](https://github.com/clerkinc/clerk-sdk-node/issues) or contact us on the [official Clerk Slack channel](https://www.todo.com).
