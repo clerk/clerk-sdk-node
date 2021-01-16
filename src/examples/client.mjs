@@ -21,3 +21,20 @@ console.log(JSON.stringify(client));
 console.log('Verify client');
 let verifiedClient = await sdk.clientApi.verifyClient(sessionToken);
 console.log(JSON.stringify(verifiedClient));
+
+try {
+  console.log('Get single client for invalid clientId');
+  let invalidClient = await sdk.clientApi.getClient('foobar');
+  console.log(JSON.stringify(invalidClient));
+} catch(error) {
+  console.log(JSON.stringify(error));
+}
+
+try {
+  console.log('Get client list with invalid API key');
+  const sdk2 = new ClerkServerSDK('snafu', { baseUrl: baseUrl });
+  let invalidClients = await sdk2.clientApi.getClientList();
+  console.log(JSON.stringify(invalidClients));
+} catch(error) {
+  console.log(JSON.stringify(error));
+}
