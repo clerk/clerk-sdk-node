@@ -3,12 +3,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const baseUrl = process.env.BASE_URL
-const accessToken = process.env.ACCESS_TOKEN;
+const serverApiUrl = process.env.SERVER_API_URL
+const apiKey = process.env.API_KEY;
 const clientId = process.env.CLIENT_ID;
 const sessionToken = process.env.SESSION_TOKEN;
 
-const clerk = new Clerk.default(accessToken, { baseUrl: baseUrl });
+const clerk = new Clerk.default(apiKey, { serverApiUrl });
 
 console.log('Get client list');
 let clients = await clerk.clientApi.getClientList();
@@ -32,7 +32,7 @@ try {
 
 try {
   console.log('Get client list with invalid API key');
-  const clerk2 = new Clerk('snafu', { baseUrl: baseUrl });
+  const clerk2 = new Clerk('snafu', { serverApiUrl });
   let invalidClients = await clerk2.clientApi.getClientList();
   console.log(invalidClients);
 } catch(error) {

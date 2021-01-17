@@ -6,6 +6,9 @@ import * as querystring from 'querystring';
 
 // TODO Support setting timeout, retries
 
+const packageName = 'clerk-sdk-go'; // TODO get from package.json
+const packageVersion = '0.0.3'; // TODO get form package.json
+const packageRepo = 'https://github.com/clerkinc/clerk-sdk-node';
 const contentType = 'application/x-www-form-urlencoded';
 
 type RequestOptions = {
@@ -16,25 +19,25 @@ type RequestOptions = {
 };
 
 export class RestClient {
-  accessToken: string;
-  baseUrl: string;
+  apiKey: string;
+  serverApiUrl: string;
   apiVersion: string;
   httpOptions?: object;
 
   constructor(
-    accessToken: string,
-    baseUrl: string,
+    apiKey: string,
+    serverApiUrl: string,
     apiVersion: string,
     httpOptions?: object
   ) {
-    this.accessToken = accessToken;
-    this.baseUrl = baseUrl;
+    this.apiKey = apiKey;
+    this.serverApiUrl = serverApiUrl;
     this.apiVersion = apiVersion;
     this.httpOptions = httpOptions || {};
   }
 
   makeRequest(requestOptions: RequestOptions) {
-    let url = `${this.baseUrl}/${this.apiVersion}${requestOptions.path}`;
+    let url = `${this.serverApiUrl}/${this.apiVersion}${requestOptions.path}`;
 
     if (requestOptions.queryParams) {
       url = `${url}?${querystring.stringify(
@@ -47,8 +50,9 @@ export class RestClient {
       method: requestOptions.method,
       responseType: 'json' as 'json',
       headers: {
-        Authorization: `Bearer ${this.accessToken}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-type': contentType,
+        'user-agent': `${packageName}/${packageVersion} (${packageRepo})`,
       },
       ...this.httpOptions,
     };

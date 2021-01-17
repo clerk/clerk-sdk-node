@@ -3,15 +3,15 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const baseUrl = process.env.BASE_URL
-const accessToken = process.env.ACCESS_TOKEN;
+const serverApiUrl = process.env.SERVER_API_URL
+const apiKey = process.env.API_KEY;
 const clientId = process.env.CLIENT_ID;
 const userId = process.env.USER_ID;
 const sessionId = process.env.SESSION_ID;
 const sessionIdtoRevoke = process.env.SESSION_ID_TO_REVOKE;
 const sessionToken = process.env.SESSION_TOKEN;
 
-const clerk = new Clerk.default(accessToken, { baseUrl: baseUrl });
+const clerk = new Clerk.default(apiKey, { serverApiUrl });
 
 console.log('Get session list');
 let sessions = await clerk.sessionApi.getSessionList();

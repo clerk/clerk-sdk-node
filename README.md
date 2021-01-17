@@ -58,6 +58,20 @@ const clerk = new Clerk.default("my-clerk-server-api-key");
 
 You can also consult the [examples folder](https://www.todo.com) for further hints on usage.
 
+### Passing options to underlying http client
+
+The SDK allows you to optionally pass options for the underlying http client (got) by instantiating it with an additional `httpOptions` object.
+
+e.g. to pass a custom header:
+
+```
+sdk = new Clerk(apiKey, { httpOptions: headers: {
+		'x-unicorn': 'rainbow'
+	} })
+```
+
+You can check the options got supports [here](https://github.com/sindresorhus/got#options).
+
 ### Client operations
 
 #### getClientList()
@@ -211,7 +225,62 @@ TODO
 
 ## Express middleware
 
-TODO
+For usage with [Express](https://github.com/expressjs/express), this package also exports an `ExpressAuthMiddleware` function that can be used in the standard manner:
+
+```
+import { ExpressAuthMiddleware } from 'sdk-server-node';
+
+// Initialize express app the usual way
+
+const apiKey = "my-api-key";
+
+const options = {
+    serverApiUrl: '', // You would generally ever need to override this
+    onError: function() {} // Function to call if the middleware encounters or fails to authenticate, can be used to provide logging etc
+};
+
+app.use(ExpressAuthMiddleware(apiKey, options));
+```
+
+The middleware will set the Clerk session on the request object as `req.session` and simply call the next firmware.
+
+You can then implement your own logic for handling a logged in or logged out user in your express endpoints or custom middleware, depending on whether they are trying to access a public or protected resource.
+
+## Next
+
+The current package also offers a way of making your [Next.js api middleware](https://nextjs.org/docs/api-routes/api-middlewares) aware of the Clerk Session.
+
+You can define your handler function with the usual signature (`function handler(req, res) {}`) then wrap it with `withSession`:
+
+```
+import { withSession, WithSessionProp } from 'clerk-sdk-node';
+```
+
+Note: Since the request will be extended with a session property, the signature of your handler in TypeScript would be:
+
+```
+function handler(req WithSessionProp<NextApiRequest>, res: NextApiResponse) {
+    if (req.session) {
+        // do something with session.userId
+    } else {
+        // Respond with 401 or similar
+    }
+}
+```
+
+In case you would like the request to be rejected with a 401 (Unauthorized) automatically when no session exists, without having to implement such logic yourself, you can opt for the stricter variants:
+
+```
+import { requireSession, RequireSessionProp } from 'clerk-sdk-node';
+```
+
+In this case your handler can be even simpler because the existence of the session can be assumed, otherwise the execution will never reach your handler:
+
+```
+function handler(req RequireSessionProp<NextApiRequest>, res: NextApiResponse) {
+    // do something with session.user_id
+}
+```
 
 ## Feedback / Issue reporting
 

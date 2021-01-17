@@ -1,11 +1,11 @@
 const Clerk = require('clerk-sdk-node');
 require('dotenv').config();
 
-const baseUrl = process.env.BASE_URL
-const accessToken = process.env.ACCESS_TOKEN;
+const serverApiUrl = process.env.SERVER_API_URL
+const apiKey = process.env.API_KEY;
 const emailAddressId = process.env.EMAIL_ADDRESS_ID;
 
-const clerk = new Clerk.default(accessToken, { baseUrl: baseUrl });
+const clerk = new Clerk.default(apiKey, { serverApiUrl });
 
 console.log('Create email');
 const fromEmailName = 'sales';
