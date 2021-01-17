@@ -1,4 +1,5 @@
 {
+    "name": "clerk-sdk-node-examples",
     "dependencies": {
         "clerk-sdk-node": "file:../../",
         "dotenv": "^8.2.0",

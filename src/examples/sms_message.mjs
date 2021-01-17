@@ -3,11 +3,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const baseUrl = process.env.BASE_URL
-const accessToken = process.env.ACCESS_TOKEN;
+const serverApiUrl = process.env.SERVER_API_URL
+const apiKey = process.env.API_KEY;
 const phoneNumberId = process.env.PHONE_NUMBER_ID;
 
-const clerk = new Clerk.default(accessToken, { baseUrl: baseUrl });
+const clerk = new Clerk.default(apiKey, { serverApiUrl });
 
 console.log('Create SMS message');
 const message = "I'd buy that for a dollar";

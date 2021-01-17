@@ -3,12 +3,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const baseUrl = process.env.BASE_URL
-const accessToken = process.env.ACCESS_TOKEN;
+const serverApiUrl = process.env.SERVER_API_URL
+const apiKey = process.env.API_KEY;
 const userId = process.env.USER_ID;
 const userIdToDelete = process.env.USER_ID_TO_DELETE;
 
-const clerk = new Clerk.default(accessToken, { baseUrl: baseUrl });
+const clerk = new Clerk.default(apiKey, { serverApiUrl });
 
 console.log('Get user list');
 let users = await clerk.userApi.getUserList();
