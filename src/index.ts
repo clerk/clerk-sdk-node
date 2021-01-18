@@ -22,10 +22,11 @@ import { Verification } from './resources/Verification';
 const defaultApiVersion = 'v1';
 const defaultBaseUrl = 'https://api.clerk.dev';
 
-export class Clerk {
+export default class Clerk {
   accessToken: string;
   baseUrl: string = defaultBaseUrl;
   apiVersion: string = defaultApiVersion;
+  httpOptions: object = {};
   restClient: RestClient;
 
   // private api instances
@@ -52,10 +53,12 @@ export class Clerk {
     {
       baseUrl = defaultBaseUrl,
       apiVersion = defaultApiVersion,
-    }: { baseUrl?: string; apiVersion?: string } = {}
+      httpOptions = {},
+    }: { baseUrl?: string; apiVersion?: string; httpOptions?: object } = {}
   ) {
     this.accessToken = accessToken;
     this.apiVersion = apiVersion;
+    this.httpOptions = httpOptions || {};
 
     if (baseUrl) {
       this.baseUrl = baseUrl;
@@ -64,7 +67,8 @@ export class Clerk {
     this.restClient = new RestClient(
       this.accessToken,
       this.baseUrl,
-      this.apiVersion
+      this.apiVersion,
+      this.httpOptions
     );
   }
 

@@ -67,7 +67,7 @@ cacheable-request@^7.0.1:
     responselike "^2.0.0"
 
 "clerk-sdk-node@file:../..":
-  version "0.0.1"
+  version "0.0.2"
   dependencies:
     got "^11.8.1"
     snakecase-keys "^3.2.1"

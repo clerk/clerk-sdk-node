@@ -41,9 +41,9 @@ The following types are of interest to the integrator:
 Usage with ES modules:
 
 ```
-import { Clerk } from "clerk-sdk-node";
+import Clerk from "clerk-sdk-node";
 
-const clerk = new Clerk("my-clerk-server-api-key");
+const clerk = new Clerk.default("my-clerk-server-api-key");
 
 ```
 
@@ -52,7 +52,7 @@ Usage with CommonJS:
 ```
 const Clerk = require('clerk-sdk-node');
 
-const clerk = new Clerk("my-clerk-server-api-key");
+const clerk = new Clerk.default("my-clerk-server-api-key");
 
 ```
 
