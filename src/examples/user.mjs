@@ -1,4 +1,4 @@
-import { ClerkServerSDK } from 'clerk-sdk-node';
+import { Clerk } from 'clerk-sdk-node';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -8,7 +8,7 @@ const accessToken = process.env.ACCESS_TOKEN;
 const userId = process.env.USER_ID;
 const userIdToDelete = process.env.USER_ID_TO_DELETE;
 
-const clerk = new ClerkServerSDK(accessToken, { baseUrl: baseUrl });
+const clerk = new Clerk(accessToken, { baseUrl: baseUrl });
 
 console.log('Get user list');
 let users = await clerk.userApi.getUserList();

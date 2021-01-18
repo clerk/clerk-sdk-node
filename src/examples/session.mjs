@@ -1,4 +1,4 @@
-import { ClerkServerSDK } from 'clerk-sdk-node';
+import { Clerk } from 'clerk-sdk-node';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -11,7 +11,7 @@ const sessionId = process.env.SESSION_ID;
 const sessionIdtoRevoke = process.env.SESSION_ID_TO_REVOKE;
 const sessionToken = process.env.SESSION_TOKEN;
 
-const clerk = new ClerkServerSDK(accessToken, { baseUrl: baseUrl });
+const clerk = new Clerk(accessToken, { baseUrl: baseUrl });
 
 console.log('Get session list');
 let sessions = await clerk.sessionApi.getSessionList();

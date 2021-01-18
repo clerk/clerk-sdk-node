@@ -1,4 +1,4 @@
-import { ClerkServerSDK } from 'clerk-sdk-node';
+import { Clerk } from 'clerk-sdk-node';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -8,7 +8,7 @@ const accessToken = process.env.ACCESS_TOKEN;
 const clientId = process.env.CLIENT_ID;
 const sessionToken = process.env.SESSION_TOKEN;
 
-const clerk = new ClerkServerSDK(accessToken, { baseUrl: baseUrl });
+const clerk = new Clerk(accessToken, { baseUrl: baseUrl });
 
 console.log('Get client list');
 let clients = await clerk.clientApi.getClientList();
@@ -32,7 +32,7 @@ try {
 
 try {
   console.log('Get client list with invalid API key');
-  const clerk2 = new ClerkServerSDK('snafu', { baseUrl: baseUrl });
+  const clerk2 = new Clerk('snafu', { baseUrl: baseUrl });
   let invalidClients = await clerk2.clientApi.getClientList();
   console.log(JSON.stringify(invalidClients));
 } catch(error) {

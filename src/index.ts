@@ -7,10 +7,22 @@ import { SessionApi } from './apis/SessionApi';
 import { SMSMessageApi } from './apis/SMSMessageApi';
 import { UserApi } from './apis/UserApi';
 
+// TODO import dynamically or from single index file
+import { Client } from './resources/Client';
+import { Email } from './resources/Email';
+import { EmailAddress } from './resources/EmailAddress';
+import { GoogleAccount } from './resources/GoogleAccount';
+import { IdentificationLink } from './resources/IdentificationLink';
+import { PhoneNumber } from './resources/PhoneNumber';
+import { Session } from './resources/Session';
+import { SMSMessage } from './resources/SMSMessage';
+import { User } from './resources/User';
+import { Verification } from './resources/Verification';
+
 const defaultApiVersion = 'v1';
 const defaultBaseUrl = 'https://api.clerk.dev';
 
-export class ClerkServerSDK {
+export class Clerk {
   accessToken: string;
   baseUrl: string = defaultBaseUrl;
   apiVersion: string = defaultApiVersion;
@@ -22,6 +34,18 @@ export class ClerkServerSDK {
   private _sessionApi?: SessionApi;
   private _smsMessageApi?: SMSMessageApi;
   private _userApi?: UserApi;
+
+  // Namespace resources
+  public static Client = Client;
+  public static Email = Email;
+  public static EmailAddress = EmailAddress;
+  public static GoogleAccount = GoogleAccount;
+  public static IdentificationLink = IdentificationLink;
+  public static PhoneNumber = PhoneNumber;
+  public static Session = Session;
+  public static SMSMessage = SMSMessage;
+  public static User = User;
+  public static Verification = Verification;
 
   constructor(
     accessToken: string,

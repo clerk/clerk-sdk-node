@@ -12,7 +12,7 @@ This project is written in [TypeScript](https://www.typescriptlang.org/) and bui
 
 The http client used by the sdk is [got](https://github.com/sindresorhus/got).
 
-All resource operations are mounted as sub-APIs on a `ClerkServerSDK` object and return promises that either resolve with their expected resource types or reject with the error types described below.
+All resource operations are mounted as sub-APIs on a `Clerk` object and return promises that either resolve with their expected resource types or reject with the error types described below.
 
 ## Installation
 
@@ -41,18 +41,18 @@ The following types are of interest to the integrator:
 Usage with ES modules:
 
 ```
-import { ClerkServerSDK } from "clerk-sdk-node";
+import { Clerk } from "clerk-sdk-node";
 
-const clerk = new ClerkServerSDK("my-clerk-server-api-key");
+const clerk = new Clerk("my-clerk-server-api-key");
 
 ```
 
 Usage with CommonJS:
 
 ```
-const ClerkServerSDK = require('clerk-sdk-node');
+const Clerk = require('clerk-sdk-node');
 
-const clerk = new ClerkServerSDK("my-clerk-server-api-key");
+const clerk = new Clerk("my-clerk-server-api-key");
 
 ```
 
