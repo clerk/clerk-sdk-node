@@ -8,7 +8,7 @@ const accessToken = process.env.ACCESS_TOKEN;
 const clientId = process.env.CLIENT_ID;
 const sessionToken = process.env.SESSION_TOKEN;
 
-const clerk = new Clerk(accessToken, { baseUrl: baseUrl });
+const clerk = new Clerk.default(accessToken, { baseUrl: baseUrl });
 
 console.log('Get client list');
 let clients = await clerk.clientApi.getClientList();
