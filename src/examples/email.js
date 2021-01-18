@@ -1,7 +1,5 @@
-import Clerk from 'clerk-sdk-node';
-import dotenv from 'dotenv';
-
-dotenv.config();
+const Clerk = require('clerk-sdk-node');
+require('dotenv').config();
 
 const baseUrl = process.env.BASE_URL
 const accessToken = process.env.ACCESS_TOKEN;
@@ -13,5 +11,5 @@ console.log('Create email');
 const fromEmailName = 'sales';
 const subject = 'Amazing offer!';
 const body = 'Click <a href="https://www.thisiswhyimbroke.com/">here</a> to find out more!';
-let email = await clerk.emailApi.createEmail({ fromEmailName, subject, body, emailAddressId });
-console.log(email);
+
+clerk.emailApi.createEmail({ fromEmailName, subject, body, emailAddressId }).then(email => console.log(email));

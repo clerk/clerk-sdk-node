@@ -19,34 +19,42 @@ export class RestClient {
   accessToken: string;
   baseUrl: string;
   apiVersion: string;
+  httpOptions?: object;
 
-  constructor(accessToken: string, baseUrl: string, apiVersion: string) {
+  constructor(
+    accessToken: string,
+    baseUrl: string,
+    apiVersion: string,
+    httpOptions?: object
+  ) {
     this.accessToken = accessToken;
     this.baseUrl = baseUrl;
     this.apiVersion = apiVersion;
+    this.httpOptions = httpOptions || {};
   }
 
-  makeRequest(options: RequestOptions) {
-    let url = `${this.baseUrl}/${this.apiVersion}${options.path}`;
+  makeRequest(requestOptions: RequestOptions) {
+    let url = `${this.baseUrl}/${this.apiVersion}${requestOptions.path}`;
 
-    if (options.queryParams) {
+    if (requestOptions.queryParams) {
       url = `${url}?${querystring.stringify(
-        snakecaseKeys(options.queryParams)
+        snakecaseKeys(requestOptions.queryParams)
       )}`;
     }
 
     // FIXME remove any
     const gotOptions: any = {
-      method: options.method,
+      method: requestOptions.method,
       responseType: 'json' as 'json',
       headers: {
         Authorization: `Bearer ${this.accessToken}`,
         'Content-type': contentType,
       },
+      ...this.httpOptions,
     };
 
-    if (options.bodyParams) {
-      gotOptions['form'] = snakecaseKeys(options.bodyParams);
+    if (requestOptions.bodyParams) {
+      gotOptions['form'] = snakecaseKeys(requestOptions.bodyParams);
     }
 
     // TODO improve error handling
