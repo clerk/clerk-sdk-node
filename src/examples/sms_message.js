@@ -1,7 +1,5 @@
-import Clerk from 'clerk-sdk-node';
-import dotenv from 'dotenv';
-
-dotenv.config();
+const Clerk = require('clerk-sdk-node');
+require('dotenv').config();
 
 const baseUrl = process.env.BASE_URL
 const accessToken = process.env.ACCESS_TOKEN;
@@ -11,5 +9,4 @@ const clerk = new Clerk.default(accessToken, { baseUrl: baseUrl });
 
 console.log('Create SMS message');
 const message = "I'd buy that for a dollar";
-let smsMessage = await clerk.smsMessageApi.createSMSMessage({ message, phoneNumberId });
-console.log(smsMessage);
+clerk.smsMessageApi.createSMSMessage({ message, phoneNumberId }).then(smsMessage => console.log(smsMessage));
