@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const serverApiUrl = process.env.SERVER_API_URL
-const apiKey = process.env.API_KEY;
+const serverApiUrl = process.env.CLERK_API_URL;
+const apiKey = process.env.CLERK_API_KEY;
 const userId = process.env.USER_ID;
 const userIdToDelete = process.env.USER_ID_TO_DELETE;
 
@@ -19,7 +19,10 @@ let user = await clerk.userApi.getUser(userId);
 console.log(user);
 
 console.log('Update user');
-let updatedUser = await clerk.userApi.updateUser(userId, { firstName: 'Kyle', lastName: 'Reese' });
+let updatedUser = await clerk.userApi.updateUser(userId, {
+  firstName: 'Kyle',
+  lastName: 'Reese',
+});
 // let updatedUser = await sdk.userApi.updateUser(userId, { firstName: 'John', lastName: 'Connor' });
 // let updatedUser = await sdk.userApi.updateUser(userId, { firstName: 'Peter', lastName: 'Silberman' });
 console.log(updatedUser);

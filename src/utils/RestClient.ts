@@ -7,8 +7,9 @@ import * as querystring from 'querystring';
 // TODO Support setting timeout, retries
 
 const packageName = 'clerk-sdk-go'; // TODO get from package.json
-const packageVersion = '0.0.3'; // TODO get form package.json
+const packageVersion = '0.0.5'; // TODO get form package.json
 const packageRepo = 'https://github.com/clerkinc/clerk-sdk-node';
+const userAgent = `${packageName}/${packageVersion} (${packageRepo})`;
 const contentType = 'application/x-www-form-urlencoded';
 
 type RequestOptions = {
@@ -52,7 +53,7 @@ export class RestClient {
       headers: {
         Authorization: `Bearer ${this.apiKey}`,
         'Content-type': contentType,
-        'user-agent': `${packageName}/${packageVersion} (${packageRepo})`,
+        'user-agent': userAgent,
       },
       ...this.httpOptions,
     };
@@ -63,7 +64,7 @@ export class RestClient {
 
     // TODO improve error handling
     return got(url, gotOptions)
-      .then(data => deserialize(data.body))
-      .catch(error => handleError(error));
+      .then((data) => deserialize(data.body))
+      .catch((error) => handleError(error));
   }
 }

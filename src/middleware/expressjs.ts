@@ -3,11 +3,14 @@ import Cookies from 'cookies';
 import Clerk from '../Clerk';
 
 export type MiddlewareOptions = {
-  serverApiUrl?: string
-  onError?: Function
-}
+  serverApiUrl?: string;
+  onError?: Function;
+};
 
-export default function ExpressAuthMiddleware(apiKey: string, options: MiddlewareOptions) {
+export default function ExpressAuthMiddleware(
+  apiKey: string,
+  options: MiddlewareOptions
+) {
   return async function authenticate(
     req: Request,
     res: Response,
@@ -25,10 +28,13 @@ export default function ExpressAuthMiddleware(apiKey: string, options: Middlewar
       }
 
       let sessionId: any = req.query._clerk_session_id;
-      
+
+      console.log(`sessionId from query: ${sessionId}`);
+
       if (!sessionId) {
         client = await clerk.clientApi.verifyClient(sessionToken);
         sessionId = client.lastActiveSessionId;
+        console.log(`sessionId from client: ${sessionId}`);
       }
 
       const session = await clerk.sessionApi.verifySession(

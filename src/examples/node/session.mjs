@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const serverApiUrl = process.env.SERVER_API_URL
-const apiKey = process.env.API_KEY;
+const serverApiUrl = process.env.CLERK_API_URL;
+const apiKey = process.env.CLERK_API_KEY;
 const clientId = process.env.CLIENT_ID;
 const userId = process.env.USER_ID;
 const sessionId = process.env.SESSION_ID;
@@ -34,5 +34,8 @@ let revokedSession = await clerk.sessionApi.revokeSession(sessionIdtoRevoke);
 console.log(revokedSession);
 
 console.log('Verify session');
-let verifiedSession = await clerk.clientApi.verifySession(sessionId, sessionToken);
+let verifiedSession = await clerk.clientApi.verifySession(
+  sessionId,
+  sessionToken
+);
 console.log(verifiedSession);

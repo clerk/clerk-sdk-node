@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const serverApiUrl = process.env.SERVER_API_URL
-const apiKey = process.env.API_KEY;
+const serverApiUrl = process.env.CLERK_API_URL;
+const apiKey = process.env.CLERK_API_KEY;
 const clientId = process.env.CLIENT_ID;
 const sessionToken = process.env.SESSION_TOKEN;
 
@@ -26,7 +26,7 @@ try {
   console.log('Get single client for invalid clientId');
   let invalidClient = await clerk.clientApi.getClient('foobar');
   console.log(invalidClient);
-} catch(error) {
+} catch (error) {
   console.log(error);
 }
 
@@ -35,6 +35,6 @@ try {
   const clerk2 = new Clerk('snafu', { serverApiUrl });
   let invalidClients = await clerk2.clientApi.getClientList();
   console.log(invalidClients);
-} catch(error) {
+} catch (error) {
   console.log(error);
 }

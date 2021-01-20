@@ -1,0 +1,8 @@
+{
+    "name": "clerk-sdk-node-express-examples",
+    "dependencies": {
+        "clerk-sdk-node": "file:../../../",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1"
+    }
+}
