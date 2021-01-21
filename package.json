@@ -1,5 +1,5 @@
 {
-  "version": "0.0.0",
+  "version": "0.0.2",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -77,6 +77,6 @@
   },
   "homepage": "https://github.com/clerkinc/clerk-sdk-node#readme",
   "publishConfig": {
-	  "access": "public"
+    "access": "public"
   }
 }
