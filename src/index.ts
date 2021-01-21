@@ -1,5 +1,5 @@
 import Clerk from './Clerk';
-import ExpressAuthMiddleware from './middleware/expressjs';
+import ClerkExpressMiddleware from './middleware/expressjs';
 import {
   withSession,
   requireSession,
@@ -9,7 +9,7 @@ import {
 
 export default Clerk;
 export {
-  ExpressAuthMiddleware,
+  ClerkExpressMiddleware,
   withSession,
   requireSession,
   WithSessionProp,

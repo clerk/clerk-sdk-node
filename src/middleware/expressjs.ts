@@ -7,7 +7,7 @@ export type MiddlewareOptions = {
   onError?: Function;
 };
 
-export default function ExpressAuthMiddleware(
+export default function ClerkExpressMiddleware(
   apiKey: string,
   options: MiddlewareOptions
 ) {

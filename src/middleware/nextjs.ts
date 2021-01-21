@@ -1,24 +1,25 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import ExpressAuthMiddleware, { MiddlewareOptions } from './expressjs';
+import ClerkExpressMiddleware, { MiddlewareOptions } from './expressjs';
 import { Session } from '../resources/Session';
 
 export type WithSessionProp<T> = T & { session?: Session };
 export type RequireSessionProp<T> = T & { session: Session };
 
+// Credits to https://nextjs.org/docs/api-routes/api-middlewares
 // Helper method to wait for a middleware to execute before continuing
 // And to throw an error when an error happens in a middleware
-function runMiddleware(middleware: Function) {
-  // @ts-ignore
-  return (req, res) =>
-    new Promise((resolve, reject) => {
-      // @ts-ignore
-      middleware((req, res, result) => {
-        if (result instanceof Error) {
-          return reject(result);
-        }
-        return resolve(result);
-      });
+// @ts-ignore
+function runMiddleware(req, res, fn) {
+  return new Promise((resolve, reject) => {
+    // @ts-ignore
+    fn(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+
+      return resolve(result);
     });
+  });
 }
 
 // Set the session on the request and the call provided handler
@@ -28,14 +29,16 @@ export function withSession(
 ) {
   return async (req: WithSessionProp<NextApiRequest>, res: NextApiResponse) => {
     await runMiddleware(
-      ExpressAuthMiddleware(process.env.CLERK_API_KEY || '', options)
+      req,
+      res,
+      ClerkExpressMiddleware(process.env.CLERK_API_KEY || '', options)
     );
 
     return handler(req, res);
   };
 }
 
-// Stricter version, fails fast if no session is present
+// Stricter version, short-circuits if no session is present
 export function requireSession(
   handler: Function,
   options: MiddlewareOptions = { serverApiUrl: process.env.CLERK_API_URL }
@@ -45,14 +48,16 @@ export function requireSession(
     res: NextApiResponse
   ) => {
     await runMiddleware(
-      ExpressAuthMiddleware(process.env.CLERK_API_KEY || '', options)
+      req,
+      res,
+      ClerkExpressMiddleware(process.env.CLERK_API_KEY || '', options)
     );
 
     if (req.session) {
+      return handler(req, res);
+    } else {
       res.statusCode = 401;
       res.end();
-    } else {
-      return handler(req, res);
     }
   };
 }

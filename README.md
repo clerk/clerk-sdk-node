@@ -228,7 +228,7 @@ TODO
 For usage with [Express](https://github.com/expressjs/express), this package also exports an `ExpressAuthMiddleware` function that can be used in the standard manner:
 
 ```
-import { ExpressAuthMiddleware } from 'sdk-server-node';
+import { ClerkExpressMiddleware } from 'sdk-server-node';
 
 // Initialize express app the usual way
 
@@ -239,7 +239,7 @@ const options = {
     onError: function() {} // Function to call if the middleware encounters or fails to authenticate, can be used to provide logging etc
 };
 
-app.use(ExpressAuthMiddleware(apiKey, options));
+app.use(ClerkExpressMiddleware(apiKey, options));
 ```
 
 The middleware will set the Clerk session on the request object as `req.session` and simply call the next firmware.

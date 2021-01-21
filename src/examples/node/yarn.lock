@@ -139,7 +139,7 @@ cacheable-request@^7.0.1:
     responselike "^2.0.0"
 
 "clerk-sdk-node@file:../../..":
-  version "0.0.4"
+  version "0.0.6"
   dependencies:
     "@types/cookies" "^0.7.6"
     cookies "^0.8.0"
