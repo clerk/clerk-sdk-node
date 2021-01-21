@@ -1,4 +1,4 @@
-const { requireSession } = require('clerk-sdk-node');
+const { requireSession } = require('@clerk/clerk-sdk-node');
 
 function handler(req, res) {
     console.log('Session required');

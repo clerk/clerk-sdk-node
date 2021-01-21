@@ -18,11 +18,11 @@ All resource operations are mounted as sub-APIs on a `Clerk` object and return p
 
 Using yarn:
 
-`yarn add clerk-sdk-node`
+`yarn add @clerk/clerk-sdk-node`
 
 Using npm:
 
-`npm install clerk-sdk-node --save`
+`npm install @clerk/clerk-sdk-node --save`
 
 ## Resource types
 
@@ -41,7 +41,7 @@ The following types are of interest to the integrator:
 Usage with ES modules:
 
 ```
-import Clerk from "clerk-sdk-node";
+import Clerk from "@clerk/clerk-sdk-node";
 
 const clerk = new Clerk.default("my-clerk-server-api-key");
 
@@ -50,7 +50,7 @@ const clerk = new Clerk.default("my-clerk-server-api-key");
 Usage with CommonJS:
 
 ```
-const Clerk = require('clerk-sdk-node');
+const Clerk = require('@clerk/clerk-sdk-node');
 
 const clerk = new Clerk.default("my-clerk-server-api-key");
 
@@ -259,7 +259,7 @@ CLERK_API_KEY=my-clerk-api-key
 You can define your handler function with the usual signature (`function handler(req, res) {}`) then wrap it with `withSession`:
 
 ```
-import { withSession, WithSessionProp } from 'clerk-sdk-node';
+import { withSession, WithSessionProp } from '@clerk/clerk-sdk-node';
 ```
 
 Note: Since the request will be extended with a session property, the signature of your handler in TypeScript would be:
@@ -285,7 +285,7 @@ export default withSession(handler, { onError: error => console.log(error) });
 In case you would like the request to be rejected with a 401 (Unauthorized) automatically when no session exists, without having to implement such logic yourself, you can opt for the stricter variants:
 
 ```
-import { requireSession, RequireSessionProp } from 'clerk-sdk-node';
+import { requireSession, RequireSessionProp } from '@clerk/clerk-sdk-node';
 ```
 
 In this case your handler can be even simpler because the existence of the session can be assumed, otherwise the execution will never reach your handler:

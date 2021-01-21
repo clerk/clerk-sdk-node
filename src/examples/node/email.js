@@ -1,4 +1,4 @@
-const Clerk = require('clerk-sdk-node');
+const Clerk = require('@clerk/clerk-sdk-node');
 require('dotenv').config();
 
 const serverApiUrl = process.env.CLERK_API_URL;

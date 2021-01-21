@@ -1,4 +1,4 @@
-const { withSession } = require('clerk-sdk-node');
+const { withSession } = require('@clerk/clerk-sdk-node');
 
 function handler(req, res) {
     console.log('Session optional');

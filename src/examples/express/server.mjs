@@ -1,5 +1,5 @@
 import express from 'express';
-import { ExpressAuthMiddleware } from 'clerk-sdk-node';
+import { ExpressAuthMiddleware } from '@clerk/clerk-sdk-node';
 import dotenv from 'dotenv';
 
 dotenv.config();

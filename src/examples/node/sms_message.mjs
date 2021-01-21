@@ -1,4 +1,4 @@
-import Clerk from 'clerk-sdk-node';
+import Clerk from '@clerk/clerk-sdk-node';
 import dotenv from 'dotenv';
 
 dotenv.config();
