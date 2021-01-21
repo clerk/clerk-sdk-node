@@ -7,7 +7,7 @@ import * as querystring from 'querystring';
 // TODO Support setting timeout, retries
 
 const packageName = '@clerk/clerk-sdk-node'; // TODO get from package.json
-const packageVersion = '0.0.5'; // TODO get form package.json
+const packageVersion = '0.0.2'; // TODO get form package.json
 const packageRepo = 'https://github.com/clerkinc/clerk-sdk-node';
 const userAgent = `${packageName}/${packageVersion} (${packageRepo})`;
 const contentType = 'application/x-www-form-urlencoded';
