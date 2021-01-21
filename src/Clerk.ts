@@ -19,13 +19,13 @@ import { SMSMessage } from './resources/SMSMessage';
 import { User } from './resources/User';
 import { Verification } from './resources/Verification';
 
-const defaultClerkApiVersion = 'v1';
-const defaultClerkApiUrl = 'https://api.clerk.dev';
+const defaultApiVersion = 'v1';
+const defaultServerApiUrl = 'https://api.clerk.dev';
 
 export default class Clerk {
   apiKey: string;
-  serverApiUrl: string = defaultClerkApiUrl;
-  apiVersion: string = defaultClerkApiVersion;
+  serverApiUrl: string = defaultServerApiUrl;
+  apiVersion: string = defaultApiVersion;
   httpOptions: object = {};
   restClient: RestClient;
 
@@ -51,8 +51,8 @@ export default class Clerk {
   constructor(
     apiKey: string,
     {
-      serverApiUrl = defaultClerkApiUrl,
-      apiVersion = defaultClerkApiVersion,
+      serverApiUrl = defaultServerApiUrl,
+      apiVersion = defaultApiVersion,
       httpOptions = {},
     }: {
       serverApiUrl?: string;

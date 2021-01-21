@@ -32,7 +32,7 @@ try {
 
 try {
   console.log('Get client list with invalid API key');
-  const clerk2 = new Clerk('snafu', { serverApiUrl });
+  const clerk2 = new Clerk.default('snafu', { serverApiUrl });
   let invalidClients = await clerk2.clientApi.getClientList();
   console.log(invalidClients);
 } catch (error) {

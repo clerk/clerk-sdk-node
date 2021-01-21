@@ -25,8 +25,12 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "clerk-sdk-node",
-  "author": "Mark Pitsilos",
+  "name": "@clerk/clerk-sdk-node",
+  "author": {
+    "name": "Clerk, Inc.",
+    "email": "developers@clerk.dev",
+    "url": "https://github.com/clerkinc/clerk-sdk-node"
+  },
   "module": "dist/clerk-sdk-node.esm.js",
   "size-limit": [
     {
@@ -71,5 +75,8 @@
   "bugs": {
     "url": "https://github.com/clerkinc/clerk-sdk-node/issues"
   },
-  "homepage": "https://github.com/clerkinc/clerk-sdk-node#readme"
+  "homepage": "https://github.com/clerkinc/clerk-sdk-node#readme",
+  "publishConfig": {
+	  "access": "public"
+  }
 }

@@ -56,7 +56,7 @@ const clerk = new Clerk.default("my-clerk-server-api-key");
 
 ```
 
-You can also consult the [examples folder](https://www.todo.com) for further hints on usage.
+You can also consult the [examples folder](https://github.com/clerkinc/clerk-sdk-node/tree/main/src/examples) for further hints on usage.
 
 ### Passing options to underlying http client
 
@@ -65,7 +65,7 @@ The SDK allows you to optionally pass options for the underlying http client (go
 e.g. to pass a custom header:
 
 ```
-sdk = new Clerk(apiKey, { httpOptions: headers: {
+sdk = new Clerk.default(apiKey, { httpOptions: headers: {
 		'x-unicorn': 'rainbow'
 	} })
 ```
@@ -250,6 +250,12 @@ You can then implement your own logic for handling a logged in or logged out use
 
 The current package also offers a way of making your [Next.js api middleware](https://nextjs.org/docs/api-routes/api-middlewares) aware of the Clerk Session.
 
+Note: you will need to set your Clerk server API key to the following ENV variable:
+
+```
+CLERK_API_KEY=my-clerk-api-key
+```
+
 You can define your handler function with the usual signature (`function handler(req, res) {}`) then wrap it with `withSession`:
 
 ```
@@ -266,6 +272,14 @@ function handler(req WithSessionProp<NextApiRequest>, res: NextApiResponse) {
         // Respond with 401 or similar
     }
 }
+
+export withSession(handler);
+```
+
+You can also pass an onError handler to the underlying Express middleware that is called (see previous section):
+
+```
+export default withSession(handler, { onError: error => console.log(error) });
 ```
 
 In case you would like the request to be rejected with a 401 (Unauthorized) automatically when no session exists, without having to implement such logic yourself, you can opt for the stricter variants:
@@ -280,8 +294,10 @@ In this case your handler can be even simpler because the existence of the sessi
 function handler(req RequireSessionProp<NextApiRequest>, res: NextApiResponse) {
     // do something with session.user_id
 }
+
+export requireSession(handler);
 ```
 
 ## Feedback / Issue reporting
 
-Please open a [github issue](https://github.com/clerkinc/clerk-sdk-node/issues) or contact us on the [official Clerk Slack channel](https://www.todo.com).
+Please report issues or open feauture request in the [github issue section](https://github.com/clerkinc/clerk-sdk-node/issues).
