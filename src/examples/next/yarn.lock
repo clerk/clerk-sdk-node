@@ -90,6 +90,14 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@clerk/clerk-sdk-node@file:../../..":
+  version "0.0.2"
+  dependencies:
+    "@types/cookies" "^0.7.6"
+    cookies "^0.8.0"
+    got "^11.8.1"
+    snakecase-keys "^3.2.1"
+
 "@hapi/accept@5.0.1":
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@hapi/accept/-/accept-5.0.1.tgz#068553e867f0f63225a506ed74e899441af53e10"
@@ -1018,14 +1026,6 @@ classnames@2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
   integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
-
-"clerk-sdk-node@file:../../..":
-  version "0.0.6"
-  dependencies:
-    "@types/cookies" "^0.7.6"
-    cookies "^0.8.0"
-    got "^11.8.1"
-    snakecase-keys "^3.2.1"
 
 clone-response@^1.0.2:
   version "1.0.2"

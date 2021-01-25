@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import Cookies from 'cookies';
 import Clerk from '../Clerk';
+import Logger from '../utils/Logger'
 
 export type MiddlewareOptions = {
   serverApiUrl?: string;
@@ -29,12 +30,12 @@ export default function ClerkExpressMiddleware(
 
       let sessionId: any = req.query._clerk_session_id;
 
-      console.log(`sessionId from query: ${sessionId}`);
+      Logger.info(`sessionId from query: ${sessionId}`);
 
       if (!sessionId) {
         client = await clerk.clientApi.verifyClient(sessionToken);
         sessionId = client.lastActiveSessionId;
-        console.log(`sessionId from client: ${sessionId}`);
+        Logger.info(`sessionId from client: ${sessionId}`);
       }
 
       const session = await clerk.sessionApi.verifySession(
