@@ -6,6 +6,36 @@ This SDK allows you to call the Clerk server API from node / JS / TS code withou
 
 To gain a better understanding of the underlying API calls the SDK makes, feel free to consult the [official Clerk server API documentation](https://docs.clerk.dev/server-api/).
 
+## Table of contents
+
+- [Internal implementation details](#internal-implementation-details)
+- [Installation](#installation)
+- [Resource types](#resource-types)
+- [Usage](#usage)
+  - [Passing options to underlying http client](#passing-options-to-underlying-http-client)
+  - [Client operations](#client-operations)
+    - [getClientList()](#getclientlist)
+    - [getClient(clientId)](#getclientclientid)
+    - [verifyClient(sessionToken)](#verifyclientsessiontoken)
+  - [Session operations](#session-operations)
+    - [getSessionList({ clientId, userId })](#getsessionlist-clientid-userid-)
+    - [getSession(sessionId)](#getsessionsessionid)
+    - [revokeSession(sessionId)](#revokesessionsessionid)
+    - [verifySession(sessionId, sessionToken)](#verifysessionsessionid-sessiontoken)
+  - [User operations](#user-operations)
+    - [getUserList()](#getuserlist)
+    - [getUser(userId)](#getuseruserid)
+    - [updateUser(userId, params)](#updateuseruserid-params)
+    - [deleteUser(userId)](#deleteuseruserid)
+  - [Email operations](#email-operations)
+    - [createEmail({ fromEmailName, subject, body, emailAddressId })](#createemail-fromemailname-subject-body-emailaddressid-)
+  - [SMS Message operations](#sms-message-operations)
+    - [createSMSMessage({ message, phoneNumberId })](#createsmsmessage-message-phonenumberid-)
+- [Error handling](#error-handling)
+- [Express middleware](#express-middleware)
+- [Next](#next)
+- [Feedback / Issue reporting](#feedback--issue-reporting)
+
 ## Internal implementation details
 
 This project is written in [TypeScript](https://www.typescriptlang.org/) and built with [tsdx](https://github.com/formium/tsdx), thus CJS, ESModules, and UMD module formats are supported.
