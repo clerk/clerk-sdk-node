@@ -10,7 +10,7 @@ type EmailParams = {
 
 export class EmailApi extends AbstractApi {
   public async createEmail(params: EmailParams): Promise<Email> {
-    return this.restClient.makeRequest({
+    return this._restClient.makeRequest({
       method: 'post',
       path: '/emails',
       bodyParams: params,

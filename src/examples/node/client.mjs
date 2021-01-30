@@ -1,30 +1,29 @@
-import Clerk from '@clerk/clerk-sdk-node';
-import dotenv from 'dotenv';
+// Usage:
+// node --require dotenv/config client.mjs
 
-dotenv.config();
+import { setClerkServerApiUrl, clients } from '@clerk/clerk-sdk-node';
 
 const serverApiUrl = process.env.CLERK_API_URL;
-const apiKey = process.env.CLERK_API_KEY;
 const clientId = process.env.CLIENT_ID;
 const sessionToken = process.env.SESSION_TOKEN;
 
-const clerk = new Clerk.default(apiKey, { serverApiUrl });
+setClerkServerApiUrl(serverApiUrl);
 
 console.log('Get client list');
-let clients = await clerk.clientApi.getClientList();
-console.log(clients);
+let clientList = await clients.getClientList();
+console.log(clientList);
 
 console.log('Get single client');
-let client = await clerk.clientApi.getClient(clientId);
+let client = await clients.getClient(clientId);
 console.log(client);
 
 console.log('Verify client');
-let verifiedClient = await clerk.clientApi.verifyClient(sessionToken);
+let verifiedClient = await clients.verifyClient(sessionToken);
 console.log(verifiedClient);
 
 try {
   console.log('Get single client for invalid clientId');
-  let invalidClient = await clerk.clientApi.getClient('foobar');
+  let invalidClient = await clients.getClient('foobar');
   console.log(invalidClient);
 } catch (error) {
   console.log(error);

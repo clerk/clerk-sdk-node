@@ -25,13 +25,13 @@ function runMiddleware(req, res, fn) {
 // Set the session on the request and the call provided handler
 export function withSession(
   handler: Function,
-  options: MiddlewareOptions = { serverApiUrl: process.env.CLERK_API_URL }
+  options: MiddlewareOptions
 ) {
   return async (req: WithSessionProp<NextApiRequest>, res: NextApiResponse) => {
     await runMiddleware(
       req,
       res,
-      ClerkExpressMiddleware(process.env.CLERK_API_KEY || '', options)
+      ClerkExpressMiddleware(options)
     );
 
     return handler(req, res);
@@ -41,7 +41,7 @@ export function withSession(
 // Stricter version, short-circuits if no session is present
 export function requireSession(
   handler: Function,
-  options: MiddlewareOptions = { serverApiUrl: process.env.CLERK_API_URL }
+  options: MiddlewareOptions
 ) {
   return async (
     req: RequireSessionProp<NextApiRequest>,
@@ -50,7 +50,7 @@ export function requireSession(
     await runMiddleware(
       req,
       res,
-      ClerkExpressMiddleware(process.env.CLERK_API_KEY || '', options)
+      ClerkExpressMiddleware(options)
     );
 
     if (req.session) {

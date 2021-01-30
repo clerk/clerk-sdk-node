@@ -1,9 +1,9 @@
 import { RestClient } from '../utils/RestClient';
 
 export abstract class AbstractApi {
-  restClient: RestClient;
+  protected _restClient: RestClient;
 
   constructor(restClient: RestClient) {
-    this.restClient = restClient;
+    this._restClient = restClient;
   }
 }

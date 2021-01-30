@@ -1,3 +1,5 @@
+// TODO use EventEmitter for an async Logger instead
+
 enum LogLevel {
   Info = 'INFO',
   Debug = 'DEBUG',
