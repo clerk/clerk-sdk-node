@@ -4,14 +4,11 @@ import Clerk from '../Clerk';
 import Logger from '../utils/Logger'
 
 export type MiddlewareOptions = {
-  serverApiUrl?: string;
-  onError?: Function;
-};
+  clerk: Clerk,
+  onError?: Function
+}
 
-export default function ClerkExpressMiddleware(
-  apiKey: string,
-  options: MiddlewareOptions
-) {
+export default function ClerkExpressMiddleware({ clerk, onError }: MiddlewareOptions) {
   return async function authenticate(
     req: Request,
     res: Response,
@@ -21,7 +18,6 @@ export default function ClerkExpressMiddleware(
     let client;
 
     try {
-      const clerk = new Clerk(apiKey, { serverApiUrl: options.serverApiUrl });
       const sessionToken = String(cookies.get('__session'));
 
       if (!sessionToken) {
@@ -33,12 +29,12 @@ export default function ClerkExpressMiddleware(
       Logger.info(`sessionId from query: ${sessionId}`);
 
       if (!sessionId) {
-        client = await clerk.clientApi.verifyClient(sessionToken);
+        client = await clerk.clients.verifyClient(sessionToken);
         sessionId = client.lastActiveSessionId;
         Logger.info(`sessionId from client: ${sessionId}`);
       }
 
-      const session = await clerk.sessionApi.verifySession(
+      const session = await clerk.sessions.verifySession(
         sessionId,
         sessionToken
       );
@@ -54,8 +50,8 @@ export default function ClerkExpressMiddleware(
       // TODO add different handling depending on wrong api key vs unauthenticated user
 
       // Call onError if provided
-      if (options.onError) {
-        await options.onError(error);
+      if (onError) {
+        await onError(error);
       }
 
       next();

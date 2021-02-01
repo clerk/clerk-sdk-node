@@ -1,17 +1,16 @@
-import Clerk from '@clerk/clerk-sdk-node';
-import dotenv from 'dotenv';
+// Usage:
+// node --require dotenv/config sms_message.mjs
 
-dotenv.config();
+import { smsMessages, setClerkServerApiUrl } from '@clerk/clerk-sdk-node';
 
 const serverApiUrl = process.env.CLERK_API_URL;
-const apiKey = process.env.CLERK_API_KEY;
 const phoneNumberId = process.env.PHONE_NUMBER_ID;
 
-const clerk = new Clerk.default(apiKey, { serverApiUrl });
+setClerkServerApiUrl(serverApiUrl);
 
 console.log('Create SMS message');
 const message = "I'd buy that for a dollar";
-let smsMessage = await clerk.smsMessageApi.createSMSMessage({
+let smsMessage = await smsMessages.createSMSMessage({
   message,
   phoneNumberId,
 });

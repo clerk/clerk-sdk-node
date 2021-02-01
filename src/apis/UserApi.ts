@@ -12,14 +12,14 @@ interface UserParams {
 
 export class UserApi extends AbstractApi {
   public async getUserList(): Promise<Array<User>> {
-    return this.restClient.makeRequest({
+    return this._restClient.makeRequest({
       method: 'get',
       path: '/users',
     });
   }
 
   public async getUser(userId: string): Promise<User> {
-    return this.restClient.makeRequest({
+    return this._restClient.makeRequest({
       method: 'get',
       path: `/users/${userId}`,
     });
@@ -29,7 +29,7 @@ export class UserApi extends AbstractApi {
     userId: string,
     params: UserParams = {}
   ): Promise<User> {
-    return this.restClient.makeRequest({
+    return this._restClient.makeRequest({
       method: 'patch',
       path: `/users/${userId}`,
       bodyParams: params,
@@ -37,7 +37,7 @@ export class UserApi extends AbstractApi {
   }
 
   public async deleteUser(userId: string): Promise<User> {
-    return this.restClient.makeRequest({
+    return this._restClient.makeRequest({
       method: 'delete',
       path: `/users/${userId}`,
     });

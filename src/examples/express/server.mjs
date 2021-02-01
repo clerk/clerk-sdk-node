@@ -1,10 +1,9 @@
+// Usage:
+// node --require dotenv/config server.mjs
+
 import express from 'express';
-import { ExpressAuthMiddleware } from '@clerk/clerk-sdk-node';
-import dotenv from 'dotenv';
+import clerk, { ClerkExpressMiddleware } from '@clerk/clerk-sdk-node';
 
-dotenv.config();
-
-const apiKey = process.env.CLERK_API_KEY;
 const serverApiUrl = process.env.CLERK_API_URL;
 const port = process.env.PORT;
 
@@ -12,9 +11,11 @@ function onError(error) {
   console.log(error);
 }
 
+clerk.serverApiUrl = serverApiUrl;
+
 var app = express();
 
-app.use(ExpressAuthMiddleware(apiKey, { serverApiUrl, onError }));
+app.use(ClerkExpressMiddleware({ clerk, onError }));
 
 app.get('/', (req, res) => {
   res.json(req.session);

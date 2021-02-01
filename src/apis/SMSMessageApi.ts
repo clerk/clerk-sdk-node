@@ -8,7 +8,7 @@ type SMSParams = {
 
 export class SMSMessageApi extends AbstractApi {
   public async createSMSMessage(params: SMSParams): Promise<SMSMessage> {
-    return this.restClient.makeRequest({
+    return this._restClient.makeRequest({
       method: 'post',
       path: '/sms_messages',
       bodyParams: params,

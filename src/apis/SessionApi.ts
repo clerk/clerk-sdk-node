@@ -10,7 +10,7 @@ export class SessionApi extends AbstractApi {
   public async getSessionList(
     queryParams: QueryParams
   ): Promise<Array<Session>> {
-    return this.restClient.makeRequest({
+    return this._restClient.makeRequest({
       method: 'get',
       path: '/sessions',
       queryParams: queryParams,
@@ -18,14 +18,14 @@ export class SessionApi extends AbstractApi {
   }
 
   public async getSession(sessionId: string): Promise<Session> {
-    return this.restClient.makeRequest({
+    return this._restClient.makeRequest({
       method: 'get',
       path: `/sessions/${sessionId}`,
     });
   }
 
   public async revokeSession(sessionId: string): Promise<Session> {
-    return this.restClient.makeRequest({
+    return this._restClient.makeRequest({
       method: 'post',
       path: `/sessions/${sessionId}/revoke`,
     });
@@ -35,7 +35,7 @@ export class SessionApi extends AbstractApi {
     sessionId: string,
     token: string
   ): Promise<Session> {
-    return this.restClient.makeRequest({
+    return this._restClient.makeRequest({
       method: 'post',
       path: `/sessions/${sessionId}/verify`,
       bodyParams: { token },
