@@ -11,14 +11,15 @@ export {
   RequireSessionProp,
 } from './instance';
 
-// Export a default singleton instance that should suffice for most use cases
 const singletonInstance = Clerk.getInstance();
-export default singletonInstance;
 const clients = singletonInstance.clients;
 const emails = singletonInstance.emails;
 const sessions = singletonInstance.sessions;
 const smsMessages = singletonInstance.smsMessages;
 const users = singletonInstance.users;
+
+// Export a default singleton instance that should suffice for most use cases
+export default singletonInstance;
 
 // Export sub-api objects
 export { clients, emails, sessions, smsMessages, users };

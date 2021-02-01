@@ -1,4 +1,5 @@
 // TODO use EventEmitter for an async Logger instead
+// TODO use actual console log levels
 
 enum LogLevel {
   Info = 'INFO',
