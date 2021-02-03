@@ -1,4 +1,4 @@
-import clerk, { requireSession } from '@clerk/clerk-sdk-node';
+import { requireSession } from '@clerk/clerk-sdk-node';
 
 function handler(req, res) {
     console.log('Session required');
@@ -6,4 +6,4 @@ function handler(req, res) {
     res.json(req.session || { empty: true });
 }
 
-export default requireSession(handler, { clerk, onError: error => console.log(error) });
+export default requireSession(handler, { onError: error => console.log(error.message) });

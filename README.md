@@ -386,12 +386,11 @@ The error handling is pretty generic at the moment but more fine grained errors 
 For usage with [Express](https://github.com/expressjs/express), this package also exports a `ClerkExpressMiddleware` function that can be used in the standard manner:
 
 ```
-import clerk, { ClerkExpressMiddleware } from 'sdk-server-node';
+import { ClerkExpressMiddleware } from 'sdk-server-node';
 
 // Initialize express app the usual way
 
 const options = {
-    clerk: clerk,
     onError: function() {} // Function to call if the middleware encounters or fails to authenticate, can be used to provide logging etc
 };
 
@@ -402,6 +401,14 @@ The middleware will set the Clerk session on the request object as `req.session`
 
 You can then implement your own logic for handling a logged in or logged out user in your express endpoints or custom middleware, depending on whether they are trying to access a public or protected resource.
 
+If you want to use the express middleware of your custom `Clerk` instance, you can use:
+
+```
+app.use(clerk.expressMiddleware(options));
+```
+
+Where `clerk` is your own instance.
+
 ## Next
 
 The current package also offers a way of making your [Next.js api middleware](https://nextjs.org/docs/api-routes/api-middlewares) aware of the Clerk Session.
@@ -409,7 +416,7 @@ The current package also offers a way of making your [Next.js api middleware](ht
 You can define your handler function with the usual signature (`function handler(req, res) {}`) then wrap it with `withSession`:
 
 ```
-import clerk, { withSession, WithSessionProp } from '@clerk/clerk-sdk-node';
+import { withSession, WithSessionProp } from '@clerk/clerk-sdk-node';
 ```
 
 Note: Since the request will be extended with a session property, the signature of your handler in TypeScript would be:
@@ -423,7 +430,7 @@ function handler(req WithSessionProp<NextApiRequest>, res: NextApiResponse) {
     }
 }
 
-export withSession(handler, { clerk });
+export withSession(handler);
 ```
 
 You can also pass an `onError` handler to the underlying Express middleware that is called (see previous section):
@@ -446,6 +453,14 @@ function handler(req RequireSessionProp<NextApiRequest>, res: NextApiResponse) {
 }
 
 export requireSession(handler, { clerk, onError });
+```
+
+The aforementioned usage pertains to the singleton case. If you would like to use a `Clerk` instance you instantiated yourself (e.g. named `clerk`), you can use the following syntax instead:
+
+```
+export clerk.withSession(handler);
+// OR
+export clerk.requireSession(handler);
 ```
 
 ## Feedback / Issue reporting

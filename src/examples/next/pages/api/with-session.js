@@ -1,4 +1,4 @@
-import clerk, { withSession } from '@clerk/clerk-sdk-node';
+import { withSession } from '@clerk/clerk-sdk-node';
 
 function handler(req, res) {
     console.log('Session optional');
@@ -6,4 +6,4 @@ function handler(req, res) {
     res.json(req.session || { empty: true });
 }
 
-export default withSession(handler, { clerk, onError: error => console.log(error) });
+export default withSession(handler, { onError: error => console.log(error.message) });
