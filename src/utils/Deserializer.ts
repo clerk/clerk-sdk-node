@@ -8,7 +8,7 @@ import { User } from '../resources/User';
 // Define type / enum for object types we support
 
 // FIXME don't return any
-export function deserialize(data: any): any {
+export default function deserialize(data: any): any {
   if (Array.isArray(data)) {
     return data.map(item => jsonToObject(item));
   } else {

@@ -3,14 +3,6 @@ import Clerk from './instance';
 // Export as a named export in case the dev wishes to create Clerk instances as well
 export { Clerk };
 
-export {
-  ClerkExpressMiddleware,
-  withSession,
-  requireSession,
-  WithSessionProp,
-  RequireSessionProp,
-} from './instance';
-
 const singletonInstance = Clerk.getInstance();
 const clients = singletonInstance.clients;
 const emails = singletonInstance.emails;
@@ -24,8 +16,19 @@ export default singletonInstance;
 // Export sub-api objects
 export { clients, emails, sessions, smsMessages, users };
 
+// Export middleware functions
+const ClerkExpressMiddleware = singletonInstance.expressMiddleware.bind(
+  singletonInstance
+);
+const withSession = singletonInstance.withSession.bind(singletonInstance);
+const requireSession = singletonInstance.requireSession.bind(singletonInstance);
+export { ClerkExpressMiddleware, withSession, requireSession };
+
+// Export wrapper types for Next.js requests
+export { WithSessionProp, RequireSessionProp } from './instance';
+
 // Export setters for the default singleton instance
-// Useful if you de-structure the default export and have access only to a sub-api instance
+// Useful if you only have access to a sub-api instance
 
 export function setClerkApiKey(value: string) {
   Clerk.getInstance().apiKey = value;

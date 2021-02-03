@@ -1,5 +1,5 @@
 // TODO use EventEmitter for an async Logger instead
-// TODO use actual console log levels
+// TODO support more than just console output
 
 enum LogLevel {
   Info = 'INFO',
@@ -39,7 +39,8 @@ export default class Logger {
         message: msg,
       };
 
-      console.log(logMessage);
+      // @ts-ignore
+      console[logLevel.toLowerCase()](logMessage);
     }
   }
 }
