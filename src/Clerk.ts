@@ -154,7 +154,7 @@ export default class Clerk {
 
   // Middlewares
 
-  expressMiddleware({ onError }: MiddlewareOptions) {
+  expressMiddleware({ onError }: MiddlewareOptions = {}) {
     async function authenticate(
       this: Clerk,
       req: Request,
@@ -230,7 +230,7 @@ export default class Clerk {
   // Set the session on the request and the call provided handler
   withSession(
     handler: Function,
-    options: MiddlewareOptions
+    options?: MiddlewareOptions
   ) {
     return async (req: WithSessionProp<NextApiRequest>, res: NextApiResponse) => {
       await this._runMiddleware(
@@ -246,7 +246,7 @@ export default class Clerk {
   // Stricter version, short-circuits if no session is present
   requireSession(
     handler: Function,
-    options: MiddlewareOptions
+    options?: MiddlewareOptions
   ) {
     return async (
       req: RequireSessionProp<NextApiRequest>,

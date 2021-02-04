@@ -5,7 +5,7 @@ import snakecaseKeys from 'snakecase-keys';
 import * as querystring from 'querystring';
 
 const packageName = '@clerk/clerk-sdk-node'; // TODO get from package.json
-const packageVersion = '0.0.4'; // TODO get from package.json
+const packageVersion = '0.0.5'; // TODO get from package.json
 const packageRepo = 'https://github.com/clerkinc/clerk-sdk-node';
 const userAgent = `${packageName}/${packageVersion} (${packageRepo})`;
 const contentType = 'application/x-www-form-urlencoded';
