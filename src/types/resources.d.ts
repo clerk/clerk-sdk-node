@@ -201,7 +201,7 @@ export interface UserJSON extends ClerkResourceJSON {
   email_addresses: EmailAddressJSON[];
   phone_numbers: PhoneNumberJSON[];
   external_accounts: GoogleAccountJSON[];
-  metadata: object;
+  public_metadata: object;
   private_metadata: object;
   created_at: number;
   updated_at: number;
@@ -221,7 +221,7 @@ export interface UserResource extends ClerkResource {
   emailAddresses: EmailAddressResource[];
   phoneNumbers: PhoneNumberResource[];
   externalAccounts: GoogleAccountResource[];
-  metadata: object;
+  publicMetadata: object;
   privateMetadata: object;
   createdAt: number;
   updatedAt: number;

@@ -8,6 +8,8 @@ interface UserParams {
   password?: string;
   primaryEmailAddressID?: string;
   primaryPhoneNumberID?: string;
+  publicMetadata?: object;
+  privateMetadata?: object;
 }
 
 export class UserApi extends AbstractApi {

@@ -12,7 +12,7 @@ import { GoogleAccount } from './GoogleAccount';
 import { PhoneNumber } from './PhoneNumber';
 
 export class User implements UserResource {
-  id: string
+  id: string;
   username: string | null;
   firstName: string | null;
   lastName: string | null;
@@ -26,7 +26,7 @@ export class User implements UserResource {
   emailAddresses: EmailAddressResource[];
   phoneNumbers: PhoneNumberResource[];
   externalAccounts: GoogleAccountResource[];
-  metadata: object;
+  publicMetadata: object;
   privateMetadata: object;
   createdAt: number;
   updatedAt: number;
@@ -46,7 +46,7 @@ export class User implements UserResource {
     this.emailAddresses = data.email_addresses.map((x) => new EmailAddress(x));
     this.phoneNumbers = data.phone_numbers.map((x) => new PhoneNumber(x));
     this.externalAccounts = data.external_accounts.map((x: GoogleAccountJSON) => new GoogleAccount(x));
-    this.metadata = data.metadata;
+    this.publicMetadata = data.public_metadata;
     this.privateMetadata = data.private_metadata;
     this.createdAt = data.created_at;
     this.updatedAt = data.updated_at;
