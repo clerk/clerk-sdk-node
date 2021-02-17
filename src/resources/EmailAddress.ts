@@ -1,18 +1,16 @@
 import type {
   EmailAddressJSON,
   EmailAddressResource,
-  IdentificationLinkResource,
-  VerificationResource,
-} from "../types/resources";
+} from './Base';
 
-import { Verification } from "./Verification";
-import { IdentificationLink } from "./IdentificationLink";
+import { Verification } from './Verification';
+import { IdentificationLink } from './IdentificationLink';
 
 export class EmailAddress implements EmailAddressResource {
   id: string;
   emailAddress: string;
-  verification: VerificationResource;
-  linkedTo: Array<IdentificationLinkResource>;
+  verification: Verification;
+  linkedTo: Array<IdentificationLink>;
 
   constructor(data: EmailAddressJSON) {
     this.id = data.id;

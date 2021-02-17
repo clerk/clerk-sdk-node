@@ -8,7 +8,7 @@ type QueryParams = {
 
 export class SessionApi extends AbstractApi {
   public async getSessionList(
-    queryParams: QueryParams
+    queryParams?: QueryParams
   ): Promise<Array<Session>> {
     return this._restClient.makeRequest({
       method: 'get',

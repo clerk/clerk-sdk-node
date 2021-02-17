@@ -1,5 +1,3 @@
-import { Client } from '../resources/Client';
-
 export interface ClerkResourceJSON {
   object: string;
   id: string;

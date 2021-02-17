@@ -1,7 +1,7 @@
 import type {
   IdentificationLinkJSON,
   IdentificationLinkResource,
-} from "../types/resources";
+} from "./Base";
 
 export class IdentificationLink implements IdentificationLinkResource {
   id: string;

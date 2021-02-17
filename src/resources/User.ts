@@ -1,11 +1,8 @@
 import type {
-  EmailAddressResource,
   GoogleAccountJSON,
-  GoogleAccountResource,
-  PhoneNumberResource,
   UserJSON,
   UserResource,
-} from '../types/resources';
+} from './Base';
 
 import { EmailAddress } from './EmailAddress';
 import { GoogleAccount } from './GoogleAccount';
@@ -23,9 +20,9 @@ export class User implements UserResource {
   primaryPhoneNumberId: string | null;
   passwordEnabled: boolean;
   twoFactorEnabled: boolean;
-  emailAddresses: EmailAddressResource[];
-  phoneNumbers: PhoneNumberResource[];
-  externalAccounts: GoogleAccountResource[];
+  emailAddresses: EmailAddress[];
+  phoneNumbers: PhoneNumber[];
+  externalAccounts: GoogleAccount[];
   publicMetadata: object;
   privateMetadata: object;
   createdAt: number;

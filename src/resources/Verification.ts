@@ -1,7 +1,7 @@
 import type {
   VerificationJSON,
   VerificationResource,
-} from "../types/resources";
+} from "./Base";
 
 export class Verification implements VerificationResource {
   status: string | null;

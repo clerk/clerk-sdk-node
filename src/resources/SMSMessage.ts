@@ -1,7 +1,7 @@
 import type {
   SMSMessageJSON,
   SMSMessageResource,
-} from "../types/resources";
+} from "./Base";
 
 export class SMSMessage implements SMSMessageResource {
   id: string;

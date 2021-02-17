@@ -1,7 +1,7 @@
 import type {
   ClientJSON,
   ClientResource,
-} from "../types/resources";
+} from "./Base";
 
 export class Client implements ClientResource {
   id: string;

@@ -1,7 +1,7 @@
 import type {
   GoogleAccountJSON,
   GoogleAccountResource,
-} from "../types/resources";
+} from "./Base";
 
 export class GoogleAccount implements GoogleAccountResource {
   id: string;

@@ -1,7 +1,4 @@
-import type {
-  EmailJSON,
-  EmailResource,
-} from "../types/resources";
+import type { EmailJSON, EmailResource } from './Base';
 
 export class Email implements EmailResource {
   id: string;
@@ -10,7 +7,7 @@ export class Email implements EmailResource {
   emailAddressId: string;
   subject: string;
   body: string;
-  status: string
+  status: string;
 
   constructor(data: EmailJSON) {
     this.id = data.id;

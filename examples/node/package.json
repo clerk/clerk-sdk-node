@@ -1,0 +1,12 @@
+{
+    "name": "clerk-sdk-node-examples",
+    "type": "module",
+    "dependencies": {
+        "@clerk/clerk-sdk-node": "latest",
+        "dotenv": "^8.2.0",
+        "log-that-http": "^1.0.1"
+    },
+    "devDependencies": {
+        "@types/react-dom": "^17.0.1"
+    }
+}

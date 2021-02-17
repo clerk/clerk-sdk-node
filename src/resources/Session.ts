@@ -1,7 +1,7 @@
 import type {
   SessionJSON,
   SessionResource,
-} from "../types/resources";
+} from "./Base";
 
 export class Session implements SessionResource {
   id: string

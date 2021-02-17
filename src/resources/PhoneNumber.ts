@@ -1,19 +1,14 @@
-import type {
-  PhoneNumberJSON,
-  PhoneNumberResource,
-  VerificationResource,
-  IdentificationLinkResource,
-} from "../types/resources";
+import type { PhoneNumberJSON, PhoneNumberResource } from './Base';
 
-import { Verification } from "./Verification";
-import { IdentificationLink } from "./IdentificationLink";
+import { Verification } from './Verification';
+import { IdentificationLink } from './IdentificationLink';
 
 export class PhoneNumber implements PhoneNumberResource {
   id: string;
   phoneNumber: string;
-  verification: VerificationResource;
+  verification: Verification;
   reservedForSecondFactor: boolean;
-  linkedTo: Array<IdentificationLinkResource>;
+  linkedTo: Array<IdentificationLink>;
 
   constructor(data: PhoneNumberJSON) {
     this.id = data.id;
