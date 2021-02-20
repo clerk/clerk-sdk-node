@@ -21,15 +21,15 @@ export default function deserialize(data: any): any {
 function jsonToObject(item: any): any {
   switch (item.object) {
     case 'client':
-      return new Client(item);
+      return Client.fromJSON(item);
     case 'email':
-      return new Email(item);
+      return Email.fromJSON(item);
     case 'user':
-      return new User(item);
+      return User.fromJSON(item);
     case 'session':
-      return new Session(item);
+      return Session.fromJSON(item);
     case 'sms_message':
-      return new SMSMessage(item);
+      return SMSMessage.fromJSON(item);
     default:
       console.log(`Unexpected object type: ${item.object}`);
   }

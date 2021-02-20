@@ -1,24 +1,42 @@
-import type {
-  EmailAddressJSON,
-  EmailAddressResource,
-} from './Base';
+import associationDefaults from '../utils/Associations';
+
+import { Association } from './Enums';
+import type { Nullable } from './Nullable';
+import type { EmailAddressJSON } from './JSON';
+import type { EmailAddressProps } from './Props';
 
 import { Verification } from './Verification';
 import { IdentificationLink } from './IdentificationLink';
 
-export class EmailAddress implements EmailAddressResource {
-  id: string;
-  emailAddress: string;
-  verification: Verification;
-  linkedTo: Array<IdentificationLink>;
+interface EmailAddressAssociations {
+  verification: Nullable<Verification>,
+  linkedTo: IdentificationLink[]
+}
 
-  constructor(data: EmailAddressJSON) {
-    this.id = data.id;
-    this.emailAddress = data.email_address;
-    this.verification = new Verification(data.verification);
+interface EmailAddressPayload extends EmailAddressProps, EmailAddressAssociations {};
 
-    this.linkedTo = data.linked_to.map((link) => {
-      return new IdentificationLink(link);
+export interface EmailAddress extends EmailAddressPayload {};
+
+export class EmailAddress {
+  static attributes = ['id', 'emailAddress'];
+
+  static associations = {
+    verification: Association.HasOne,
+    linkedTo: Association.HasMany
+  };
+
+  static defaults = associationDefaults(EmailAddress.associations);
+
+  constructor(data: Partial<EmailAddressPayload> = {}) {
+    Object.assign(this, EmailAddress.defaults, data);
+  }
+
+  static fromJSON(data: EmailAddressJSON): EmailAddress {
+    return new EmailAddress({
+      id: data.id,
+      emailAddress: data.email_address,
+      verification: Verification.fromJSON(data.verification),
+      linkedTo: (data.linked_to || []).map((link) => { return IdentificationLink.fromJSON(link); })
     });
   }
 }

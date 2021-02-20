@@ -18,6 +18,7 @@ export { clients, emails, sessions, smsMessages, users };
 
 // Export resources
 export {
+  Nullable,
   Client,
   Email,
   EmailAddress,

@@ -1,21 +1,26 @@
-import type { EmailJSON, EmailResource } from './Base';
+import camelcaseKeys from 'camelcase-keys';
+import filterKeys from '../utils/Filter';
 
-export class Email implements EmailResource {
-  id: string;
-  fromEmailName: string;
-  toEmailAddress: string;
-  emailAddressId: string;
-  subject: string;
-  body: string;
-  status: string;
+import type { EmailJSON } from './JSON';
+import type { EmailProps } from './Props';
 
-  constructor(data: EmailJSON) {
-    this.id = data.id;
-    this.fromEmailName = data.from_email_name;
-    this.toEmailAddress = data.to_email_address;
-    this.emailAddressId = data.email_address_id;
-    this.subject = data.subject;
-    this.body = data.body;
-    this.status = data.status;
+interface EmailPayload extends EmailProps {};
+
+export interface Email extends EmailPayload {};
+
+export class Email {
+  static attributes = ['id', 'fromEmailName', 'toEmailAddress', 'emailAddressId',
+    'subject', 'body', 'status'];
+
+  static defaults = {};
+
+  constructor(data: Partial<EmailPayload> = {}) {
+    Object.assign(this, Email.defaults, data);
+  }
+
+  static fromJSON(data: EmailJSON): Email {
+    const camelcased = camelcaseKeys(data);
+    const filtered = filterKeys(camelcased, Email.attributes);
+    return new Email(filtered as EmailPayload);
   }
 }

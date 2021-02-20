@@ -1,5 +1,6 @@
 {
     "name": "clerk-sdk-node-examples",
+    "license": "MIT",
     "type": "module",
     "dependencies": {
         "@clerk/clerk-sdk-node": "latest",

@@ -1,24 +1,26 @@
-import type {
-  ClientJSON,
-  ClientResource,
-} from "./Base";
+import camelcaseKeys from 'camelcase-keys';
+import filterKeys from '../utils/Filter';
 
-export class Client implements ClientResource {
-  id: string;
-  sessionIds: string[];
-  signInAttemptId: string | null;
-  signUpAttemptId: string | null;
-  lastActiveSessionId: string | null;
-  createdAt: number;
-  updatedAt: number;
+import type { ClientJSON } from './JSON';
+import type { ClientProps } from './Props';
 
-  constructor(data: ClientJSON) {
-    this.id = data.id;
-    this.sessionIds = data.session_ids;
-    this.signUpAttemptId = data.sign_in_attempt_id;
-    this.signInAttemptId = data.sign_in_attempt_id;
-    this.lastActiveSessionId = data ? data.last_active_session_id : null;
-    this.createdAt = data.created_at;
-    this.updatedAt = data.updated_at;
+interface ClientPayload extends ClientProps {};
+
+export interface Client extends ClientPayload {};
+
+export class Client {
+  static attributes = ['id', 'sessionIds', 'signUpAttemptId', 'signInAttemptId',
+    'lastActiveSessionId', 'lastActiveSessionId', 'createdAt', 'updatedAt'];
+
+  static defaults = {};
+
+  constructor(data: Partial<ClientPayload> = {}) {
+    Object.assign(this, Client.defaults, data);
+  }
+
+  static fromJSON(data: ClientJSON): Client {
+    const camelcased = camelcaseKeys(data);
+    const filtered = filterKeys(camelcased, Client.attributes);
+    return new Client(filtered as ClientPayload);
   }
 }

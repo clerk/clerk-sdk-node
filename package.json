@@ -49,6 +49,7 @@
     "husky": "^4.3.7",
     "jest": "^26.6.3",
     "next": "^10.0.7",
+    "nock": "^13.0.7",
     "size-limit": "^4.9.1",
     "ts-jest": "^26.5.0",
     "tsdx": "^0.14.1",
@@ -57,6 +58,7 @@
   },
   "dependencies": {
     "@types/cookies": "^0.7.6",
+    "camelcase-keys": "^6.2.2",
     "cookies": "^0.8.0",
     "got": "^11.8.1",
     "snakecase-keys": "^3.2.1"

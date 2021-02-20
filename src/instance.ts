@@ -3,6 +3,7 @@ export default Clerk;
 
 export { WithSessionProp, RequireSessionProp } from './Clerk';
 
+export { Nullable } from './resources/Nullable';
 export { Client } from './resources/Client';
 export { Email } from './resources/Email';
 export { EmailAddress } from './resources/EmailAddress';
