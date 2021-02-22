@@ -1,22 +1,26 @@
-import type {
-  SMSMessageJSON,
-  SMSMessageResource,
-} from "../types/resources";
+import camelcaseKeys from 'camelcase-keys';
+import filterKeys from '../utils/Filter';
 
-export class SMSMessage implements SMSMessageResource {
-  id: string;
-  fromPhoneNumber: string;
-  toPhoneNumber: string;
-  phoneNumberId: string;
-  message: string;
-  status: string;
+import type { SMSMessageJSON } from './JSON';
+import type { SMSMessageProps } from './Props';
 
-  constructor(data: SMSMessageJSON) {
-    this.id = data.id;
-    this.fromPhoneNumber = data.phone_number_id;
-    this.toPhoneNumber = data.to_phone_number;
-    this.phoneNumberId = data.phone_number_id;
-    this.message = data.message;
-    this.status = data.status;
+interface SMSMessagePayload extends SMSMessageProps {};
+
+export interface SMSMessage extends SMSMessagePayload {};
+
+export class SMSMessage {
+  static attributes = ['id', 'fromPhoneNumber', 'toPhoneNumber',
+    'phoneNumberId', 'message', 'status'];
+
+  static defaults = {};
+
+  constructor(data: Partial<SMSMessagePayload> = {}) {
+    Object.assign(this, SMSMessage.defaults, data);
+  }
+
+  static fromJSON(data: SMSMessageJSON): SMSMessage {
+    const camelcased = camelcaseKeys(data);
+    const filtered = filterKeys(camelcased, SMSMessage.attributes);
+    return new SMSMessage(filtered as SMSMessagePayload);
   }
 }

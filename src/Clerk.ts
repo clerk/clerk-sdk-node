@@ -7,24 +7,15 @@ import Cookies from 'cookies';
 import RestClient from './utils/RestClient';
 import Logger from './utils/Logger';
 
-// TODO import dynamically
+// sub-apis
 import { ClientApi } from './apis/ClientApi';
 import { EmailApi } from './apis/EmailApi';
 import { SessionApi } from './apis/SessionApi';
 import { SMSMessageApi } from './apis/SMSMessageApi';
 import { UserApi } from './apis/UserApi';
 
-// TODO import dynamically or from single index file
-import { Client } from './resources/Client';
-import { Email } from './resources/Email';
-import { EmailAddress } from './resources/EmailAddress';
-import { GoogleAccount } from './resources/GoogleAccount';
-import { IdentificationLink } from './resources/IdentificationLink';
-import { PhoneNumber } from './resources/PhoneNumber';
+// resources
 import { Session } from './resources/Session';
-import { SMSMessage } from './resources/SMSMessage';
-import { User } from './resources/User';
-import { Verification } from './resources/Verification';
 
 const defaultApiKey = process.env.CLERK_API_KEY || '';
 const defaultApiVersion = process.env.CLERK_API_VERSION || 'v1';
@@ -51,18 +42,6 @@ export default class Clerk {
   private _sessionApi?: SessionApi;
   private _smsMessageApi?: SMSMessageApi;
   private _userApi?: UserApi;
-
-  // Namespace resources
-  public static Client = Client;
-  public static Email = Email;
-  public static EmailAddress = EmailAddress;
-  public static GoogleAccount = GoogleAccount;
-  public static IdentificationLink = IdentificationLink;
-  public static PhoneNumber = PhoneNumber;
-  public static Session = Session;
-  public static SMSMessage = SMSMessage;
-  public static User = User;
-  public static Verification = Verification;
 
   constructor({
     apiKey = defaultApiKey,
@@ -205,7 +184,7 @@ export default class Clerk {
 
         next();
       }
-    };
+    }
 
     return authenticate.bind(this);
   }
@@ -228,35 +207,24 @@ export default class Clerk {
   }
 
   // Set the session on the request and the call provided handler
-  withSession(
-    handler: Function,
-    options?: MiddlewareOptions
-  ) {
-    return async (req: WithSessionProp<NextApiRequest>, res: NextApiResponse) => {
-      await this._runMiddleware(
-        req,
-        res,
-        this.expressMiddleware(options)
-      );
+  withSession(handler: Function, options?: MiddlewareOptions) {
+    return async (
+      req: WithSessionProp<NextApiRequest>,
+      res: NextApiResponse
+    ) => {
+      await this._runMiddleware(req, res, this.expressMiddleware(options));
 
       return handler(req, res);
     };
   }
 
   // Stricter version, short-circuits if no session is present
-  requireSession(
-    handler: Function,
-    options?: MiddlewareOptions
-  ) {
+  requireSession(handler: Function, options?: MiddlewareOptions) {
     return async (
       req: RequireSessionProp<NextApiRequest>,
       res: NextApiResponse
     ) => {
-      await this._runMiddleware(
-        req,
-        res,
-        this.expressMiddleware(options)
-      );
+      await this._runMiddleware(req, res, this.expressMiddleware(options));
 
       if (req.session) {
         return handler(req, res);

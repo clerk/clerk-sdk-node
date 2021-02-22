@@ -3,5 +3,9 @@
 // TODO also process the error.code for 50X responses
 
 export default function handleError(error: any): never {
-  throw error.response.body;
+  if (error.response && error.response.body) {
+    throw error.response.body;
+  } else {
+    throw error.message;
+  }
 }

@@ -1,54 +1,61 @@
-import type {
-  EmailAddressResource,
-  GoogleAccountJSON,
-  GoogleAccountResource,
-  PhoneNumberResource,
-  UserJSON,
-  UserResource,
-} from '../types/resources';
+import camelcaseKeys from 'camelcase-keys';
+import filterKeys from '../utils/Filter';
+import associationDefaults from '../utils/Associations';
+
+import { Association } from './Enums';
+import type { UserJSON } from './JSON';
+import type { UserProps } from './Props';
 
 import { EmailAddress } from './EmailAddress';
 import { GoogleAccount } from './GoogleAccount';
 import { PhoneNumber } from './PhoneNumber';
 
-export class User implements UserResource {
-  id: string;
-  username: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  gender: string | null;
-  birthday: string | null;
-  profileImageUrl: string;
-  primaryEmailAddressId: string | null;
-  primaryPhoneNumberId: string | null;
-  passwordEnabled: boolean;
-  twoFactorEnabled: boolean;
-  emailAddresses: EmailAddressResource[];
-  phoneNumbers: PhoneNumberResource[];
-  externalAccounts: GoogleAccountResource[];
-  publicMetadata: object;
-  privateMetadata: object;
-  createdAt: number;
-  updatedAt: number;
+interface UserAssociations {
+  emailAddresses: EmailAddress[];
+  phoneNumbers: PhoneNumber[];
+  externalAccounts: GoogleAccount[];
+}
 
-  constructor(data: UserJSON) {
-    this.id = data.id;
-    this.username = data.username;
-    this.firstName = data.first_name;
-    this.lastName = data.last_name;
-    this.gender = data.gender;
-    this.birthday = data.birthday;
-    this.profileImageUrl = data.profile_image_url;
-    this.primaryEmailAddressId = data.primary_email_address_id;
-    this.primaryPhoneNumberId = data.primary_phone_number_id;
-    this.passwordEnabled = data.password_enabled;
-    this.twoFactorEnabled = data.two_factor_enabled;
-    this.emailAddresses = data.email_addresses.map((x) => new EmailAddress(x));
-    this.phoneNumbers = data.phone_numbers.map((x) => new PhoneNumber(x));
-    this.externalAccounts = data.external_accounts.map((x: GoogleAccountJSON) => new GoogleAccount(x));
-    this.publicMetadata = data.public_metadata;
-    this.privateMetadata = data.private_metadata;
-    this.createdAt = data.created_at;
-    this.updatedAt = data.updated_at;
+interface UserPayload extends UserProps, UserAssociations {};
+
+export interface User extends UserPayload {};
+
+export class User {
+  static attributes = ['id', 'username', 'firstName', 'lastName', 'gender', 'birthday',
+    'profileImageUrl', 'primaryEmailAddressId', 'primaryEmailAddressId', 'primaryPhoneNumberId',
+    'passwordEnabled', 'twoFactorEnabled', 'passwordEnabled', 'passwordEnabled', 'passwordEnabled',
+    'twoFactorEnabled', 'publicMetadata', 'privateMetadata', 'createdAt', 'updatedAt'];
+  
+  static associations = {
+    emailAddresses: Association.HasMany,
+    phoneNumbers: Association.HasMany,
+    externalAccounts: Association.HasMany
+  };
+
+  static defaults = {
+    publicMetadata: {},
+    privateMetadata: {},
+    ...associationDefaults(User.associations)
+  }
+
+  constructor(data: Partial<UserPayload> = {}) {
+    Object.assign(this, User.defaults, data);
+  }
+
+  static fromJSON(data: UserJSON): User {
+    const obj: Record<string, any> = {};
+
+    const camelcased = camelcaseKeys(data);
+    const filtered = filterKeys(camelcased, User.attributes);
+    Object.assign(obj, filtered);
+
+    obj.emailAddresses = (data.email_addresses || []).map((x) => EmailAddress.fromJSON(x));
+    obj.phoneNumbers = (data.phone_numbers || []).map((x) => PhoneNumber.fromJSON(x));
+
+    obj.externalAccounts = (data.external_accounts || []).map(
+      (x) => GoogleAccount.fromJSON(x)
+    );
+
+    return new User(obj as UserPayload);
   }
 }

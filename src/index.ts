@@ -16,6 +16,21 @@ export default singletonInstance;
 // Export sub-api objects
 export { clients, emails, sessions, smsMessages, users };
 
+// Export resources
+export {
+  Nullable,
+  Client,
+  Email,
+  EmailAddress,
+  GoogleAccount,
+  IdentificationLink,
+  PhoneNumber,
+  Session,
+  SMSMessage,
+  User,
+  Verification,
+} from './instance';
+
 // Export middleware functions
 const ClerkExpressMiddleware = singletonInstance.expressMiddleware.bind(
   singletonInstance

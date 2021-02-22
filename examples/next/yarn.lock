@@ -90,8 +90,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@clerk/clerk-sdk-node@file:../../..":
-  version "0.0.2"
+"@clerk/clerk-sdk-node@latest":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@clerk/clerk-sdk-node/-/clerk-sdk-node-0.0.5.tgz#86bfdb32a1530df896425d77f88b641fd45cd474"
+  integrity sha512-g9CoBKoLD8lOB8xw9QlvYaTHkICe50gIMNoWUxErZqul4GryA5Fz29fA+qX2/EyJIW70ZbZ6pdbm1x/HIQRTxw==
   dependencies:
     "@types/cookies" "^0.7.6"
     cookies "^0.8.0"

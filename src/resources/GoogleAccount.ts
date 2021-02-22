@@ -1,24 +1,26 @@
-import type {
-  GoogleAccountJSON,
-  GoogleAccountResource,
-} from "../types/resources";
+import camelcaseKeys from 'camelcase-keys';
+import filterKeys from '../utils/Filter';
 
-export class GoogleAccount implements GoogleAccountResource {
-  id: string;
-  googleId: string;
-  approvedScopes: string;
-  emailAddress: string;
-  givenName: string;
-  familyName: string;
-  picture: string;
+import type { GoogleAccountJSON } from './JSON';
+import type { GoogleAccountProps } from './Props';
 
-  constructor(data: GoogleAccountJSON) {
-    this.id = data.id;
-    this.googleId = data.google_id;
-    this.approvedScopes = data.approved_scopes;
-    this.emailAddress = data.email_address;
-    this.givenName = data.given_name;
-    this.familyName = data.family_name;
-    this.picture = data.picture;
+interface GoogleAccountPayload extends GoogleAccountProps {};
+
+export interface GoogleAccount extends GoogleAccountPayload {};
+
+export class GoogleAccount {
+  static attributes = ['id', 'googleId', 'approvedScopes', 'emailAddress',
+    'emailAddress', 'givenName', 'familyName', 'picture'];
+
+  static defaults = {};
+
+  constructor(data: Partial<GoogleAccountPayload> = {}) {
+    Object.assign(this, GoogleAccount.defaults, data);
+  }
+
+  static fromJSON(data: GoogleAccountJSON): GoogleAccount {
+    const camelcased = camelcaseKeys(data);
+    const filtered = filterKeys(camelcased, GoogleAccount.attributes);
+    return new GoogleAccount(filtered as GoogleAccountPayload);
   }
 }

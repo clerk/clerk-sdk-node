@@ -1,8 +1,0 @@
-{
-    "name": "clerk-sdk-node-examples",
-    "dependencies": {
-        "@clerk/clerk-sdk-node": "file:../../../",
-        "dotenv": "^8.2.0",
-        "log-that-http": "^1.0.1"
-    }
-}

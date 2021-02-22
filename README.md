@@ -218,7 +218,7 @@ clerk.smsMessages
 
 ### Examples
 
-You also consult the [examples folder](https://github.com/clerkinc/clerk-sdk-node/tree/main/src/examples) for further hints on usage.
+You also consult the [examples folder](https://github.com/clerkinc/clerk-sdk-node/tree/main/examples) for further hints on usage.
 
 ### Client operations
 
