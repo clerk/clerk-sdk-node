@@ -117,8 +117,8 @@ export interface UserProps extends ClerkProps {
   // emailAddresses: EmailAddressProps[];
   // phoneNumbers: PhoneNumberProps[];
   // externalAccounts: GoogleAccountProps[];
-  publicMetadata: object;
-  privateMetadata: object;
+  publicMetadata: {[key: string]: string};
+  privateMetadata: {[key: string]: string};
   createdAt: Nullable<number>;
   updatedAt: Nullable<number>;
 }
