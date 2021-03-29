@@ -20,6 +20,44 @@ test('getUserList() returns a list of users', async () => {
   expect(userList[0]).toBeInstanceOf(User);
 });
 
+test('getUserList() with limit returns a list of users', async () => {
+  nock('https://api.clerk.dev')
+    .get('/v1/users?limit=1')
+    .replyWithFile(200, __dirname + '/responses/getUserList.json', {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
+
+  const userList = await users.getUserList({limit: 1});
+
+  expect(userList).toBeInstanceOf(Array);
+  expect(userList.length).toEqual(1);
+
+  // const expected = new User();
+
+  // expect(userList[0]).toEqual(expected);
+
+  expect(userList[0]).toBeInstanceOf(User);
+});
+
+test('getUserList() with limit returns a list of users', async () => {
+  nock('https://api.clerk.dev')
+    .get('/v1/users?limit=1&offset=1')
+    .replyWithFile(200, __dirname + '/responses/getUserList.json', {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
+
+  const userList = await users.getUserList({limit: 1, offset: 1});
+
+  expect(userList).toBeInstanceOf(Array);
+  expect(userList.length).toEqual(1);
+
+  // const expected = new User();
+
+  // expect(userList[0]).toEqual(expected);
+
+  expect(userList[0]).toBeInstanceOf(User);
+});
+
 test('getUser() returns a single user', async () => {
   const expected = new User({
     id: 'user_noone',

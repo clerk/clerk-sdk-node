@@ -12,11 +12,17 @@ interface UserParams {
   privateMetadata?: object;
 }
 
+interface UserListParams {
+  limit?: number;
+  offset?: number;
+}
+
 export class UserApi extends AbstractApi {
-  public async getUserList(): Promise<Array<User>> {
+  public async getUserList(params: UserListParams = {}): Promise<Array<User>> {
     return this._restClient.makeRequest({
       method: 'get',
       path: '/users',
+      queryParams: params,
     });
   }
 
