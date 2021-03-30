@@ -1,15 +1,14 @@
 import { AbstractApi } from './AbstractApi';
 import { User } from '../resources/User';
 
-// TODO support all params
 interface UserParams {
   firstName?: string;
   lastName?: string;
   password?: string;
   primaryEmailAddressID?: string;
   primaryPhoneNumberID?: string;
-  publicMetadata?: object;
-  privateMetadata?: object;
+  publicMetadata?: Record<string, unknown> | string;
+  privateMetadata?: Record<string, unknown> | string;
 }
 
 interface UserListParams {
@@ -37,6 +36,16 @@ export class UserApi extends AbstractApi {
     userId: string,
     params: UserParams = {}
   ): Promise<User> {
+    // The Clerk server API requires metadata fields to be stringified
+
+    if (params.publicMetadata && !(typeof params.publicMetadata == 'string')) {
+      params.publicMetadata = JSON.stringify(params.publicMetadata);
+    }
+
+    if (params.privateMetadata && !(typeof params.privateMetadata == 'string')) {
+      params.privateMetadata = JSON.stringify(params.privateMetadata);
+    }
+
     return this._restClient.makeRequest({
       method: 'patch',
       path: `/users/${userId}`,

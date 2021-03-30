@@ -2,9 +2,11 @@
 
 Thank you for choosing [Clerk](https://clerk.dev/) for your authentication, session & user management needs!
 
-This SDK allows you to call the Clerk server API from node / JS / TS code without having to implement the calls yourself.
+This SDK allows you to call the Clerk server API from node / JS / TS code without having to implement the calls
+yourself.
 
-To gain a better understanding of the underlying API calls the SDK makes, feel free to consult the [official Clerk server API documentation](https://docs.clerk.dev/server-api/).
+To gain a better understanding of the underlying API calls the SDK makes, feel free to consult
+the [official Clerk server API documentation](https://docs.clerk.dev/server-api/).
 
 ## Table of contents
 
@@ -12,36 +14,36 @@ To gain a better understanding of the underlying API calls the SDK makes, feel f
 - [Installation](#installation)
 - [Resource types](#resource-types)
 - [Usage](#usage)
-  - [Options & ENV vars available](#options--env-vars-available)
-    - [tl;dr](#tldr)
-    - [Full option reference](#full-option-reference)
-    - [httpOptions](#httpoptions)
-  - [Singleton](#singleton)
-    - [ESM](#esm)
-    - [CJS](#cjs)
-    - [Setters](#setters)
-  - [Custom instance](#custom-instance)
-    - [ESM](#esm-1)
-    - [CJS](#cjs-1)
-  - [Examples](#examples)
-  - [Client operations](#client-operations)
-    - [getClientList()](#getclientlist)
-    - [getClient(clientId)](#getclientclientid)
-    - [verifyClient(sessionToken)](#verifyclientsessiontoken)
-  - [Session operations](#session-operations)
-    - [getSessionList({ clientId, userId })](#getsessionlist-clientid-userid-)
-    - [getSession(sessionId)](#getsessionsessionid)
-    - [revokeSession(sessionId)](#revokesessionsessionid)
-    - [verifySession(sessionId, sessionToken)](#verifysessionsessionid-sessiontoken)
-  - [User operations](#user-operations)
-    - [getUserList()](#getuserlist)
-    - [getUser(userId)](#getuseruserid)
-    - [updateUser(userId, params)](#updateuseruserid-params)
-    - [deleteUser(userId)](#deleteuseruserid)
-  - [Email operations](#email-operations)
-    - [createEmail({ fromEmailName, subject, body, emailAddressId })](#createemail-fromemailname-subject-body-emailaddressid-)
-  - [SMS Message operations](#sms-message-operations)
-    - [createSMSMessage({ message, phoneNumberId })](#createsmsmessage-message-phonenumberid-)
+    - [Options & ENV vars available](#options--env-vars-available)
+        - [tl;dr](#tldr)
+        - [Full option reference](#full-option-reference)
+        - [httpOptions](#httpoptions)
+    - [Singleton](#singleton)
+        - [ESM](#esm)
+        - [CJS](#cjs)
+        - [Setters](#setters)
+    - [Custom instance](#custom-instance)
+        - [ESM](#esm-1)
+        - [CJS](#cjs-1)
+    - [Examples](#examples)
+    - [Client operations](#client-operations)
+        - [getClientList()](#getclientlist)
+        - [getClient(clientId)](#getclientclientid)
+        - [verifyClient(sessionToken)](#verifyclientsessiontoken)
+    - [Session operations](#session-operations)
+        - [getSessionList({ clientId, userId })](#getsessionlist-clientid-userid-)
+        - [getSession(sessionId)](#getsessionsessionid)
+        - [revokeSession(sessionId)](#revokesessionsessionid)
+        - [verifySession(sessionId, sessionToken)](#verifysessionsessionid-sessiontoken)
+    - [User operations](#user-operations)
+        - [getUserList()](#getuserlist)
+        - [getUser(userId)](#getuseruserid)
+        - [updateUser(userId, params)](#updateuseruserid-params)
+        - [deleteUser(userId)](#deleteuseruserid)
+    - [Email operations](#email-operations)
+        - [createEmail({ fromEmailName, subject, body, emailAddressId })](#createemail-fromemailname-subject-body-emailaddressid-)
+    - [SMS Message operations](#sms-message-operations)
+        - [createSMSMessage({ message, phoneNumberId })](#createsmsmessage-message-phonenumberid-)
 - [Error handling](#error-handling)
 - [Express middleware](#express-middleware)
 - [Next](#next)
@@ -49,13 +51,15 @@ To gain a better understanding of the underlying API calls the SDK makes, feel f
 
 ## Internal implementation details
 
-This project is written in [TypeScript](https://www.typescriptlang.org/) and built with [tsdx](https://github.com/formium/tsdx).
+This project is written in [TypeScript](https://www.typescriptlang.org/) and built
+with [tsdx](https://github.com/formium/tsdx).
 
 CJS, ESM, and UMD module builds are provided.
 
 The http client used by the sdk is [got](https://github.com/sindresorhus/got).
 
-All resource operations are mounted as sub-APIs on a `Clerk` class and return promises that either resolve with their expected resource types or reject with the error types described below.
+All resource operations are mounted as sub-APIs on a `Clerk` class and return promises that either resolve with their
+expected resource types or reject with the error types described below.
 
 The sub-APIs are also importable directly if you don't want to go through the `Clerk` class.
 
@@ -100,7 +104,8 @@ If you set `CLERK_API_KEY` in your environment you are good to go.
 
 The following options are available for you to customize the behaviour of the `Clerk` class.
 
-Note that most options can also be set as ENV vars so that you don't need to pass anything to the constructor or set it via the available setters.
+Note that most options can also be set as ENV vars so that you don't need to pass anything to the constructor or set it
+via the available setters.
 
 | Option       | Description                                                        | Default                 | ENV variable        |
 | ------------ | ------------------------------------------------------------------ | ----------------------- | ------------------- |
@@ -117,7 +122,8 @@ For every option the resolution is as follows, in order of descending precedence
 
 #### httpOptions
 
-The SDK allows you to pass options to the underlying http client (got) by instantiating it with an additional `httpOptions` object.
+The SDK allows you to pass options to the underlying http client (got) by instantiating it with an
+additional `httpOptions` object.
 
 e.g. to pass a custom header:
 
@@ -131,7 +137,8 @@ You can check the options the got client supports [here](https://github.com/sind
 
 ### Singleton
 
-If you are comfortable with setting the `CLERK_API_KEY` ENV variable and be done with it, the default instance created by the SDK will suffice for your needs.
+If you are comfortable with setting the `CLERK_API_KEY` ENV variable and be done with it, the default instance created
+by the SDK will suffice for your needs.
 
 #### ESM
 
@@ -172,7 +179,8 @@ clients.getClient(clientId)
 
 #### Setters
 
-The following setters are avaible for you to change the options even after you've obtained a handle on a `Clerk` or sub-api instance:
+The following setters are avaible for you to change the options even after you've obtained a handle on a `Clerk` or
+sub-api instance:
 
 If you have a `clerk` handle:
 
@@ -190,7 +198,8 @@ If are using a sub-api handle and wish to change options on the (implicit) singl
 
 ### Custom instantiation
 
-If you would like to use more than one `Clerk` instance, e.g. if you are using multiple api keys or simply prefer the warm fuzzy feeling of controlling instantiation yourself:
+If you would like to use more than one `Clerk` instance, e.g. if you are using multiple api keys or simply prefer the
+warm fuzzy feeling of controlling instantiation yourself:
 
 #### ESM
 
@@ -218,7 +227,8 @@ clerk.smsMessages
 
 ### Examples
 
-You also consult the [examples folder](https://github.com/clerkinc/clerk-sdk-node/tree/main/examples) for further hints on usage.
+You also consult the [examples folder](https://github.com/clerkinc/clerk-sdk-node/tree/main/examples) for further hints
+on usage.
 
 ### Client operations
 
@@ -330,13 +340,15 @@ const user = await clerk.users.update(userId, params)
 
 Supported user attributes for update are:
 
-| Attribute             | Data type |
-| --------------------- | --------- |
-| firstName             | string    |
-| lastName              | string    |
-| password              | string    |
-| primaryEmailAddressID | string    |
-| primaryPhoneNumberID  | string    |
+| Attribute             | Data type               |
+| :-------------------: | :---------------------: |
+| firstName             | string                  |
+| lastName              | string                  |
+| password              | string                  |
+| primaryEmailAddressID | string                  |
+| primaryPhoneNumberID  | string                  |
+| publicMetadata        | Record<string, unknown> |
+| privateMetadata       | Record<string, unknown> |
 
 #### deleteUser(userId)
 
@@ -383,7 +395,8 @@ The error handling is pretty generic at the moment but more fine grained errors 
 
 ## Express middleware
 
-For usage with [Express](https://github.com/expressjs/express), this package also exports a `ClerkExpressMiddleware` function that can be used in the standard manner:
+For usage with [Express](https://github.com/expressjs/express), this package also exports a `ClerkExpressMiddleware`
+function that can be used in the standard manner:
 
 ```
 import { ClerkExpressMiddleware } from 'sdk-server-node';
@@ -399,7 +412,8 @@ app.use(ClerkExpressMiddleware(options));
 
 The middleware will set the Clerk session on the request object as `req.session` and simply call the next middleware.
 
-You can then implement your own logic for handling a logged in or logged out user in your express endpoints or custom middleware, depending on whether they are trying to access a public or protected resource.
+You can then implement your own logic for handling a logged in or logged out user in your express endpoints or custom
+middleware, depending on whether they are trying to access a public or protected resource.
 
 If you want to use the express middleware of your custom `Clerk` instance, you can use:
 
@@ -411,9 +425,11 @@ Where `clerk` is your own instance.
 
 ## Next
 
-The current package also offers a way of making your [Next.js api middleware](https://nextjs.org/docs/api-routes/api-middlewares) aware of the Clerk Session.
+The current package also offers a way of making
+your [Next.js api middleware](https://nextjs.org/docs/api-routes/api-middlewares) aware of the Clerk Session.
 
-You can define your handler function with the usual signature (`function handler(req, res) {}`) then wrap it with `withSession`:
+You can define your handler function with the usual signature (`function handler(req, res) {}`) then wrap it
+with `withSession`:
 
 ```
 import { withSession, WithSessionProp } from '@clerk/clerk-sdk-node';
@@ -439,13 +455,15 @@ You can also pass an `onError` handler to the underlying Express middleware that
 export withSession(handler, { clerk, onError: error => console.log(error) });
 ```
 
-In case you would like the request to be rejected with a 401 (Unauthorized) automatically when no session exists, without having to implement such logic yourself, you can opt for the stricter variant:
+In case you would like the request to be rejected with a 401 (Unauthorized) automatically when no session exists,
+without having to implement such logic yourself, you can opt for the stricter variant:
 
 ```
 import clerk, { requireSession, RequireSessionProp } from '@clerk/clerk-sdk-node';
 ```
 
-In this case your handler can be even simpler because the existence of the session can be assumed, otherwise the execution will never reach your handler:
+In this case your handler can be even simpler because the existence of the session can be assumed, otherwise the
+execution will never reach your handler:
 
 ```
 function handler(req RequireSessionProp<NextApiRequest>, res: NextApiResponse) {
@@ -455,7 +473,8 @@ function handler(req RequireSessionProp<NextApiRequest>, res: NextApiResponse) {
 export requireSession(handler, { clerk, onError });
 ```
 
-The aforementioned usage pertains to the singleton case. If you would like to use a `Clerk` instance you instantiated yourself (e.g. named `clerk`), you can use the following syntax instead:
+The aforementioned usage pertains to the singleton case. If you would like to use a `Clerk` instance you instantiated
+yourself (e.g. named `clerk`), you can use the following syntax instead:
 
 ```
 export clerk.withSession(handler);
@@ -465,4 +484,5 @@ export clerk.requireSession(handler);
 
 ## Feedback / Issue reporting
 
-Please report issues or open feauture request in the [github issue section](https://github.com/clerkinc/clerk-sdk-node/issues).
+Please report issues or open feauture request in
+the [github issue section](https://github.com/clerkinc/clerk-sdk-node/issues).

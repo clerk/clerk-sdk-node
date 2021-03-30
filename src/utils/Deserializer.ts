@@ -1,11 +1,9 @@
+import { ObjectType } from '../resources/JSON';
 import { Client } from '../resources/Client';
 import { Email } from '../resources/Email';
 import { Session } from '../resources/Session';
 import { SMSMessage } from '../resources/SMSMessage';
 import { User } from '../resources/User';
-
-// TODO
-// Define type / enum for object types we support
 
 // FIXME don't return any
 export default function deserialize(data: any): any {
@@ -20,15 +18,15 @@ export default function deserialize(data: any): any {
 // item must have 'object' key
 function jsonToObject(item: any): any {
   switch (item.object) {
-    case 'client':
+    case ObjectType.Client:
       return Client.fromJSON(item);
-    case 'email':
+    case ObjectType.Email:
       return Email.fromJSON(item);
-    case 'user':
+    case ObjectType.User:
       return User.fromJSON(item);
-    case 'session':
+    case ObjectType.Session:
       return Session.fromJSON(item);
-    case 'sms_message':
+    case ObjectType.SmsMessage:
       return SMSMessage.fromJSON(item);
     default:
       console.log(`Unexpected object type: ${item.object}`);

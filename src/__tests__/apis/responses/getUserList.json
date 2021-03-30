@@ -57,7 +57,7 @@
       },
       {
         "id": "idn_maybe",
-        "phoneNumber": "+19515551002",
+        "phone_number": "+19515551002",
         "reserved_for_second_factor": false,
         "verification": {
           "status": "verified",
@@ -71,16 +71,30 @@
     ],
     "external_accounts": [
       {
-        "id": "idn_altavista",
-        "googleId": "1234567890",
-        "approvedScopes": "email https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid profile",
-        "emailAddress": "kyle@tech.com",
-        "givenName": "Kyle",
-        "familyName": "Reese",
+        "object": "google_account",
+        "id": "gac_googlyeyes",
+        "google_id": "1234567890",
+        "approved_scopes": "email https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid profile",
+        "email_address": "kyle@tech.com",
+        "given_name": "Kyle",
+        "family_name": "Reese",
         "picture": "https://lh3.googleusercontent.com/-MvTefx9nU6o/BBBBBBBBBBI/BBBBBBBBBBB/ereRAMWiew8hQ5IaSVdTZWm1Y1G1z0T_P7Q/s96-c/photo.jpg"
+      },
+      {
+        "object": "facebook_account",
+        "id": "fbac_xavier",
+        "facebook_id": "",
+        "approved_scopes": "email",
+        "email_address": "kyle@tech.com",
+        "first_name": "Kyle",
+        "last_name": "Reese",
+        "picture": "https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=16357923188267094&height=50&width=50&ext=2319847405&hash=AeQyoXRpxMMso8vNHSw"
       }
     ],
-    "public_metadata": {},
+    "public_metadata": {
+      "zodiac_sign": "leo",
+      "ascendant": "scorpio"
+    },
     "private_metadata": {},
     "created_at": 1611948436,
     "updated_at": 1611948436
