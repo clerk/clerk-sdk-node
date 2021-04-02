@@ -25,6 +25,10 @@ try {
   let updatedUser = await users.updateUser(userId, {
     firstName: 'Kyle',
     lastName: 'Reese',
+    publicMetadata: {
+      zodiac_sign: 'leo',
+      ascendant: 'scorpio',
+    },
   });
 
   // let updatedUser = await users.updateUser(userId, { firstName: 'John', lastName: 'Connor' });

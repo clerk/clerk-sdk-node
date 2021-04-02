@@ -2,18 +2,32 @@ import {
   SignInIdentifier,
   SignInFactorStrategy,
   SignInStatus,
-  SignUpAttibuteRequirements,
+  SignUpAttributeRequirements,
   SignUpIdentificationRequirements,
   SignUpStatus,
 } from './Enums';
 
+export enum ObjectType {
+  Client = 'client',
+  Email = 'email',
+  EmailAddress = 'email_address',
+  FacebookAccount = 'facebook_account',
+  GoogleAccount = 'google_account',
+  PhoneNumber = 'phone_number',
+  Session = 'session',
+  SignInAttempt = 'sign_in_attempt',
+  SignUpAttempt = 'sign_up_attempt',
+  SmsMessage = 'sms_message',
+  User = 'user',
+}
+
 export interface ClerkResourceJSON {
-  object: string;
+  object: ObjectType;
   id: string;
 }
 
 export interface ClientJSON extends ClerkResourceJSON {
-  object: 'client';
+  object: ObjectType.Client;
   session_ids: string[];
   sign_in_attempt_id: string | null;
   sign_up_attempt_id: string | null;
@@ -23,6 +37,7 @@ export interface ClientJSON extends ClerkResourceJSON {
 }
 
 export interface EmailJSON extends ClerkResourceJSON {
+  object: ObjectType.Email;
   from_email_name: string;
   to_email_address: string;
   email_address_id: string;
@@ -32,14 +47,24 @@ export interface EmailJSON extends ClerkResourceJSON {
 }
 
 export interface EmailAddressJSON extends ClerkResourceJSON {
-  object: 'email_address';
+  object: ObjectType.EmailAddress;
   email_address: string;
   verification: VerificationJSON | null;
   linked_to: Array<IdentificationLinkJSON>;
 }
 
+export interface FacebookAccountJSON extends ClerkResourceJSON {
+  object: ObjectType.FacebookAccount;
+  facebook_id: string;
+  approved_scopes: string;
+  email_address: string;
+  first_name: string;
+  last_name: string;
+  picture: string;
+}
+
 export interface GoogleAccountJSON extends ClerkResourceJSON {
-  object: 'google_account';
+  object: ObjectType.GoogleAccount;
   google_id: string;
   approved_scopes: string;
   email_address: string;
@@ -48,12 +73,14 @@ export interface GoogleAccountJSON extends ClerkResourceJSON {
   picture: string;
 }
 
+export type ExternalAccountJSON = FacebookAccountJSON | GoogleAccountJSON;
+
 export interface IdentificationLinkJSON extends ClerkResourceJSON {
   type: string;
 }
 
 export interface PhoneNumberJSON extends ClerkResourceJSON {
-  object: 'phone_number';
+  object: ObjectType.PhoneNumber;
   phone_number: string;
   reserved_for_second_factor: boolean;
   linked_to: Array<IdentificationLinkJSON>;
@@ -61,7 +88,7 @@ export interface PhoneNumberJSON extends ClerkResourceJSON {
 }
 
 export interface SessionJSON extends ClerkResourceJSON {
-  object: 'session';
+  object: ObjectType.Session;
   client_id: string;
   user_id: string;
   status: string;
@@ -71,7 +98,7 @@ export interface SessionJSON extends ClerkResourceJSON {
 }
 
 export interface SignInJSON extends ClerkResourceJSON {
-  object: 'sign_in_attempt';
+  object: ObjectType.SignInAttempt;
   status: SignInStatus;
   allowed_identifier_types: SignInIdentifier[];
   identifier: string;
@@ -82,10 +109,10 @@ export interface SignInJSON extends ClerkResourceJSON {
 }
 
 export interface SignUpJSON extends ClerkResourceJSON {
-  object: 'sign_up_attempt';
+  object: ObjectType.SignUpAttempt;
   status: SignUpStatus;
   identification_requirements: SignUpIdentificationRequirements;
-  attribute_requirements: SignUpAttibuteRequirements;
+  attribute_requirements: SignUpAttributeRequirements;
   username: string | null;
   email_address: string | null;
   email_address_verification: VerificationJSON | null;
@@ -101,7 +128,7 @@ export interface SignUpJSON extends ClerkResourceJSON {
 }
 
 export interface SMSMessageJSON extends ClerkResourceJSON {
-  object: 'sms_message';
+  object: ObjectType.SmsMessage;
   from_phone_number: string;
   to_phone_number: string;
   phone_number_id: string;
@@ -110,7 +137,7 @@ export interface SMSMessageJSON extends ClerkResourceJSON {
 }
 
 export interface UserJSON extends ClerkResourceJSON {
-  object: 'user';
+  object: ObjectType.User;
   username: string;
   first_name: string;
   last_name: string;
@@ -124,8 +151,8 @@ export interface UserJSON extends ClerkResourceJSON {
   email_addresses: EmailAddressJSON[];
   phone_numbers: PhoneNumberJSON[];
   external_accounts: GoogleAccountJSON[];
-  public_metadata: object;
-  private_metadata: object;
+  public_metadata: Record<string, unknown>;
+  private_metadata: Record<string, unknown>;
   created_at: number;
   updated_at: number;
 }

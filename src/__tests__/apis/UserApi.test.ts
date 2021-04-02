@@ -27,7 +27,7 @@ test('getUserList() with limit returns a list of users', async () => {
       'Content-Type': 'application/x-www-form-urlencoded',
     });
 
-  const userList = await users.getUserList({limit: 1});
+  const userList = await users.getUserList({ limit: 1 });
 
   expect(userList).toBeInstanceOf(Array);
   expect(userList.length).toEqual(1);
@@ -46,7 +46,7 @@ test('getUserList() with limit returns a list of users', async () => {
       'Content-Type': 'application/x-www-form-urlencoded',
     });
 
-  const userList = await users.getUserList({limit: 1, offset: 1});
+  const userList = await users.getUserList({ limit: 1, offset: 1 });
 
   expect(userList).toBeInstanceOf(Array);
   expect(userList.length).toEqual(1);
@@ -74,4 +74,11 @@ test('getUser() returns a single user', async () => {
   // expect(user).toMatchObject(expected);
 
   expect(user).toBeInstanceOf(User);
+
+  expect(user.externalAccounts.length).toEqual(2);
+  expect(user.externalAccounts[0].provider).toEqual('google');
+  expect(user.externalAccounts[1].provider).toEqual('facebook');
+
+  const expectedPublicMetadata = { zodiac_sign: 'leo', ascendant: 'scorpio' };
+  expect(user.publicMetadata).toEqual(expectedPublicMetadata);
 });

@@ -15,9 +15,7 @@
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "prepare": "tsdx build",
-    "size": "size-limit",
-    "analyze": "size-limit --why"
+    "prepare": "tsdx build"
   },
   "prettier": {
     "printWidth": 80,
@@ -32,25 +30,13 @@
     "url": "https://github.com/clerkinc/clerk-sdk-node"
   },
   "module": "dist/clerk-sdk-node.esm.js",
-  "size-limit": [
-    {
-      "path": "dist/clerk-sdk-node.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/clerk-sdk-node.esm.js",
-      "limit": "10 KB"
-    }
-  ],
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^4.9.1",
     "@types/express": "^4.17.11",
     "@types/jest": "^26.0.20",
     "husky": "^4.3.7",
     "jest": "^26.6.3",
     "next": "^10.0.7",
     "nock": "^13.0.7",
-    "size-limit": "^4.9.1",
     "ts-jest": "^26.5.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.1.0",

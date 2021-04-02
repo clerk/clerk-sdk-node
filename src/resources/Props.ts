@@ -5,9 +5,14 @@ import {
   SignInIdentifier,
   SignInStatus,
   SignUpIdentificationRequirements,
-  SignUpAttibuteRequirements,
+  SignUpAttributeRequirements,
   SignUpStatus,
 } from './Enums';
+
+export enum Provider {
+  Facebook = 'facebook',
+  Google = 'google',
+}
 
 export interface ClerkProps {
   id: Nullable<string>;
@@ -37,12 +42,13 @@ export interface EmailAddressProps extends ClerkProps {
   // linkedTo: Array<IdentificationLinkProps>;
 }
 
-export interface GoogleAccountProps extends ClerkProps {
-  googleId: Nullable<string>;
-  approvedScopes: Nullable<string>;
+export interface ExternalAccountProps extends ClerkProps {
+  provider: Provider;
+  externalId: Nullable<string>;
   emailAddress: Nullable<string>;
-  givenName: Nullable<string>;
-  familyName: Nullable<string>;
+  approvedScopes: Nullable<string>;
+  firstName: Nullable<string>;
+  lastName: Nullable<string>;
   picture: Nullable<string>;
 }
 
@@ -81,7 +87,7 @@ export interface SignInProps {
 export interface SignUpProps {
   status: SignUpStatus | null;
   identificationRequirements: SignUpIdentificationRequirements;
-  attributeRequirements: SignUpAttibuteRequirements;
+  attributeRequirements: SignUpAttributeRequirements;
   username: string | null;
   emailAddress: string | null;
   //emailAddressVerification: VerificationProps;
@@ -117,8 +123,8 @@ export interface UserProps extends ClerkProps {
   // emailAddresses: EmailAddressProps[];
   // phoneNumbers: PhoneNumberProps[];
   // externalAccounts: GoogleAccountProps[];
-  publicMetadata: object;
-  privateMetadata: object;
+  publicMetadata: Record<string, unknown>;
+  privateMetadata: Record<string, unknown>;
   createdAt: Nullable<number>;
   updatedAt: Nullable<number>;
 }

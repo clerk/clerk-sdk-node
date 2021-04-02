@@ -3,17 +3,17 @@ import filterKeys from '../utils/Filter';
 import associationDefaults from '../utils/Associations';
 
 import { Association } from './Enums';
-import type { UserJSON } from './JSON';
+import type {ExternalAccountJSON, UserJSON} from './JSON';
 import type { UserProps } from './Props';
 
 import { EmailAddress } from './EmailAddress';
-import { GoogleAccount } from './GoogleAccount';
+import { ExternalAccount } from './ExternalAccount';
 import { PhoneNumber } from './PhoneNumber';
 
 interface UserAssociations {
   emailAddresses: EmailAddress[];
   phoneNumbers: PhoneNumber[];
-  externalAccounts: GoogleAccount[];
+  externalAccounts: ExternalAccount[];
 }
 
 interface UserPayload extends UserProps, UserAssociations {};
@@ -53,7 +53,7 @@ export class User {
     obj.phoneNumbers = (data.phone_numbers || []).map((x) => PhoneNumber.fromJSON(x));
 
     obj.externalAccounts = (data.external_accounts || []).map(
-      (x) => GoogleAccount.fromJSON(x)
+      (x: ExternalAccountJSON) => ExternalAccount.fromJSON(x)
     );
 
     return new User(obj as UserPayload);
