@@ -6,4 +6,4 @@ function handler(req, res) {
     res.json(req.session || { empty: true });
 }
 
-export default requireSession(handler, { onError: error => console.log(error.message) });
+export default requireSession(handler);

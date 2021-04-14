@@ -33,15 +33,26 @@ export {
 } from './instance';
 
 // Export middleware functions
-const ClerkExpressMiddleware = singletonInstance.expressMiddleware.bind(
+const ClerkExpressWithSession = singletonInstance.expressWithSession.bind(
+  singletonInstance
+);
+const ClerkExpressRequireSession = singletonInstance.expressRequireSession.bind(
   singletonInstance
 );
 const withSession = singletonInstance.withSession.bind(singletonInstance);
 const requireSession = singletonInstance.requireSession.bind(singletonInstance);
-export { ClerkExpressMiddleware, withSession, requireSession };
+export {
+  ClerkExpressWithSession,
+  ClerkExpressRequireSession,
+  withSession,
+  requireSession,
+};
 
 // Export wrapper types for Next.js requests
 export { WithSessionProp, RequireSessionProp } from './instance';
+
+// Export Errors
+export { HttpError } from './utils/Errors';
 
 // Export setters for the default singleton instance
 // Useful if you only have access to a sub-api instance

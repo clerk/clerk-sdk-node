@@ -1,4 +1,4 @@
-// libs
+﻿// libs
 import type { Request, Response, NextFunction } from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Cookies from 'cookies';
@@ -16,6 +16,8 @@ import { UserApi } from './apis/UserApi';
 
 // resources
 import { Session } from './resources/Session';
+
+import { HttpError } from './utils/Errors';
 
 const defaultApiKey = process.env.CLERK_API_KEY || '';
 const defaultApiVersion = process.env.CLERK_API_VERSION || 'v1';
@@ -133,7 +135,18 @@ export default class Clerk {
 
   // Middlewares
 
-  expressMiddleware({ onError }: MiddlewareOptions = {}) {
+  // defaultOnError swallows the error
+  defaultOnError(error: Error) {
+    console.warn(error.message);
+  }
+
+  // strictOnError returns the error so that Express will halt the request chain
+  strictOnError(error: Error) {
+    console.error(error.message);
+    return error;
+  }
+
+  expressWithSession({ onError }: MiddlewareOptions = { onError: this.defaultOnError }): (req: Request, res: Response, next: NextFunction) => Promise<void> {
     async function authenticate(
       this: Clerk,
       req: Request,
@@ -149,7 +162,7 @@ export default class Clerk {
         Logger.debug(`sessionToken: ${sessionToken}`);
 
         if (!sessionToken) {
-          throw new Error('No session cookie found');
+          throw new HttpError(401, 'No session cookie found', undefined)
         }
 
         let sessionId: any = req.query._clerk_session_id;
@@ -174,19 +187,28 @@ export default class Clerk {
 
         next();
       } catch (error) {
-        // Don't set session on request
-        // TODO add different handling depending on wrong api key vs unauthenticated user
+        // Session will not be set on request
 
         // Call onError if provided
-        if (onError) {
-          await onError(error);
+        if (!onError) {
+          return next();
         }
 
-        next();
+        const err = await onError(error);
+
+        if (err) {
+          next(err);
+        } else {
+          next();
+        }
       }
     }
 
     return authenticate.bind(this);
+  }
+
+  expressRequireSession({ onError }: MiddlewareOptions = { onError: this.strictOnError }) {
+    return this.expressWithSession({ onError });
   }
 
   // Credits to https://nextjs.org/docs/api-routes/api-middlewares
@@ -206,32 +228,25 @@ export default class Clerk {
     });
   }
 
-  // Set the session on the request and the call provided handler
-  withSession(handler: Function, options?: MiddlewareOptions) {
+  // Set the session on the request and then call provided handler
+  withSession(handler: Function, { onError }: MiddlewareOptions = { onError: this.defaultOnError }) {
     return async (
       req: WithSessionProp<NextApiRequest>,
       res: NextApiResponse
     ) => {
-      await this._runMiddleware(req, res, this.expressMiddleware(options));
-
-      return handler(req, res);
-    };
-  }
-
-  // Stricter version, short-circuits if no session is present
-  requireSession(handler: Function, options?: MiddlewareOptions) {
-    return async (
-      req: RequireSessionProp<NextApiRequest>,
-      res: NextApiResponse
-    ) => {
-      await this._runMiddleware(req, res, this.expressMiddleware(options));
-
-      if (req.session) {
+      try {
+        await this._runMiddleware(req, res, this.expressWithSession({ onError }));
         return handler(req, res);
-      } else {
-        res.statusCode = 401;
+      } catch (error) {
+        res.statusCode = error.statusCode || 401;
+        res.json(error.data || { error: error.message });
         res.end();
       }
     };
+  }
+
+  // Stricter version, short-circuits if session can't be determined
+  requireSession(handler: Function, { onError }: MiddlewareOptions = { onError: this.strictOnError }) {
+    return this.withSession(handler, { onError })
   }
 }

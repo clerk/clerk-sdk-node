@@ -1,11 +1,11 @@
-// Just a passthrough of the error response body for now
-// Final error structure TBD
-// TODO also process the error.code for 50X responses
+// Just a pass-through of the error response code & body for no
+
+import { HttpError } from './Errors';
 
 export default function handleError(error: any): never {
-  if (error.response && error.response.body) {
-    throw error.response.body;
-  } else {
-    throw error.message;
-  }
+  const statusCode = error?.response?.statusCode || 500;
+  const message = error.message || '';
+  const data = error?.response?.body;
+
+  throw new HttpError(statusCode, message, data);
 }
