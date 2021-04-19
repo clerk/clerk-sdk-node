@@ -156,16 +156,18 @@ export default class Clerk {
 
         Logger.debug(`sessionId from query: ${sessionId}`);
 
-        if (!sessionId) {
-          client = await this.clients.verifyClient(sessionToken);
-          sessionId = client.lastActiveSessionId;
-          Logger.debug(`lastActiveSessionId from client: ${sessionId}`);
-        }
+        let session: (Session | null) = null;
 
-        const session = await this.sessions.verifySession(
-          sessionId,
-          sessionToken
-        );
+        if (!sessionId) {
+          Logger.debug('retrieving last active session for client');
+          session = await this.sessions.verify(sessionToken);
+        } else {
+          Logger.debug(`retrieving session ${sessionId}`);
+          session = await this.sessions.verifySession(
+              sessionId,
+              sessionToken
+          );
+        }
 
         // Set Clerk session on request
         // TBD Set on state / locals instead?

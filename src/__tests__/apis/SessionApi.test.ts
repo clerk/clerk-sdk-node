@@ -87,3 +87,29 @@ test('verifySession() returns a session if verified', async () => {
 
   expect(session).toEqual(expected);
 });
+
+test('verify() returns a session if verified', async () => {
+  const expected = new Session({
+    id: 'sess_oops',
+    clientId: 'client_isalwayswrong',
+    userId: 'user_player1',
+    status: 'active',
+    lastActiveAt: 1613593533,
+    expireAt: 1614198333,
+    abandonAt: 1616185533,
+  });
+
+  const sessionToken = 'random_jwt_token';
+
+  const encodedBody = new URLSearchParams({ token: sessionToken }).toString();
+
+  nock('https://api.clerk.dev')
+      .post(`/v1/sessions/verify`, encodedBody)
+      .replyWithFile(200, __dirname + '/responses/getSession.json', {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      });
+
+  const session = await sessions.verify(sessionToken);
+
+  expect(session).toEqual(expected);
+});

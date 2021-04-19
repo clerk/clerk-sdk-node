@@ -41,4 +41,12 @@ export class SessionApi extends AbstractApi {
       bodyParams: { token },
     });
   }
+
+  public async verify(token: string): Promise<Session> {
+    return this._restClient.makeRequest({
+      method: 'post',
+      path: `/sessions/verify`,
+      bodyParams: { token },
+    });
+  }
 }

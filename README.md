@@ -35,6 +35,7 @@ the [official Clerk server API documentation](https://docs.clerk.dev/server-api/
         - [getSession(sessionId)](#getsessionsessionid)
         - [revokeSession(sessionId)](#revokesessionsessionid)
         - [verifySession(sessionId, sessionToken)](#verifysessionsessionid-sessiontoken)
+        - [verify(sessionToken)](#verifysessionsessiontoken)
     - [User operations](#user-operations)
         - [getUserList()](#getuserlist)
         - [getUser(userId)](#getuseruserid)
@@ -305,6 +306,15 @@ Verifies whether a session with a given id corresponds to the provided session t
 const sessionId = "my-session-id";
 const sessionToken = "my-session-token";
 let session = await clerk.sessions.verifySession(sessionId, sessionToken);
+```
+
+#### verify(sessionToken)
+
+Retrieves the client's last active session and verifies it corresponds to the provided session token:
+
+```
+const sessionToken = "my-session-token";
+let session = await clerk.sessions.verify(sessionToken);
 ```
 
 ### User operations
