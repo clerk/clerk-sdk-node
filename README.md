@@ -391,37 +391,71 @@ let smsMessage = await clerk.smsMessages.createSMSMessage({ message, phoneNumber
 
 ## Error handling
 
-The error handling is pretty generic at the moment but more fine grained errors are coming soon ™.
+The error handling is pretty generic at the moment but more fine-grained errors are coming soon ™.
 
 ## Express middleware
 
-For usage with [Express](https://github.com/expressjs/express), this package also exports a `ClerkExpressMiddleware`
-function that can be used in the standard manner:
+For usage with [Express](https://github.com/expressjs/express), this package also exports `ClerkExpressWithSession` (lax) & `ClerkExpressRequireSession` (strict)
+middlewares that can be used in the standard manner:
 
 ```
-import { ClerkExpressMiddleware } from 'sdk-server-node';
+import { ClerkWithSession } from 'sdk-server-node';
 
 // Initialize express app the usual way
 
-const options = {
-    onError: function() {} // Function to call if the middleware encounters or fails to authenticate, can be used to provide logging etc
-};
-
-app.use(ClerkExpressMiddleware(options));
+app.use(ClerkWithSession());
 ```
 
-The middleware will set the Clerk session on the request object as `req.session` and simply call the next middleware.
+The `ClerkWithSession` middleware will set the Clerk session on the request object as `req.session` and then call the next middleware.
 
-You can then implement your own logic for handling a logged in or logged out user in your express endpoints or custom
-middleware, depending on whether they are trying to access a public or protected resource.
+You can then implement your own logic for handling a logged-in or logged-out user in your express endpoints or custom
+middleware, depending on whether your users are trying to access a public or protected resource.
 
 If you want to use the express middleware of your custom `Clerk` instance, you can use:
 
 ```
-app.use(clerk.expressMiddleware(options));
+app.use(clerk.expressWithSession());
 ```
 
 Where `clerk` is your own instance.
+
+If you prefer that the middleware renders a 401 (Unauthenticated) itself, you can use the following variant instead:
+
+```
+import { ClerkExpressRequireSession } from 'sdk-server-node';
+
+app.use(ClerkExpressRequireSession());
+
+```
+
+### onError option
+
+The Express middleware supports an `options` object as an optional argument.
+The only key only supported is `onError` for providing your own error handler.
+
+The `onError` function, if provided, should take an `Error` argument (`onError(error)`).
+
+Depending on the return value, it can affect the behavior of the middleware as follows:
+
+- If an `Error` is returned, the middleware will call `next(err)` with that error. If the `err` has a `statusCode` it will indicate to Express what HTTP code the response should have.
+- If anything other than an `Error` is returned (or nothing is returned at all), then the middleware will call `next()` without arguments
+
+The default implementations unless overridden are:
+
+```
+// defaultOnError swallows the error
+defaultOnError(error: Error) {
+  console.error(error.message);
+}
+
+// strictOnError returns the error so that Express will halt the request chain
+strictOnError(error: Error) {
+  console.error(error.message);
+  return error;
+}
+```
+
+`defaultOnError` is used in the lax middleware variant and `strictOnError` in the strict variant.
 
 ## Next
 

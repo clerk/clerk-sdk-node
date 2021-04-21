@@ -1,6 +1,6 @@
 {
   "name": "next",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "@clerk/clerk-sdk-node": "latest",
-    "next": "10.0.5",
-    "react": "17.0.1",
-    "react-dom": "17.0.1"
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
   }
 }
