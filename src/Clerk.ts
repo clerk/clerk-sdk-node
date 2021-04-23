@@ -154,7 +154,6 @@ export default class Clerk {
       next: NextFunction
     ) {
       const cookies = new Cookies(req, res);
-      let client;
 
       try {
         const sessionToken = cookies.get('__session');
@@ -169,16 +168,18 @@ export default class Clerk {
 
         Logger.debug(`sessionId from query: ${sessionId}`);
 
+        let session: (Session | undefined) = undefined;
         if (!sessionId) {
-          client = await this.clients.verifyClient(sessionToken);
-          sessionId = client.lastActiveSessionId;
-          Logger.debug(`lastActiveSessionId from client: ${sessionId}`);
+          const client = await this.clients.verifyClient(sessionToken);
+          session = client.sessions.find(session => session.id === client.lastActiveSessionId);
+          Logger.debug(`active session from client ${client.id}: ${session?.id}`);
+        } else {
+          session = await this.sessions.verifySession(
+              sessionId,
+              sessionToken
+          );
+          Logger.debug(`active session from session id ${sessionId}: ${session}`);
         }
-
-        const session = await this.sessions.verifySession(
-          sessionId,
-          sessionToken
-        );
 
         // Set Clerk session on request
         // TBD Set on state / locals instead?

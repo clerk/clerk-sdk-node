@@ -16,6 +16,15 @@ test('getClientList() returns a list of clients', async () => {
   const expected1 = new Client({
     id: 'client_isalwaysright',
     sessionIds: ['sess_swag'],
+    sessions: [{
+      id: 'sess_swag',
+      clientId: 'client_isalwaysright',
+      userId: 'user_player1',
+      status: 'active',
+      lastActiveAt: 1610706634,
+      expireAt: 1630846634,
+      abandonAt: 1630846634
+    }],
     signInAttemptId: null,
     signUpAttemptId: null,
     lastActiveSessionId: 'sess_swag',
@@ -26,6 +35,15 @@ test('getClientList() returns a list of clients', async () => {
   const expected2 = new Client({
     id: 'client_keysersoze',
     sessionIds: ['sess_mood'],
+    sessions: [{
+      id: 'sess_mood',
+      clientId: 'client_keysersoze',
+      userId: 'user_player2',
+      status: 'active',
+      lastActiveAt: 1610706634,
+      expireAt: 1630846634,
+      abandonAt: 1630846634
+    }],
     signInAttemptId: 'sia_qwerty',
     signUpAttemptId: null,
     lastActiveSessionId: null,
@@ -41,6 +59,15 @@ test('getClient() returns a single client', async () => {
   const expected = new Client({
     id: 'client_server',
     sessionIds: ['sess_onthebeach'],
+    sessions: [{
+      id: 'sess_onthebeach',
+      clientId: 'client_server',
+      userId: 'user_player1',
+      status: 'active',
+      lastActiveAt: 1610706634,
+      expireAt: 1630846634,
+      abandonAt: 1630846634,
+    }],
     signInAttemptId: 'sia_cheepthrills',
     signUpAttemptId: null,
     lastActiveSessionId: null,
@@ -63,6 +90,15 @@ test('verifyClient() returns a client if verified', async () => {
   const expected = new Client({
     id: 'client_server',
     sessionIds: ['sess_onthebeach'],
+    sessions: [{
+      id: 'sess_onthebeach',
+      clientId: 'client_server',
+      userId: 'user_player1',
+      status: 'active',
+      lastActiveAt: 1610706634,
+      expireAt: 1630846634,
+      abandonAt: 1630846634,
+    }],
     signInAttemptId: 'sia_cheepthrills',
     signUpAttemptId: null,
     lastActiveSessionId: null,
