@@ -29,6 +29,7 @@ export interface ClerkResourceJSON {
 export interface ClientJSON extends ClerkResourceJSON {
   object: ObjectType.Client;
   session_ids: string[];
+  sessions: SessionJSON[];
   sign_in_attempt_id: string | null;
   sign_up_attempt_id: string | null;
   last_active_session_id: string | null;
