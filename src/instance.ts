@@ -5,7 +5,9 @@ export default Clerk;
 export { WithSessionProp, RequireSessionProp } from './Clerk';
 
 export { Nullable } from './resources/Nullable';
-export { HttpError } from './utils/Errors';
+export { HttpError, ClerkServerError, ClerkServerErrorJSON } from './utils/Errors';
+import Logger from './utils/Logger';
+export { Logger };
 export { Client } from './resources/Client';
 export { Email } from './resources/Email';
 export { EmailAddress } from './resources/EmailAddress';

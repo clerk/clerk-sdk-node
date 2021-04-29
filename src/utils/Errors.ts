@@ -8,3 +8,35 @@ export class HttpError extends Error {
     this.data = data;
   }
 }
+
+export interface ClerkServerErrorProps {
+  message: string;
+  longMessage: string;
+  code: string;
+}
+
+export interface ClerkServerErrorJSON {
+  message: string;
+  long_message: string;
+  code: string;
+}
+
+export class ClerkServerError {
+  public message: string;
+  public longMessage: string;
+  public code: string;
+
+  constructor(data: ClerkServerErrorProps) {
+    this.message = data.message;
+    this.longMessage = data.longMessage;
+    this.code = data.code;
+  }
+
+  static fromJSON(data: ClerkServerErrorJSON) {
+    return new ClerkServerError({
+      message: data.message,
+      longMessage: data.long_message,
+      code: data.code
+    });
+  }
+}
