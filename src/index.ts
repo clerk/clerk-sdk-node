@@ -52,7 +52,11 @@ export {
 export { WithSessionProp, RequireSessionProp } from './instance';
 
 // Export Errors
-export { HttpError } from './utils/Errors';
+export { HttpError, ClerkServerError, ClerkServerErrorJSON } from './utils/Errors';
+
+// Export Logger
+import Logger from './utils/Logger';
+export { Logger };
 
 // Export setters for the default singleton instance
 // Useful if you only have access to a sub-api instance

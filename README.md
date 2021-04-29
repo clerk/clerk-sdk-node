@@ -22,9 +22,9 @@ the [official Clerk server API documentation](https://docs.clerk.dev/server-api/
         - [ESM](#esm)
         - [CJS](#cjs)
         - [Setters](#setters)
-    - [Custom instance](#custom-instance)
-        - [ESM](#esm-1)
-        - [CJS](#cjs-1)
+    - [Custom instantiation](#custom-instantiation)
+        - [ESM](#esm)
+        - [CJS](#cjs)
     - [Examples](#examples)
     - [Client operations](#client-operations)
         - [getClientList()](#getclientlist)
@@ -46,10 +46,13 @@ the [official Clerk server API documentation](https://docs.clerk.dev/server-api/
         - [createSMSMessage({ message, phoneNumberId })](#createsmsmessage-message-phonenumberid-)
 - [Error handling](#error-handling)
 - [Express middleware](#express-middleware)
+    - [onError option](#onerror-option)
+    - [Express Error Handlers](#express-error-handlers)
 - [Next](#next)
+- [Troubleshooting](#troubleshooting)
 - [Feedback / Issue reporting](#feedback--issue-reporting)
 
-## Internal implementation details
+nternal implementation details
 
 This project is written in [TypeScript](https://www.typescriptlang.org/) and built
 with [tsdx](https://github.com/formium/tsdx).
@@ -119,6 +122,10 @@ For every option the resolution is as follows, in order of descending precedence
 1. option passed
 2. ENV var (if applicable)
 3. default
+
+Another available environment variable is `CLERK_LOGGING`.
+
+You can set its value to `true` to enable additional logging that may be of use when debugging an issue.
 
 #### httpOptions
 
@@ -457,6 +464,29 @@ strictOnError(error: Error) {
 
 `defaultOnError` is used in the lax middleware variant and `strictOnError` in the strict variant.
 
+### Express Error Handlers
+
+Not to be confused with the `onError` option mentioned above, Express comes with a default error handler for errors encountered in the middleware chain.
+
+Developers can also implement their own custom error handlers as detailed [here](https://expressjs.com/en/guide/error-handling.html).
+
+An example error handler can be found in the [Express examples folder](https://github.com/clerkinc/clerk-sdk-node/tree/main/examples/expresss):
+
+```
+// Note: this is just a sample errorHandler that pipes clerk server errors through to your API responses
+// You will want to apply different handling in your own app to avoid exposing too much info to the client
+function errorHandler (err, req, res, next) {
+  const statusCode = err.statusCode || 500;
+  const body = err.data || { error: err.message };
+
+  res
+      .status(statusCode)
+      .json(body);
+}
+```
+
+If you are using the strict middleware variant, the `err` pass to your error handler will contain enough context for you to respond as you deem fit.
+
 ## Next
 
 The current package also offers a way of making
@@ -516,7 +546,22 @@ export clerk.withSession(handler);
 export clerk.requireSession(handler);
 ```
 
+## Troubleshooting
+
+Especially when using the middlewares, a number of common issues may occur.
+
+Please consult the following check-list for some potential quick fixes:
+
+* Is the `CLERK_API_KEY` set in your environment?
+* In case you are using multiple Clerk apps or instances thereof (i.e. development, staging, production), ensure you are using the API key for the correct Clerk instance.
+* If you are handling instantiation of the Clerk object yourself, are you passing your server API key to the constructor via the `apiKey` option?
+* In development mode, do your frontend & API reside on the same domain? Unless the clerk `__session` is sent to your API server, the SDK will fail to authenticate your user.
+* If you are still experiencing issues, it is advisable to set the `CLERK_LOGGING` environment variable to `true` to get additional logging output that may help identify the issue.
+
+Note: The strict middleware variants (i.e. the "require session" variants) will produce an erroneous response if the user is not signed in.
+Please ensure you are not mounting them on routes that are meant to be publicly accessible.
+
 ## Feedback / Issue reporting
 
-Please report issues or open feauture request in
+Please report issues or open feature request in
 the [github issue section](https://github.com/clerkinc/clerk-sdk-node/issues).

@@ -8,6 +8,8 @@ const port = process.env.PORT;
 
 var app = express();
 
+// Note: this is just a sample errorHandler that pipes clerk server errors through to your API responses
+// You will want to apply different handling in your own app to avoid exposing too much info to the client
 function errorHandler (err, req, res, next) {
   const statusCode = err.statusCode || 500;
   const body = err.data || { error: err.message };

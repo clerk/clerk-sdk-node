@@ -17,7 +17,7 @@ import { UserApi } from './apis/UserApi';
 // resources
 import { Session } from './resources/Session';
 
-import { HttpError } from './utils/Errors';
+import { HttpError, ClerkServerError } from './utils/Errors';
 
 const defaultApiKey = process.env.CLERK_API_KEY || '';
 const defaultApiVersion = process.env.CLERK_API_VERSION || 'v1';
@@ -136,13 +136,22 @@ export default class Clerk {
   // Middlewares
 
   // defaultOnError swallows the error
-  defaultOnError(error: Error) {
-    console.warn(error.message);
+  defaultOnError(error: Error & { data: any }) {
+    Logger.warn(error.message);
+
+    (error.data || []).forEach((serverError: ClerkServerError) => {
+      Logger.warn(serverError.longMessage);
+    });
   }
 
   // strictOnError returns the error so that Express will halt the request chain
-  strictOnError(error: Error) {
-    console.error(error.message);
+  strictOnError(error: Error & { data: any }) {
+    Logger.error(error.message);
+
+    (error.data || []).forEach((serverError: ClerkServerError) => {
+      Logger.error(serverError.longMessage);
+    });
+
     return error;
   }
 

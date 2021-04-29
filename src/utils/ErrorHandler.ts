@@ -1,11 +1,18 @@
-// Just a pass-through of the error response code & body for no
-
-import { HttpError } from './Errors';
+import { HttpError, ClerkServerError, ClerkServerErrorJSON } from './Errors';
 
 export default function handleError(error: any): never {
   const statusCode = error?.response?.statusCode || 500;
   const message = error.message || '';
-  const data = error?.response?.body;
+  const body = error?.response?.body;
+  let data;
+
+  if (body && body.errors) {
+    data = (body.errors || []).map((errorJSON: ClerkServerErrorJSON) => {
+      return ClerkServerError.fromJSON(errorJSON);
+    });
+  } else {
+    data = body;
+  }
 
   throw new HttpError(statusCode, message, data);
 }
