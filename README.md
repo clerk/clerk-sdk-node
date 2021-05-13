@@ -326,6 +326,16 @@ Retrieves user list:
 let users = await clerk.users.getUserList();
 ```
 
+Can also be filtered by the given email addresses and phone numbers:
+
+```
+const emailAddress = ["email1@clerk.dev", "email2@clerk.dev"];
+const phoneNumber = ["+12025550108"];
+const sessions = await clerk.users.getUserList({ emailAddress, phoneNumber });
+```
+
+If these filters are included, the response will contain only users that own any of these emails and/or phone numbers.
+
 #### getUser(userId)
 
 Retrieves a single user by their id:
