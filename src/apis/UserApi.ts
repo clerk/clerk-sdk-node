@@ -14,6 +14,8 @@ interface UserParams {
 interface UserListParams {
   limit?: number;
   offset?: number;
+  emailAddress?: string[];
+  phoneNumber?: string[];
 }
 
 export class UserApi extends AbstractApi {
