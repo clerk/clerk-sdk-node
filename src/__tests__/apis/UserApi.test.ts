@@ -58,6 +58,20 @@ test('getUserList() with limit returns a list of users', async () => {
   expect(userList[0]).toBeInstanceOf(User);
 });
 
+test('getUserList() with emails and phone numbers returns a list of users', async () => {
+  nock('https://api.clerk.dev')
+      .get('/v1/users?email_address=email1&email_address=email2&phone_number=phone1&phone_number=phone2')
+      .replyWithFile(200, __dirname + '/responses/getUserList.json', {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      });
+
+  const userList = await users.getUserList({ emailAddress: ['email1', 'email2'], phoneNumber: ['phone1', 'phone2'] });
+
+  expect(userList).toBeInstanceOf(Array);
+  expect(userList.length).toEqual(1);
+  expect(userList[0]).toBeInstanceOf(User);
+});
+
 test('getUser() returns a single user', async () => {
   const expected = new User({
     id: 'user_noone',
