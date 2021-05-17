@@ -47,6 +47,7 @@
     "camelcase-keys": "^6.2.2",
     "cookies": "^0.8.0",
     "got": "^11.8.1",
+    "lodash": "^4.17.21",
     "snakecase-keys": "^3.2.1"
   },
   "description": "Clerk (clerk.dev) server SDK for usage with node",

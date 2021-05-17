@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@clerk/clerk-sdk-node": "latest",
+    "lodash": "^4.17.21",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"
