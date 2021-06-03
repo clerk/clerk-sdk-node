@@ -16,7 +16,7 @@ export enum ObjectType {
   PhoneNumber = 'phone_number',
   Session = 'session',
   SignInAttempt = 'sign_in_attempt',
-  SignUpAttempt = 'sign_up_attempt',
+  SignUp = 'sign_up',
   SmsMessage = 'sms_message',
   User = 'user',
 }
@@ -31,7 +31,7 @@ export interface ClientJSON extends ClerkResourceJSON {
   session_ids: string[];
   sessions: SessionJSON[];
   sign_in_attempt_id: string | null;
-  sign_up_attempt_id: string | null;
+  sign_up_id: string | null;
   last_active_session_id: string | null;
   created_at: number;
   updated_at: number;
@@ -110,7 +110,7 @@ export interface SignInJSON extends ClerkResourceJSON {
 }
 
 export interface SignUpJSON extends ClerkResourceJSON {
-  object: ObjectType.SignUpAttempt;
+  object: ObjectType.SignUp;
   status: SignUpStatus;
   identification_requirements: SignUpIdentificationRequirements;
   attribute_requirements: SignUpAttributeRequirements;

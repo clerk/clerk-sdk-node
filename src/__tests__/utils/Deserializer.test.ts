@@ -11,7 +11,7 @@ const clientJSON = {
   id: 'client_wxyz',
   session_ids: ['sess_abcd', 'sess_efgh'],
   sign_in_attempt_id: null,
-  sign_up_attempt_id: null,
+  sign_up_id: null,
   last_active_session_id: 'sess_efgh',
   created_at: 1612378465,
   updated_at: 1612378465,

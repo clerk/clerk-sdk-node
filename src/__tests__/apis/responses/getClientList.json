@@ -13,7 +13,7 @@
             "abandonAt": 1630846634
         }],
         "sign_in_attempt_id": null,
-        "sign_up_attempt_id": null,
+        "sign_up_id": null,
         "last_active_session_id": "sess_swag",
         "created_at": 1613593529,
         "updated_at": 1613593529
@@ -32,7 +32,7 @@
             "abandonAt": 1630846634
         }],
         "sign_in_attempt_id": "sia_qwerty",
-        "sign_up_attempt_id": null,
+        "sign_up_id": null,
         "last_active_session_id": null,
         "created_at": 1612308722,
         "updated_at": 1612308722

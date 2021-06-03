@@ -22,7 +22,7 @@ export interface ClientProps extends ClerkProps {
   sessionIds: string[];
   // sessions: SessionProps[];
   signInAttemptId: Nullable<string>;
-  signUpAttemptId: Nullable<string>;
+  signUpId: Nullable<string>;
   lastActiveSessionId: Nullable<string>;
   createdAt: Nullable<number>;
   updatedAt: Nullable<number>;
