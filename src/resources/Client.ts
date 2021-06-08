@@ -17,7 +17,7 @@ interface ClientPayload extends ClientProps, ClientAssociations {};
 export interface Client extends ClientPayload {};
 
 export class Client {
-  static attributes = ['id', 'sessionIds', 'signUpId', 'signInAttemptId',
+  static attributes = ['id', 'sessionIds', 'signUpId', 'signInId',
     'lastActiveSessionId', 'createdAt', 'updatedAt'];
 
   static associations = {

@@ -15,7 +15,7 @@ export enum ObjectType {
   GoogleAccount = 'google_account',
   PhoneNumber = 'phone_number',
   Session = 'session',
-  SignInAttempt = 'sign_in_attempt',
+  SignIn = 'sign_in',
   SignUp = 'sign_up',
   SmsMessage = 'sms_message',
   User = 'user',
@@ -99,7 +99,7 @@ export interface SessionJSON extends ClerkResourceJSON {
 }
 
 export interface SignInJSON extends ClerkResourceJSON {
-  object: ObjectType.SignInAttempt;
+  object: ObjectType.SignIn;
   status: SignInStatus;
   allowed_identifier_types: SignInIdentifier[];
   identifier: string;

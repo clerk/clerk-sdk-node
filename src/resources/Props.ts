@@ -21,7 +21,7 @@ export interface ClerkProps {
 export interface ClientProps extends ClerkProps {
   sessionIds: string[];
   // sessions: SessionProps[];
-  signInAttemptId: Nullable<string>;
+  signInId: Nullable<string>;
   signUpId: Nullable<string>;
   lastActiveSessionId: Nullable<string>;
   createdAt: Nullable<number>;
