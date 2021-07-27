@@ -1,8 +1,7 @@
-import type { ExternalAccountJSON, FacebookAccountJSON, GoogleAccountJSON } from './JSON';
+import type { ExternalAccountJSON, FacebookAccountJSON, GoogleAccountJSON, ExtAccountJSON } from './JSON';
 import { ObjectType } from './JSON';
 
 import type { ExternalAccountProps } from './Props';
-import { Provider } from "./Props";
 
 interface ExternalAccountPayload extends ExternalAccountProps {};
 
@@ -24,23 +23,33 @@ export class ExternalAccount {
         obj.id = data.id;
         obj.approvedScopes = data.approved_scopes;
         obj.emailAddress = data.email_address;
-        obj.picture = data.picture;
 
         switch (data.object) {
             case ObjectType.FacebookAccount: {
-                obj.provider = Provider.Facebook;
+                obj.provider = 'facebook';
                 const fbData = data as FacebookAccountJSON;
                 obj.externalId = fbData.facebook_id;
                 obj.firstName = fbData.first_name;
                 obj.lastName = fbData.last_name;
+                obj.picture = data.picture;
                 break;
             }
             case ObjectType.GoogleAccount: {
-                obj.provider = Provider.Google;
+                obj.provider = 'google';
                 const gData = data as GoogleAccountJSON;
                 obj.externalId = gData.google_id;
                 obj.firstName = gData.given_name;
                 obj.lastName = gData.family_name;
+                obj.picture = data.picture;
+                break;
+            }
+            case ObjectType.ExternalAccount: {
+                obj.provider = data.provider;
+                const extData = data as ExtAccountJSON;
+                obj.externalId = extData.provider_user_id;
+                obj.firstName = extData.first_name;
+                obj.lastName = extData.last_name;
+                obj.picture = extData.avatar_url;
                 break;
             }
             default:

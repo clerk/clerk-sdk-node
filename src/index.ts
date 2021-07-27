@@ -24,7 +24,6 @@ export {
   EmailAddress,
   ExternalAccount,
   IdentificationLink,
-  Provider,
   PhoneNumber,
   Session,
   SMSMessage,

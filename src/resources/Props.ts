@@ -9,11 +9,6 @@ import {
   SignUpStatus,
 } from './Enums';
 
-export enum Provider {
-  Facebook = 'facebook',
-  Google = 'google',
-}
-
 export interface ClerkProps {
   id: Nullable<string>;
 }
@@ -44,7 +39,7 @@ export interface EmailAddressProps extends ClerkProps {
 }
 
 export interface ExternalAccountProps extends ClerkProps {
-  provider: Provider;
+  provider: Nullable<string>;
   externalId: Nullable<string>;
   emailAddress: Nullable<string>;
   approvedScopes: Nullable<string>;
