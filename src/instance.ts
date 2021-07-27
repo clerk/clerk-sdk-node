@@ -13,7 +13,6 @@ export { Email } from './resources/Email';
 export { EmailAddress } from './resources/EmailAddress';
 export { ExternalAccount } from './resources/ExternalAccount';
 export { IdentificationLink } from './resources/IdentificationLink';
-export { Provider } from './resources/Props';
 export { PhoneNumber } from './resources/PhoneNumber';
 export { Session } from './resources/Session';
 export { SMSMessage } from './resources/SMSMessage';

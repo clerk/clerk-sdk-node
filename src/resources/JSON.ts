@@ -13,6 +13,7 @@ export enum ObjectType {
   EmailAddress = 'email_address',
   FacebookAccount = 'facebook_account',
   GoogleAccount = 'google_account',
+  ExternalAccount = 'external_account',
   PhoneNumber = 'phone_number',
   Session = 'session',
   SignInAttempt = 'sign_in_attempt',
@@ -74,7 +75,19 @@ export interface GoogleAccountJSON extends ClerkResourceJSON {
   picture: string;
 }
 
-export type ExternalAccountJSON = FacebookAccountJSON | GoogleAccountJSON;
+export interface ExtAccountJSON extends ClerkResourceJSON {
+  object: ObjectType.ExternalAccount;
+  provider: string;
+  identification_id: string;
+  provider_user_id: string;
+  approved_scopes: string;
+  email_address: string;
+  first_name: string;
+  last_name: string;
+  avatar_url: string;
+}
+
+export type ExternalAccountJSON = FacebookAccountJSON | GoogleAccountJSON | ExtAccountJSON;
 
 export interface IdentificationLinkJSON extends ClerkResourceJSON {
   type: string;
