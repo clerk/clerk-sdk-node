@@ -10,6 +10,7 @@ import Logger from './utils/Logger';
 // sub-apis
 import { ClientApi } from './apis/ClientApi';
 import { EmailApi } from './apis/EmailApi';
+import { JWKSApi } from './apis/JWKSApi';
 import { SessionApi } from './apis/SessionApi';
 import { SMSMessageApi } from './apis/SMSMessageApi';
 import { UserApi } from './apis/UserApi';
@@ -41,6 +42,7 @@ export default class Clerk {
   // private api instances
   private _clientApi?: ClientApi;
   private _emailApi?: EmailApi;
+  private _jwksApi?: JWKSApi;
   private _sessionApi?: SessionApi;
   private _smsMessageApi?: SMSMessageApi;
   private _userApi?: UserApi;
@@ -131,6 +133,14 @@ export default class Clerk {
     }
 
     return this._userApi;
+  }
+
+  get jwks(): JWKSApi {
+    if (!this._jwksApi) {
+      this._jwksApi = new JWKSApi(this._restClient);
+    }
+
+    return this._jwksApi;
   }
 
   // Middlewares

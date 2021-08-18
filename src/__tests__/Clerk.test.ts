@@ -76,3 +76,14 @@ test('users getter returns the same instance every time', () => {
   const users2 = Clerk.getInstance().users;
   expect(users2).toBe(users);
 });
+
+test('jwks getter returns a JWKS API instance', () => {
+  const jwks = Clerk.getInstance().jwks;
+  expect(jwks).toBeInstanceOf(ClientApi);
+});
+
+test('jwks getter returns the same instance every time', () => {
+  const jwks = Clerk.getInstance().jwks;
+  const jwks2 = Clerk.getInstance().jwks;
+  expect(jwks2).toBe(jwks);
+});

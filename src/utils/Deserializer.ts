@@ -4,7 +4,8 @@ import { Email } from '../resources/Email';
 import { Session } from '../resources/Session';
 import { SMSMessage } from '../resources/SMSMessage';
 import { User } from '../resources/User';
-import Logger from './Logger';
+// import Logger from './Logger';
+import {JWKS} from "../resources/JWKS";
 
 // FIXME don't return any
 export default function deserialize(data: any): any {
@@ -30,6 +31,7 @@ function jsonToObject(item: any): any {
     case ObjectType.SmsMessage:
       return SMSMessage.fromJSON(item);
     default:
-      Logger.error(`Unexpected object type: ${item.object}`);
+      return JWKS.fromJSON(item)
+      // Logger.error(`Unexpected object type: ${item.object}`);
   }
 }

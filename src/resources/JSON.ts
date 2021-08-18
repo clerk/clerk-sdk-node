@@ -178,3 +178,16 @@ export interface VerificationJSON extends ClerkResourceJSON {
   attempts: number;
   expire_at: number;
 }
+
+export interface JWKSJSON {
+  keys: JWKJSON[];
+}
+
+export interface JWKJSON {
+  use: string;
+  kty: string;
+  kid: string;
+  alg: string;
+  n: string;
+  e: string;
+}

@@ -132,3 +132,16 @@ export interface VerificationProps {
   attempts: Nullable<number>;
   expireAt: Nullable<number>;
 }
+
+export interface JWKSProps {
+  keys: JWKProps[];
+}
+
+export interface JWKProps {
+  use: string;
+  kty: string;
+  kid: string;
+  alg: string;
+  n: string;
+  e: string;
+}
