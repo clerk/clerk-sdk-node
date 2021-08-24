@@ -44,9 +44,12 @@
   },
   "dependencies": {
     "@types/cookies": "^0.7.6",
+    "@types/jsonwebtoken": "^8.5.4",
     "camelcase-keys": "^6.2.2",
     "cookies": "^0.8.0",
     "got": "^11.8.2",
+    "jsonwebtoken": "^8.5.1",
+    "jwks-rsa": "^2.0.4",
     "lodash": "^4.17.21",
     "snakecase-keys": "^3.2.1"
   },
