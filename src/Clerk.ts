@@ -2,7 +2,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Cookies from 'cookies';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import jwks, { JwksClient } from 'jwks-rsa';
 
 // utils
@@ -32,6 +32,7 @@ export type MiddlewareOptions = {
 
 export type WithSessionProp<T> = T & { session?: Session };
 export type RequireSessionProp<T> = T & { session: Session };
+export type WithClaimsProp<T> = T & { claims?: JwtPayload };
 
 export default class Clerk {
   private _restClient: RestClient;
@@ -296,5 +297,76 @@ export default class Clerk {
   // Stricter version, short-circuits if session can't be determined
   requireSession(handler: Function, { onError }: MiddlewareOptions = { onError: this.strictOnError }) {
     return this.withSession(handler, { onError })
+  }
+
+  expressWithNetworkless({ onError }: MiddlewareOptions = { onError: this.defaultOnError }): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+    async function authenticate(
+        this: Clerk,
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) {
+      const cookies = new Cookies(req, res);
+
+      try {
+        const token = req.headers['Authorization'] || cookies.get('__session')
+
+        Logger.debug(`token: ${token}`);
+
+        if (!token) {
+          throw new HttpError(401, 'No token found in request header or cookie', undefined)
+        }
+
+        // Set JWT claims on request
+        // TBD Set on state / locals instead?
+        // @ts-ignore
+        req.claims = await this.verifyToken(token);
+
+        next();
+      } catch (error) {
+        // Token will not be set on request
+
+        // Call onError if provided
+        if (!onError) {
+          return next();
+        }
+
+        const err = await onError(error);
+
+        if (err) {
+          next(err);
+        } else {
+          next();
+        }
+      }
+    }
+
+    return authenticate.bind(this);
+  }
+
+  expressRequireNetworkless({ onError }: MiddlewareOptions = { onError: this.strictOnError }) {
+    return this.expressWithNetworkless({ onError });
+  }
+
+  // Set the JWT token claims on the request and then call provided handler
+  withNetworkless(handler: Function, { onError }: MiddlewareOptions = { onError: this.defaultOnError }) {
+    return async (
+        req: WithClaimsProp<NextApiRequest>,
+        res: NextApiResponse
+    ) => {
+      try {
+        await this._runMiddleware(req, res, this.expressWithNetworkless({ onError }));
+        return handler(req, res);
+      } catch (error) {
+        res.statusCode = error.statusCode || 401;
+        res.json(error.data || { error: error.message });
+        res.end();
+      }
+    };
+  }
+
+  // Stricter version, short-circuits if token can't be determined
+  requireNetworkless(handler: Function, { onError }: MiddlewareOptions = { onError: this.strictOnError }) {
+    return this.withNetworkless(handler, { onError })
   }
 }

@@ -89,3 +89,91 @@ test('expressRequireSession with no session cookie', async () => {
     expect(mockNext).toHaveBeenCalled();
     expect(mockNext.mock.calls[0][0]).toBeInstanceOf(Error);
 });
+
+test('expressWithNetworkless with valid token', async () => {
+    mockGet.mockImplementationOnce(() => { return 'foo'; });
+
+    // @ts-ignore
+    const req = { headers: { 'Authorization': 'token' } } as Request;
+    const res = {} as Response;
+
+    const claims = {
+        iss: 'issuer',
+        sub: 'subject',
+        aud: 'clerk',
+        name: 'name',
+        picture: 'picture'
+    }
+
+    const clerk = Clerk.getInstance();
+    clerk.verifyToken = jest.fn().mockReturnValue(claims);
+
+    await clerk.expressWithNetworkless()(req, res, mockNext as NextFunction);
+
+    // @ts-ignore
+    expect(req.claims).toEqual(claims);
+
+    expect(mockNext).toHaveBeenCalledWith(); // 0 args
+});
+
+test('expressWithNetworkless with no token', async () => {
+    mockGet.mockImplementationOnce(() => { return undefined; });
+
+    // @ts-ignore
+    const req = {} as Request;
+    const res = {} as Response;
+
+    const clerk = Clerk.getInstance();
+
+    await clerk.expressWithNetworkless()(req, res, mockNext as NextFunction);
+
+    // @ts-ignore
+    expect(req.claims).toBeUndefined();
+
+    expect(mockNext).toHaveBeenCalledWith(); // 0 args
+});
+
+test('expressRequireNetworkless with valid token', async () => {
+    mockGet.mockImplementationOnce(() => { return 'foo'; });
+
+    // @ts-ignore
+    const req = { headers: { 'Authorization': 'token' } } as Request;
+    const res = {} as Response;
+
+    const claims = {
+        iss: 'issuer',
+        sub: 'subject',
+        aud: 'clerk',
+        name: 'name',
+        picture: 'picture'
+    }
+
+    const clerk = Clerk.getInstance();
+    clerk.verifyToken = jest.fn().mockReturnValue(claims);
+
+    await clerk.expressRequireNetworkless()(req, res, mockNext as NextFunction);
+
+    // @ts-ignore
+    expect(req.claims).toEqual(claims);
+
+    expect(mockNext).toHaveBeenCalledWith(); // 0 args
+});
+
+test('expressRequireNetworkless with no token', async () => {
+    mockGet.mockImplementationOnce(() => { return undefined; });
+
+    // @ts-ignore
+    const req = {} as Request;
+    const res = {} as Response;
+
+    const clerk = Clerk.getInstance();
+
+    await clerk.expressRequireNetworkless()(req, res, mockNext as NextFunction);
+
+    // @ts-ignore
+    expect(req.claims).toBeUndefined();
+
+    expect(mockNext).toHaveBeenCalled();
+    expect(mockNext.mock.calls[0][0]).toBeInstanceOf(Error);
+});
+
