@@ -169,8 +169,8 @@ const clerk = pkg.default;
 
 clerk.emails
   .createEmail({ fromEmailName, subject, body, emailAddressId })
-  .then((email) => console.log(email))
-  .catch((error) => console.error(error));
+  .then(email => console.log(email))
+  .catch(error => console.error(error));
 ```
 
 Or if you prefer a resource sub-api directly:
@@ -181,8 +181,8 @@ const { clients } = pkg;
 
 clients
   .getClient(clientId)
-  .then((client) => console.log(client))
-  .catch((error) => console.error(error));
+  .then(client => console.log(client))
+  .catch(error => console.error(error));
 ```
 
 #### Setters
@@ -229,8 +229,8 @@ const clerk = new Clerk({ apiKey: 'your-eyes-only' });
 
 clerk.smsMessages
   .createSMSMessage({ message, phoneNumberId })
-  .then((smsMessage) => console.log(smsMessage))
-  .catch((error) => console.error(error));
+  .then(smsMessage => console.log(smsMessage))
+  .catch(error => console.error(error));
 ```
 
 ### Examples
@@ -504,6 +504,53 @@ function errorHandler(err, req, res, next) {
 If you are using the strict middleware variant, the `err` pass to your error handler will contain enough context for you to respond as you deem fit.
 
 ## Next
+
+`@clerk/clerk-sdk-node` is designed to function seamlessly with Next.js in more than one use cases depending on your application needs.
+
+### Server protected pages
+
+To protect any of your pages from unauthenticated access at the server layer, without relying on client-side conditional rendering you can use the `withProtectedRouteSSR` or `withSessionSSR` middlewares.
+
+Both methods rely on the [server-side rendering](https://nextjs.org/docs/basic-features/pages#server-side-rendering) capability provided by Next.js.
+
+- `withProtectedRouteSSR` is the easiest way to protect a route at the server level just by adding the redirection path for unauthenticated access.
+  _Default redirection happens as a 307 status code._
+
+```ts
+/* Without additional server-side processing */
+export const getServerSideProps = withProtectedRouteSSR('/sign-up')();
+
+/* With additional server-side processing if user is authenticated  */
+export const getServerSideProps = withProtectedRouteSSR('/sign-up')(
+  async ctx => {
+    const pageProps = await getPropsForAuthenticatedUse();
+    return { props: { pageProps } };
+  }
+);
+```
+
+- `withSessionSSR` gives more flexibility on how the client can handle the absence or not of a Clerk session.
+
+```ts
+export const getServerSideProps = withSessionSSR(async function({ req }) {
+  /* Get the user session based on the authentication status */
+  const clerkSession = req.session;
+
+  /* If the user is not authenticated, redirect him to the '/sign-up' route */
+  if (!clerkSession) {
+    return {
+      redirect: {
+        destination: '/sign-up',
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: {} };
+});
+```
+
+### API Middleware
 
 The current package also offers a way of making
 your <a href="https://nextjs.org/docs/api-routes/api-middlewares" target="_blank">Next.js api middleware</a> aware of the Clerk Session.

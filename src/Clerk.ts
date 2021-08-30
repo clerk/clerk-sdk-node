@@ -1,6 +1,7 @@
 ﻿// libs
+import type { ParsedUrlQuery } from 'querystring'
 import type { Request, Response, NextFunction } from 'express';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { GetServerSidePropsContext, GetServerSidePropsResult, NextApiRequest, NextApiResponse } from 'next';
 import Cookies from 'cookies';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import jwks, { JwksClient } from 'jwks-rsa';
@@ -34,6 +35,14 @@ export type WithSessionProp<T> = T & { session?: Session };
 export type RequireSessionProp<T> = T & { session: Session };
 export type WithSessionClaimsProp<T> = T & { sessionClaims?: JwtPayload };
 export type RequireSessionClaimsProp<T> = T & { sessionClaims: JwtPayload };
+
+export type SSRPropsContext<Q extends ParsedUrlQuery = ParsedUrlQuery> =
+  GetServerSidePropsContext<Q> & { req: { session: Session | undefined } }
+
+export type SSRPropGetter<
+  P extends { [key: string]: any } = { [key: string]: any },
+  Q extends ParsedUrlQuery = ParsedUrlQuery
+> = (context: SSRPropsContext<Q>) => Promise<GetServerSidePropsResult<P>>
 
 export default class Clerk {
   private _restClient: RestClient;
@@ -332,6 +341,50 @@ export default class Clerk {
         return resolve(result);
       });
     });
+  }
+
+  withProtectedRouteSSR(destination: string){
+    return (handler?: (ctxWithSession: SSRPropsContext) => Promise<GetServerSidePropsResult<any>>) => async (ctx: GetServerSidePropsContext) => {
+
+      // GetServerSidePropsContext req does not contain the query.
+      // For the sake of keeping the abstraction cleaner we inject it from ctx
+      // @ts-ignore
+      ctx.req.query = ctx.query;
+
+      try{
+        await this._runMiddleware(ctx.req, ctx.res, this.expressWithSession({ onError: this.strictOnError }));        
+      }catch (err) {
+        return {
+          redirect: {
+            destination,
+            permanent: false,
+          },
+        }
+      }
+
+      return handler ? (await handler(ctx as SSRPropsContext)) : {props: {}};
+    }
+  }
+
+  withSessionSSR(handler: (ctxWithSession: SSRPropsContext) => Promise<GetServerSidePropsResult<any>>, { onError }: MiddlewareOptions = { onError: this.defaultOnError }) {
+    return async (ctx: GetServerSidePropsContext) => {
+      // GetServerSidePropsContext req does not contain the query.
+      // For the sake of keeping the abstraction cleaner we inject it from ctx
+      // @ts-ignore
+      ctx.req.query = ctx.query;
+
+      try {
+        await this._runMiddleware(ctx.req, ctx.res, this.expressWithSession({ onError }));
+        return await handler(ctx as SSRPropsContext);
+      } catch (error) {
+        ctx.res.statusCode = error.statusCode || 401;
+        ctx.res.setHeader("Content-Type", "application/json");
+        ctx.res.end(JSON.stringify(error.data || { error: error.message }));       
+        // NextJS requires an object like that to be returned from `getServerSideProps`
+        // even if it is not consumed anywhere.
+        return { props: {} }
+      }
+    };
   }
 
   // Set the session on the request and then call provided handler
