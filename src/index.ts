@@ -48,7 +48,7 @@ export {
 };
 
 // Export wrapper types for Next.js requests
-export { WithSessionProp, RequireSessionProp } from './instance';
+export { WithSessionProp, RequireSessionProp, WithSessionClaimsProp, RequireSessionClaimsProp } from './instance';
 
 // Export Errors
 export { HttpError, ClerkServerError, ClerkServerErrorJSON } from './utils/Errors';

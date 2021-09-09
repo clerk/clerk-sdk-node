@@ -2,7 +2,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Cookies from 'cookies';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import jwks, { JwksClient } from 'jwks-rsa';
 
 // utils
@@ -32,6 +32,8 @@ export type MiddlewareOptions = {
 
 export type WithSessionProp<T> = T & { session?: Session };
 export type RequireSessionProp<T> = T & { session: Session };
+export type WithSessionClaimsProp<T> = T & { sessionClaims?: JwtPayload };
+export type RequireSessionClaimsProp<T> = T & { sessionClaims: JwtPayload };
 
 export default class Clerk {
   private _restClient: RestClient;
@@ -150,25 +152,29 @@ export default class Clerk {
 
   // Utilities
 
-  decodeToken(token: string): jwt.JwtPayload {
+  decodeToken(token: string): JwtPayload {
     const decoded = jwt.decode(token)
     if (!decoded) {
       throw new Error(`Failed to decode token: ${token}`)
     }
 
-    return decoded as jwt.JwtPayload
+    return decoded as JwtPayload
   }
 
-  async verifyToken(token: string, algorithms: string[] = ['RS256']): Promise<jwt.JwtPayload> {
+  async verifyToken(token: string, algorithms: string[] = ['RS256']): Promise<JwtPayload> {
     const decoded = jwt.decode(token, { complete: true })
     if (!decoded) {
       throw new Error(`Failed to verify token: ${token}`)
     }
 
     const key = await this._jwksClient.getSigningKey(decoded.header.kid)
-    const verified = jwt.verify(token, key.getPublicKey(), { algorithms: algorithms as jwt.Algorithm[], audience: 'clerk'})
+    const verified = jwt.verify(token, key.getPublicKey(), {algorithms: algorithms as jwt.Algorithm[]}) as JwtPayload
 
-    return verified as jwt.JwtPayload
+    if (!verified.hasOwnProperty('iss') || !(verified.iss?.lastIndexOf('https://clerk.', 0) === 0)) {
+        throw new Error(`Invalid issuer: ${verified.iss}`)
+      }
+
+    return verified
   }
 
   // Middlewares
@@ -194,6 +200,27 @@ export default class Clerk {
   }
 
   expressWithSession({ onError }: MiddlewareOptions = { onError: this.defaultOnError }): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+    function isAuthV2Request(clerk: Clerk, token: string | undefined): boolean {
+      try {
+        if (!token) {
+          return false
+        }
+
+        const decoded = clerk.decodeToken(token)
+        return (decoded.iss?.lastIndexOf('https://clerk.', 0) === 0)
+      } catch (e) {
+        return false
+      }
+    }
+
+    function verifyToken(clerk: Clerk, token: string):Promise<JwtPayload> | undefined {
+      try {
+        return clerk.verifyToken(token)
+      } catch(e) {
+        return undefined
+      }
+    }
+
     async function authenticate(
       this: Clerk,
       req: Request,
@@ -203,37 +230,51 @@ export default class Clerk {
       const cookies = new Cookies(req, res);
 
       try {
-        const sessionToken = cookies.get('__session');
+        const cookieToken = cookies.get('__session');
+        Logger.debug(`cookieToken: ${cookieToken}`);
 
-        Logger.debug(`sessionToken: ${sessionToken}`);
-
-        if (!sessionToken) {
-          throw new HttpError(401, 'No session cookie found', undefined)
+        let headerToken;
+        if (req.headers) {
+          headerToken = (req.headers['Authorization'] || req.headers['authorization']) as string
+          Logger.debug(`headerToken: ${headerToken}`);
         }
 
-        let sessionId: any = req.query._clerk_session_id;
+        if (isAuthV2Request(this, headerToken) || isAuthV2Request(this, cookieToken)) {
+          // Set Clerk session claims on request
+          // TBD Set on state / locals instead?
+          // @ts-ignore
+          req.sessionClaims = verifyToken(this, headerToken) || verifyToken(this, sessionToken);
 
-        Logger.debug(`sessionId from query: ${sessionId}`);
-
-        let session: (Session | undefined) = undefined;
-        if (!sessionId) {
-          const client = await this.clients.verifyClient(sessionToken);
-          session = client.sessions.find(session => session.id === client.lastActiveSessionId);
-          Logger.debug(`active session from client ${client.id}: ${session?.id}`);
+          next();
         } else {
-          session = await this.sessions.verifySession(
-              sessionId,
-              sessionToken
-          );
-          Logger.debug(`active session from session id ${sessionId}: ${session}`);
+          if (!cookieToken) {
+            throw new HttpError(401, 'No session cookie found', undefined)
+          }
+
+          let sessionId: any = req.query._clerk_session_id;
+
+          Logger.debug(`sessionId from query: ${sessionId}`);
+
+          let session: (Session | undefined) = undefined;
+          if (!sessionId) {
+            const client = await this.clients.verifyClient(cookieToken);
+            session = client.sessions.find(session => session.id === client.lastActiveSessionId);
+            Logger.debug(`active session from client ${client.id}: ${session?.id}`);
+          } else {
+            session = await this.sessions.verifySession(
+                sessionId,
+                cookieToken
+            );
+            Logger.debug(`active session from session id ${sessionId}: ${session}`);
+          }
+
+          // Set Clerk session on request
+          // TBD Set on state / locals instead?
+          // @ts-ignore
+          req.session = session;
+
+          next();
         }
-
-        // Set Clerk session on request
-        // TBD Set on state / locals instead?
-        // @ts-ignore
-        req.session = session;
-
-        next();
       } catch (error) {
         // Session will not be set on request
 
@@ -279,7 +320,7 @@ export default class Clerk {
   // Set the session on the request and then call provided handler
   withSession(handler: Function, { onError }: MiddlewareOptions = { onError: this.defaultOnError }) {
     return async (
-      req: WithSessionProp<NextApiRequest>,
+      req: WithSessionProp<NextApiRequest> | WithSessionClaimsProp<NextApiRequest>,
       res: NextApiResponse
     ) => {
       try {
