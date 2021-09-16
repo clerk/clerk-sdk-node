@@ -456,7 +456,7 @@ app.use(ClerkExpressRequireSession());
 ### onError option
 
 The Express middleware supports an `options` object as an optional argument.
-The only key only supported is `onError` for providing your own error handler.
+The only key currently supported is `onError` for providing your own error handler.
 
 The `onError` function, if provided, should take an `Error` argument (`onError(error)`).
 
@@ -535,7 +535,7 @@ You can also pass an `onError` handler to the underlying Express middleware that
 export withSession(handler, { clerk, onError: error => console.log(error) });
 ```
 
-In case you would like the request to be rejected with a 401 (Unauthorized) automatically when no session exists,
+In case you would like the request to be rejected automatically when no session exists,
 without having to implement such logic yourself, you can opt for the stricter variant:
 
 ```ts
@@ -554,6 +554,31 @@ function handler(req: RequireSessionProp<NextApiRequest>, res: NextApiResponse) 
 }
 
 export requireSession(handler, { clerk, onError });
+```
+
+Note that by default the error returned will be the Clerk server error encountered (or in case of misconfiguration, the error raised by the SDK itself).
+
+If you wish to have more control over what error code & message to respond with in this case, it's recommended to implement your own error class & handler as follows:
+
+```ts
+export class HttpError extends Error {
+    statusCode: number;
+
+    constructor(message: string, statusCode: number) {
+        super(message);
+
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, HttpError.prototype);
+
+        this.statusCode = statusCode;
+    }
+}
+
+export function onError(error: Error) {
+    // Ignore passed error, return a 401
+    console.log(error);
+    return new HttpError("Unauthorized", 401);
+}
 ```
 
 The aforementioned usage pertains to the singleton case. If you would like to use a `Clerk` instance you instantiated
