@@ -243,7 +243,7 @@ export default class Clerk {
           // Set Clerk session claims on request
           // TBD Set on state / locals instead?
           // @ts-ignore
-          req.sessionClaims = verifyToken(this, headerToken) || verifyToken(this, sessionToken);
+          req.sessionClaims = await verifyToken(this, headerToken || cookieToken);
 
           next();
         } else {
