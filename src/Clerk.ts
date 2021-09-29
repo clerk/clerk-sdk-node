@@ -240,10 +240,25 @@ export default class Clerk {
         }
 
         if (isAuthV2Request(this, headerToken) || isAuthV2Request(this, cookieToken)) {
+          let sessionClaims;
+
+          if (headerToken) {
+            sessionClaims = await verifyToken(this, headerToken);
+          }
+
+          // Try to verify token from cookie only if header is empty or failed to verify
+          if (!sessionClaims && cookieToken) {
+            sessionClaims = await verifyToken(this, cookieToken);
+          }
+
+          if (!sessionClaims) {
+            throw new HttpError(401, 'Missing session token', undefined)
+          }
+
           // Set Clerk session claims on request
           // TBD Set on state / locals instead?
           // @ts-ignore
-          req.sessionClaims = await verifyToken(this, headerToken || cookieToken);
+          req.sessionClaims = sessionClaims;
 
           next();
         } else {
@@ -327,7 +342,9 @@ export default class Clerk {
         await this._runMiddleware(req, res, this.expressWithSession({ onError }));
         return handler(req, res);
       } catch (error) {
+        // @ts-ignore
         res.statusCode = error.statusCode || 401;
+        // @ts-ignore
         res.json(error.data || { error: error.message });
         res.end();
       }
