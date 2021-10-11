@@ -1,4 +1,3 @@
-import got, { HTTPAlias } from 'got';
 import deserialize from './Deserializer';
 import handleError from './ErrorHandler';
 import snakecaseKeys from 'snakecase-keys';
@@ -10,8 +9,10 @@ const packageRepo = 'https://github.com/clerkinc/clerk-sdk-node';
 const userAgent = `${packageName}/${packageVersion} (${packageRepo})`;
 const contentType = 'application/x-www-form-urlencoded';
 
+declare type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'head' | 'delete';
+
 type RequestOptions = {
-  method: HTTPAlias;
+  method: HTTPMethod;
   path: string;
   queryParams?: object;
   bodyParams?: object;
@@ -45,7 +46,7 @@ export default class RestClient {
     }
 
     // FIXME remove 'any'
-    const gotOptions: any = {
+    const options: any = {
       method: requestOptions.method,
       responseType: 'json' as 'json',
       headers: {
@@ -57,11 +58,11 @@ export default class RestClient {
     };
 
     if (requestOptions.bodyParams) {
-      gotOptions['form'] = snakecaseKeys(requestOptions.bodyParams);
+      options['form'] = snakecaseKeys(requestOptions.bodyParams);
     }
 
     // TODO improve error handling
-    return got(url, gotOptions)
+    return fetch(url, options)
       .then(data => deserialize(data.body))
       .catch(error => handleError(error));
   }
