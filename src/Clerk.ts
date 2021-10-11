@@ -3,7 +3,6 @@ import type { Request, Response, NextFunction } from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Cookies from 'cookies';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import jwks, { JwksClient } from 'jwks-rsa';
 
 // utils
 import RestClient from './utils/RestClient';
@@ -24,7 +23,6 @@ import { HttpError, ClerkServerError } from './utils/Errors';
 const defaultApiKey = process.env.CLERK_API_KEY || '';
 const defaultApiVersion = process.env.CLERK_API_VERSION || 'v1';
 const defaultServerApiUrl = process.env.CLERK_API_URL || 'https://api.clerk.dev';
-const defaultJWKSCacheMaxAge = 3600000 // 1 hour
 
 export type MiddlewareOptions = {
   onError?: Function;
@@ -36,8 +34,8 @@ export type WithSessionClaimsProp<T> = T & { sessionClaims?: JwtPayload };
 export type RequireSessionClaimsProp<T> = T & { sessionClaims: JwtPayload };
 
 export default class Clerk {
-  private _restClient: RestClient;
-  private _jwksClient: JwksClient;
+  private readonly _restClient: RestClient;
+  private readonly _pubKey: string;
 
   // singleton instance
   static _instance: Clerk;
@@ -55,7 +53,6 @@ export default class Clerk {
     serverApiUrl = defaultServerApiUrl,
     apiVersion = defaultApiVersion,
     httpOptions = {},
-    jwksCacheMaxAge = defaultJWKSCacheMaxAge,
   }: {
     apiKey?: string;
     serverApiUrl?: string;
@@ -70,15 +67,14 @@ export default class Clerk {
       httpOptions
     );
 
-    this._jwksClient = jwks({
-      jwksUri: `${serverApiUrl}/${apiVersion}/jwks`,
-      requestHeaders: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-      timeout: 5000,
-      cache: true,
-      cacheMaxAge: jwksCacheMaxAge,
-    });
+    const key = process.env.CLERK_PUBLIC_KEY
+    if (!key) {
+      throw new Error('Missing public key')
+    }
+
+    this._pubKey = key
+
+    Logger.debug(this._pubKey)
   }
 
   // For use as singleton, always returns the same instance
@@ -167,8 +163,7 @@ export default class Clerk {
       throw new Error(`Failed to verify token: ${token}`)
     }
 
-    const key = await this._jwksClient.getSigningKey(decoded.header.kid)
-    const verified = jwt.verify(token, key.getPublicKey(), {algorithms: algorithms as jwt.Algorithm[]}) as JwtPayload
+    const verified = jwt.verify(token, this._pubKey, {algorithms: algorithms as jwt.Algorithm[]}) as JwtPayload
 
     if (!verified.hasOwnProperty('iss') || !(verified.iss?.lastIndexOf('https://clerk.', 0) === 0)) {
         throw new Error(`Invalid issuer: ${verified.iss}`)
