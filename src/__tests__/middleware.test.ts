@@ -111,6 +111,10 @@ test('expressWithSession with session token in header', async () => {
 
     // @ts-ignore
     expect(req.sessionClaims).toEqual(claims);
+    // @ts-ignore
+    expect(req.session.id).toEqual(claims.sid)
+    // @ts-ignore
+    expect(req.session.userId).toEqual(claims.sub)
 
     expect(mockNext).toHaveBeenCalledWith(); // 0 args
 });
@@ -136,6 +140,10 @@ test('expressRequireSession with session token in header', async () => {
 
     // @ts-ignore
     expect(req.sessionClaims).toEqual(claims);
+    // @ts-ignore
+    expect(req.session.id).toEqual(claims.sid)
+    // @ts-ignore
+    expect(req.session.userId).toEqual(claims.sub)
 
     expect(mockNext).toHaveBeenCalledWith(); // 0 args
 });

@@ -259,6 +259,8 @@ export default class Clerk {
           // TBD Set on state / locals instead?
           // @ts-ignore
           req.sessionClaims = sessionClaims;
+          // @ts-ignore
+          req.session = new Session({id: sessionClaims.sid, userId: sessionClaims.sub})
 
           next();
         } else {
