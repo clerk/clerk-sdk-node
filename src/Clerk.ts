@@ -32,8 +32,8 @@ export type MiddlewareOptions = {
 
 export type WithSessionProp<T> = T & { session?: Session };
 export type RequireSessionProp<T> = T & { session: Session };
-export type WithSessionClaimsProp<T> = T & { sessionClaims?: object };
-export type RequireSessionClaimsProp<T> = T & { sessionClaims: object };
+export type WithSessionClaimsProp<T> = T & { sessionClaims?: JWTPayload };
+export type RequireSessionClaimsProp<T> = T & { sessionClaims: JWTPayload };
 
 export default class Clerk {
   private readonly _restClient: RestClient;
@@ -188,7 +188,7 @@ export default class Clerk {
   }
 
   expressWithSession({ onError }: MiddlewareOptions = { onError: this.defaultOnError }): (req: Request, res: Response, next: NextFunction) => Promise<void> {
-    function verifyToken(clerk: Clerk, token: string):Promise<object> | undefined {
+    function verifyToken(clerk: Clerk, token: string):Promise<JWTPayload> | undefined {
       try {
         return clerk.verifyToken(token)
       } catch(e) {
