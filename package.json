@@ -44,10 +44,9 @@
   },
   "dependencies": {
     "@types/cookies": "^0.7.6",
-    "@types/jsonwebtoken": "^8.5.4",
     "camelcase-keys": "^6.2.2",
     "cookies": "^0.8.0",
-    "jsonwebtoken": "^8.5.1",
+    "jose": "^3.20.1",
     "snakecase-keys": "^3.2.1"
   },
   "description": "Clerk (clerk.dev) server SDK for usage with node",

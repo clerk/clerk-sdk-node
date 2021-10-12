@@ -2,7 +2,9 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Cookies from 'cookies';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { jwtVerify } from 'jose/jwt/verify';
+import type { JWTPayload } from 'jose/types.d';
+import { importJWK } from 'jose/key/import';
 
 // utils
 import RestClient from './utils/RestClient';
@@ -30,8 +32,8 @@ export type MiddlewareOptions = {
 
 export type WithSessionProp<T> = T & { session?: Session };
 export type RequireSessionProp<T> = T & { session: Session };
-export type WithSessionClaimsProp<T> = T & { sessionClaims?: JwtPayload };
-export type RequireSessionClaimsProp<T> = T & { sessionClaims: JwtPayload };
+export type WithSessionClaimsProp<T> = T & { sessionClaims?: object };
+export type RequireSessionClaimsProp<T> = T & { sessionClaims: object };
 
 export default class Clerk {
   private readonly _restClient: RestClient;
@@ -58,7 +60,6 @@ export default class Clerk {
     serverApiUrl?: string;
     apiVersion?: string;
     httpOptions?: object;
-    jwksCacheMaxAge?: number;
   } = {}) {
     this._restClient = new RestClient(
       apiKey,
@@ -66,10 +67,9 @@ export default class Clerk {
       apiVersion,
       httpOptions
     );
-
     const key = process.env.CLERK_PUBLIC_KEY
     if (!key) {
-      throw new Error('Missing public key')
+      throw new Error('Missing public key modulus (n)')
     }
 
     this._pubKey = key
@@ -148,28 +148,21 @@ export default class Clerk {
 
   // Utilities
 
-  decodeToken(token: string): JwtPayload {
-    const decoded = jwt.decode(token)
-    if (!decoded) {
-      throw new Error(`Failed to decode token: ${token}`)
+  async verifyToken(token: string, algorithms: string[] = ['RS256']): Promise<JWTPayload> {
+    const pubKey = await importJWK({
+      use: 'sig',
+      kty: 'RSA',
+      e: 'AQAB',
+      n: this._pubKey,
+    }, 'RS256');
+
+    const { payload } = await jwtVerify(token, pubKey, {algorithms: algorithms})
+
+    if (!payload.iss || !(payload.iss?.lastIndexOf('https://clerk.', 0) === 0)) {
+      throw new Error(`Invalid issuer: ${payload.iss}`)
     }
 
-    return decoded as JwtPayload
-  }
-
-  async verifyToken(token: string, algorithms: string[] = ['RS256']): Promise<JwtPayload> {
-    const decoded = jwt.decode(token, { complete: true })
-    if (!decoded) {
-      throw new Error(`Failed to verify token: ${token}`)
-    }
-
-    const verified = jwt.verify(token, this._pubKey, {algorithms: algorithms as jwt.Algorithm[]}) as JwtPayload
-
-    if (!verified.hasOwnProperty('iss') || !(verified.iss?.lastIndexOf('https://clerk.', 0) === 0)) {
-        throw new Error(`Invalid issuer: ${verified.iss}`)
-      }
-
-    return verified
+    return payload
   }
 
   // Middlewares
@@ -195,20 +188,7 @@ export default class Clerk {
   }
 
   expressWithSession({ onError }: MiddlewareOptions = { onError: this.defaultOnError }): (req: Request, res: Response, next: NextFunction) => Promise<void> {
-    function isAuthV2Request(clerk: Clerk, token: string | undefined): boolean {
-      try {
-        if (!token) {
-          return false
-        }
-
-        const decoded = clerk.decodeToken(token)
-        return (decoded.iss?.lastIndexOf('https://clerk.', 0) === 0)
-      } catch (e) {
-        return false
-      }
-    }
-
-    function verifyToken(clerk: Clerk, token: string):Promise<JwtPayload> | undefined {
+    function verifyToken(clerk: Clerk, token: string):Promise<object> | undefined {
       try {
         return clerk.verifyToken(token)
       } catch(e) {
@@ -234,59 +214,30 @@ export default class Clerk {
           Logger.debug(`headerToken: ${headerToken}`);
         }
 
-        if (isAuthV2Request(this, headerToken) || isAuthV2Request(this, cookieToken)) {
-          let sessionClaims;
+        let sessionClaims;
 
-          if (headerToken) {
-            sessionClaims = await verifyToken(this, headerToken);
-          }
-
-          // Try to verify token from cookie only if header is empty or failed to verify
-          if (!sessionClaims && cookieToken) {
-            sessionClaims = await verifyToken(this, cookieToken);
-          }
-
-          if (!sessionClaims) {
-            throw new HttpError(401, 'Missing session token', undefined)
-          }
-
-          // Set Clerk session claims on request
-          // TBD Set on state / locals instead?
-          // @ts-ignore
-          req.sessionClaims = sessionClaims;
-          // @ts-ignore
-          req.session = new Session({id: sessionClaims.sid, userId: sessionClaims.sub})
-
-          next();
-        } else {
-          if (!cookieToken) {
-            throw new HttpError(401, 'No session cookie found', undefined)
-          }
-
-          let sessionId: any = req.query._clerk_session_id;
-
-          Logger.debug(`sessionId from query: ${sessionId}`);
-
-          let session: (Session | undefined) = undefined;
-          if (!sessionId) {
-            const client = await this.clients.verifyClient(cookieToken);
-            session = client.sessions.find(session => session.id === client.lastActiveSessionId);
-            Logger.debug(`active session from client ${client.id}: ${session?.id}`);
-          } else {
-            session = await this.sessions.verifySession(
-                sessionId,
-                cookieToken
-            );
-            Logger.debug(`active session from session id ${sessionId}: ${session}`);
-          }
-
-          // Set Clerk session on request
-          // TBD Set on state / locals instead?
-          // @ts-ignore
-          req.session = session;
-
-          next();
+        if (headerToken) {
+          sessionClaims = await verifyToken(this, headerToken);
         }
+
+        // Try to verify token from cookie only if header is empty or failed to verify
+        if (!sessionClaims && cookieToken) {
+          sessionClaims = await verifyToken(this, cookieToken);
+        }
+
+        if (!sessionClaims) {
+          throw new HttpError(401, 'Missing session token', undefined)
+        }
+
+        // Set Clerk session claims on request
+        // TBD Set on state / locals instead?
+        // @ts-ignore
+        req.sessionClaims = sessionClaims;
+
+        // @ts-ignore
+        req.session = new Session({id: sessionClaims.sid, userId: sessionClaims.sub})
+
+        next();
       } catch (error) {
         // Session will not be set on request
 
