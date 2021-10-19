@@ -357,4 +357,180 @@ export default class Clerk {
   requireSession(handler: Function, { onError }: MiddlewareOptions = { onError: this.strictOnError }) {
     return this.withSession(handler, { onError })
   }
+
+  expressWithSessionV2({ onError }: MiddlewareOptions = { onError: this.defaultOnError }): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+    function decodeToken(clerk: Clerk, token: string):JwtPayload | undefined {
+      try {
+        return clerk.decodeToken(token)
+      } catch(e) {
+        return undefined
+      }
+    }
+
+    function verifyToken(clerk: Clerk, token: string):Promise<JwtPayload> | undefined {
+      try {
+        return clerk.verifyToken(token)
+      } catch(e) {
+        return undefined
+      }
+    }
+
+    function isDevelopmentOrStaging(apiKey: string): boolean {
+      return apiKey.startsWith('test_')
+    }
+
+    function isProduction(apiKey: string): boolean {
+      return !isDevelopmentOrStaging(apiKey)
+    }
+
+    function isCrossOriginRequest(req: Request): boolean {
+      if (req.headers.origin) {
+        return true;
+      }
+
+      return req.headers.origin !== req.headers.host?.split(':')[0]
+    }
+
+    function signedOut() {
+      throw new HttpError(401, 'Signed out', undefined)
+    }
+
+    async function interstitial(res: Response, restClient: RestClient) {
+      const body = await restClient.makeRequest({
+        method: 'get',
+        path: '/internal/interstitial',
+        responseType: 'text',
+      })
+
+      res.writeHead(401, { 'Content-Type': 'text/html'})
+      res.write(body)
+      res.end();
+    }
+
+    async function authenticateV2(
+        this: Clerk,
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<any> {
+      const cookies = new Cookies(req, res);
+
+      try {
+        const cookieToken = cookies.get('__session');
+        Logger.debug(`cookieToken: ${cookieToken}`);
+        const clientUat = cookies.get('__client_uat');
+        Logger.debug(`clientUat: ${clientUat}`);
+        const headerToken = req.headers.authorization;
+        Logger.debug(`headerToken: ${headerToken}`);
+
+        // HEADER AUTHENTICATION
+        if (headerToken && !decodeToken(this, headerToken)) {
+          Logger.debug('header authentication 1');
+          return signedOut();
+        }
+
+        if (!headerToken && req.headers.origin !== req.headers.host && req.headers.origin !== req.headers['X-Forwarded-Host']) {
+          Logger.debug('header authentication 2');
+          return signedOut();
+        }
+
+        if (headerToken) {
+          const sessionClaims = await verifyToken(this, headerToken)
+          Logger.debug(`header authentication 3 ${sessionClaims}`);
+          if (!sessionClaims) {
+            return res.status(401).end();
+          }
+
+          Logger.debug('header authentication 4');
+          // @ts-ignore
+          req.sessionClaims = sessionClaims;
+          // @ts-ignore
+          req.session = new Session({id: sessionClaims.sid, userId: sessionClaims.sub});
+          return;
+        }
+
+        // COOKIE AUTHENTICATION
+        Logger.debug('cookie authentication 1');
+
+        if (isDevelopmentOrStaging(this._restClient.apiKey) && (!req.headers.referer || isCrossOriginRequest(req))) {
+          Logger.debug('cookie authentication 2');
+          await interstitial(res, this._restClient);
+          return;
+        }
+
+        Logger.debug('cookie authentication 3');
+
+        if (isProduction(this._restClient.apiKey) && !clientUat) {
+          Logger.debug('cookie authentication 4');
+          return signedOut();
+        }
+
+        if (clientUat === '0' || !cookieToken) {
+          Logger.debug('cookie authentication 5');
+          return signedOut();
+        }
+
+        const sessionClaims = await verifyToken(this, cookieToken);
+        Logger.debug(`cookie authentication 6 ${sessionClaims}`);
+
+        if (cookieToken && clientUat && sessionClaims?.iat && sessionClaims.iat >= Number(clientUat)) {
+          Logger.debug('cookie authentication 7');
+          // @ts-ignore
+          req.sessionClaims = sessionClaims;
+          // @ts-ignore
+          req.session = new Session({id: sessionClaims.sid, userId: sessionClaims.sub});
+          return next();
+        }
+
+        Logger.debug('cookie authentication 8');
+
+        await interstitial(res, this._restClient);
+      } catch (error) {
+        // Session will not be set on request
+
+        // Call onError if provided
+        if (!onError) {
+          return next();
+        }
+
+        const err = await onError(error);
+
+        if (err) {
+          next(err);
+        } else {
+          next();
+        }
+      }
+    }
+
+    return authenticateV2.bind(this);
+  }
+
+  expressRequireSessionV2({ onError }: MiddlewareOptions = { onError: this.strictOnError }) {
+    return this.expressWithSessionV2({ onError });
+  }
+
+  // Set the session on the request and then call provided handler
+  withSessionV2(handler: Function, { onError }: MiddlewareOptions = { onError: this.defaultOnError }) {
+    return async (
+        req: WithSessionProp<NextApiRequest> | WithSessionClaimsProp<NextApiRequest>,
+        res: NextApiResponse
+    ) => {
+      try {
+        await this._runMiddleware(req, res, this.expressWithSessionV2({ onError }));
+        return handler(req, res);
+      } catch (error) {
+        // @ts-ignore
+        res.statusCode = error.statusCode || 401;
+        // @ts-ignore
+        res.json(error.data || { error: error.message });
+        res.end();
+      }
+    };
+  }
+
+  // Stricter version, short-circuits if session can't be determined
+  requireSessionV2(handler: Function, { onError }: MiddlewareOptions = { onError: this.strictOnError }) {
+    return this.withSessionV2(handler, { onError })
+  }
 }

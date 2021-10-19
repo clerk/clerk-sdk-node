@@ -40,11 +40,21 @@ const ClerkExpressRequireSession = singletonInstance.expressRequireSession.bind(
 );
 const withSession = singletonInstance.withSession.bind(singletonInstance);
 const requireSession = singletonInstance.requireSession.bind(singletonInstance);
+
+const ClerkExpressWithSessionV2 = singletonInstance.expressWithSessionV2.bind(singletonInstance);
+const ClerkExpressRequireSessionV2 = singletonInstance.expressRequireSessionV2.bind(singletonInstance);
+const withSessionV2 = singletonInstance.withSessionV2.bind(singletonInstance);
+const requireSessionV2 = singletonInstance.requireSessionV2.bind(singletonInstance);
+
 export {
   ClerkExpressWithSession,
   ClerkExpressRequireSession,
   withSession,
   requireSession,
+  ClerkExpressWithSessionV2,
+  ClerkExpressRequireSessionV2,
+  withSessionV2,
+  requireSessionV2,
 };
 
 // Export wrapper types for Next.js requests
