@@ -15,6 +15,7 @@ type RequestOptions = {
   path: string;
   queryParams?: object;
   bodyParams?: object;
+  responseType?: string;
 };
 
 export default class RestClient {
@@ -47,7 +48,7 @@ export default class RestClient {
     // FIXME remove 'any'
     const gotOptions: any = {
       method: requestOptions.method,
-      responseType: 'json' as 'json',
+      responseType: requestOptions.responseType || 'json',
       headers: {
         Authorization: `Bearer ${this.apiKey}`,
         'Content-type': contentType,
@@ -62,7 +63,7 @@ export default class RestClient {
 
     // TODO improve error handling
     return got(url, gotOptions)
-      .then(data => deserialize(data.body))
+      .then(data => gotOptions.responseType === 'json' ? deserialize(data.body) : data.body)
       .catch(error => handleError(error));
   }
 }
