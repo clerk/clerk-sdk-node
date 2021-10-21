@@ -39,11 +39,18 @@ const ClerkExpressRequireSession = singletonInstance.expressRequireSession.bind(
   singletonInstance
 );
 const withSession = singletonInstance.withSession.bind(singletonInstance);
+
+const withSessionSSR = singletonInstance.withSessionSSR.bind(singletonInstance);
 const requireSession = singletonInstance.requireSession.bind(singletonInstance);
+const withProtectedRouteSSR = singletonInstance.withProtectedRouteSSR.bind(
+  singletonInstance
+);
 export {
   ClerkExpressWithSession,
   ClerkExpressRequireSession,
   withSession,
+  withSessionSSR,
+  withProtectedRouteSSR,
   requireSession,
 };
 
@@ -51,7 +58,11 @@ export {
 export { WithSessionProp, RequireSessionProp, WithSessionClaimsProp, RequireSessionClaimsProp } from './instance';
 
 // Export Errors
-export { HttpError, ClerkServerError, ClerkServerErrorJSON } from './utils/Errors';
+export {
+  HttpError,
+  ClerkServerError,
+  ClerkServerErrorJSON,
+} from './utils/Errors';
 
 // Export Logger
 import Logger from './utils/Logger';
