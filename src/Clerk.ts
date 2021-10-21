@@ -242,7 +242,9 @@ export default class Clerk {
         return false;
       }
 
-      return req.headers.origin !== req.headers.host?.split(':')[0]
+      // Remove request's scheme
+      const origin = req.headers.origin.replace(/(^\w+:|^)\/\//, '');
+      return origin !== req.headers.host
     }
 
     function signedOut() {
@@ -286,7 +288,7 @@ export default class Clerk {
           return signedOut();
         }
 
-        if (!headerToken && req.headers.origin !== req.headers.host && req.headers.origin !== req.headers['X-Forwarded-Host']) {
+        if (!headerToken && isCrossOriginRequest(req)) {
           return signedOut();
         }
 
