@@ -217,7 +217,11 @@ export default class Clerk {
       }
     }
 
-    function verifyToken(clerk: Clerk, token: string):Promise<JwtPayload> | undefined {
+    function verifyToken(clerk: Clerk, token: string | undefined):Promise<JwtPayload> | undefined {
+      if (!token) {
+        return undefined;
+      }
+
       try {
         return clerk.verifyToken(token)
       } catch(e) {
@@ -309,7 +313,7 @@ export default class Clerk {
           return signedOut();
         }
 
-        if (clientUat === '0' || !cookieToken) {
+        if (clientUat === '0') {
           return signedOut();
         }
 
