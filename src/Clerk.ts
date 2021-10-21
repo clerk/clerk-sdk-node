@@ -20,7 +20,7 @@ import { UserApi } from './apis/UserApi';
 // resources
 import { Session } from './resources/Session';
 
-import { HttpError, ClerkServerError } from './utils/Errors';
+import { ClerkServerError } from './utils/Errors';
 
 const defaultApiKey = process.env.CLERK_API_KEY || '';
 const defaultApiVersion = process.env.CLERK_API_VERSION || 'v1';
@@ -209,16 +209,11 @@ export default class Clerk {
   }
 
   expressWithSession({ onError }: MiddlewareOptions = { onError: this.defaultOnError }): (req: Request, res: Response, next: NextFunction) => Promise<void> {
-    function isAuthV2Request(clerk: Clerk, token: string | undefined): boolean {
+    function decodeToken(clerk: Clerk, token: string):JwtPayload | undefined {
       try {
-        if (!token) {
-          return false
-        }
-
-        const decoded = clerk.decodeToken(token)
-        return (decoded.iss?.lastIndexOf('https://clerk.', 0) === 0)
-      } catch (e) {
-        return false
+        return clerk.decodeToken(token)
+      } catch(e) {
+        return undefined
       }
     }
 
@@ -230,77 +225,105 @@ export default class Clerk {
       }
     }
 
+    function isDevelopmentOrStaging(apiKey: string): boolean {
+      return apiKey.startsWith('test_')
+    }
+
+    function isProduction(apiKey: string): boolean {
+      return !isDevelopmentOrStaging(apiKey)
+    }
+
+    function isCrossOriginRequest(req: Request): boolean {
+      if (!req.headers.origin) {
+        return false;
+      }
+
+      return req.headers.origin !== req.headers.host?.split(':')[0]
+    }
+
+    function signedOut() {
+      throw new Error('You are signed out')
+    }
+
+    async function interstitial(res: Response, restClient: RestClient) {
+      const body = await restClient.makeRequest({
+        method: 'get',
+        path: '/internal/interstitial',
+        responseType: 'text',
+      })
+
+      res.writeHead(401, { 'Content-Type': 'text/html'})
+      res.write(body)
+      res.end();
+    }
+
     async function authenticate(
-      this: Clerk,
-      req: Request,
-      res: Response,
-      next: NextFunction
-    ) {
+        this: Clerk,
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<any> {
       const cookies = new Cookies(req, res);
 
       try {
         const cookieToken = cookies.get('__session');
         Logger.debug(`cookieToken: ${cookieToken}`);
+        const clientUat = cookies.get('__client_uat');
+        Logger.debug(`clientUat: ${clientUat}`);
 
         let headerToken;
         if (req.headers) {
-          headerToken = (req.headers['Authorization'] || req.headers['authorization']) as string
+          headerToken = (req.headers['Authorization'] || req.headers['authorization']) as string;
           Logger.debug(`headerToken: ${headerToken}`);
         }
 
-        if (isAuthV2Request(this, headerToken) || isAuthV2Request(this, cookieToken)) {
-          let sessionClaims;
+        // HEADER AUTHENTICATION
+        if (headerToken && !decodeToken(this, headerToken)) {
+          return signedOut();
+        }
 
-          if (headerToken) {
-            sessionClaims = await verifyToken(this, headerToken);
-          }
+        if (!headerToken && req.headers.origin !== req.headers.host && req.headers.origin !== req.headers['X-Forwarded-Host']) {
+          return signedOut();
+        }
 
-          // Try to verify token from cookie only if header is empty or failed to verify
-          if (!sessionClaims && cookieToken) {
-            sessionClaims = await verifyToken(this, cookieToken);
-          }
-
+        if (headerToken) {
+          const sessionClaims = await verifyToken(this, headerToken)
           if (!sessionClaims) {
-            throw new HttpError(401, 'Missing session token', undefined)
+            return res.status(401).end();
           }
 
-          // Set Clerk session claims on request
-          // TBD Set on state / locals instead?
           // @ts-ignore
           req.sessionClaims = sessionClaims;
           // @ts-ignore
-          req.session = new Session({id: sessionClaims.sid, userId: sessionClaims.sub})
-
-          next();
-        } else {
-          if (!cookieToken) {
-            throw new HttpError(401, 'No session cookie found', undefined)
-          }
-
-          let sessionId: any = req.query._clerk_session_id;
-
-          Logger.debug(`sessionId from query: ${sessionId}`);
-
-          let session: (Session | undefined) = undefined;
-          if (!sessionId) {
-            const client = await this.clients.verifyClient(cookieToken);
-            session = client.sessions.find(session => session.id === client.lastActiveSessionId);
-            Logger.debug(`active session from client ${client.id}: ${session?.id}`);
-          } else {
-            session = await this.sessions.verifySession(
-                sessionId,
-                cookieToken
-            );
-            Logger.debug(`active session from session id ${sessionId}: ${session}`);
-          }
-
-          // Set Clerk session on request
-          // TBD Set on state / locals instead?
-          // @ts-ignore
-          req.session = session;
-
-          next();
+          req.session = new Session({id: sessionClaims.sid, userId: sessionClaims.sub});
+          return next();
         }
+
+        // COOKIE AUTHENTICATION
+        if (isDevelopmentOrStaging(this._restClient.apiKey) && (!req.headers.referer || isCrossOriginRequest(req))) {
+          await interstitial(res, this._restClient);
+          return;
+        }
+
+        if (isProduction(this._restClient.apiKey) && !clientUat) {
+          return signedOut();
+        }
+
+        if (clientUat === '0' || !cookieToken) {
+          return signedOut();
+        }
+
+        const sessionClaims = await verifyToken(this, cookieToken);
+
+        if (cookieToken && clientUat && sessionClaims?.iat && sessionClaims.iat >= Number(clientUat)) {
+          // @ts-ignore
+          req.sessionClaims = sessionClaims;
+          // @ts-ignore
+          req.session = new Session({id: sessionClaims.sid, userId: sessionClaims.sub});
+          return next();
+        }
+
+        await interstitial(res, this._restClient);
       } catch (error) {
         // Session will not be set on request
 
