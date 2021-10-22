@@ -280,6 +280,9 @@ export default class Clerk {
         let headerToken;
         if (req.headers) {
           headerToken = (req.headers['Authorization'] || req.headers['authorization']) as string;
+          if(headerToken.startsWith("Bearer ")){
+            headerToken = headerToken.replace("Bearer ", "");
+          }
           Logger.debug(`headerToken: ${headerToken}`);
         }
 
