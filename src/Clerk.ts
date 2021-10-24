@@ -238,17 +238,39 @@ export default class Clerk {
     }
 
     function isCrossOriginRequest(req: Request): boolean {
-      if (!req.headers.origin) {
+      // Remove request's protocol
+      const origin = req.headers.origin?.trim().replace(/(^\w+:|^)\/\//, '');
+      if (!origin) {
         return false;
       }
 
-      // Remove request's scheme
-      const origin = req.headers.origin.replace(/(^\w+:|^)\/\//, '');
-      return origin !== req.headers.host
+      let initialHost = req.headers.host as string;
+      // Need to append the protocol if not exists for URL parse to work correctly
+      if (!initialHost.startsWith('http://') && !initialHost.startsWith('https://')) {
+        initialHost = `https://${initialHost}`;
+      }
+
+      const hostURL = new URL(initialHost);
+
+      let host = (req.headers['X-Forwarded-Host'] as string)?.trim();
+      if (!host) {
+        host = hostURL.hostname;
+      }
+
+      let port = (req.headers['X-Forwarded-Port'] as string)?.trim();
+      if (!port) {
+        port = hostURL.port;
+      }
+
+      if (port && port !== '80' && port !== '443') {
+        host = `${host}:${port}`;
+      }
+
+      return origin !== host;
     }
 
     function signedOut() {
-      throw new Error('You are signed out')
+      throw new Error('Unauthenticated')
     }
 
     async function interstitial(res: Response, restClient: RestClient) {
