@@ -298,15 +298,9 @@ export default class Clerk {
         Logger.debug(`cookieToken: ${cookieToken}`);
         const clientUat = cookies.get('__client_uat');
         Logger.debug(`clientUat: ${clientUat}`);
-
-        let headerToken;
-        if (req.headers) {
-          headerToken = (req.headers['Authorization'] || req.headers['authorization']) as string;
-          if(headerToken.startsWith("Bearer ")){
-            headerToken = headerToken.replace("Bearer ", "");
-          }
-          Logger.debug(`headerToken: ${headerToken}`);
-        }
+        let headerToken = (req.headers['Authorization'] || req.headers['authorization']) as string;
+        headerToken = headerToken?.replace('Bearer ', '');
+        Logger.debug(`headerToken: ${headerToken}`);
 
         // HEADER AUTHENTICATION
         if (headerToken && !decodeToken(this, headerToken)) {

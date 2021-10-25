@@ -1,22 +1,21 @@
 import type { Request, Response, NextFunction } from 'express';
 import Clerk from '../Clerk';
+import jwt from 'jsonwebtoken';
 
-const mockGet = jest.fn();
 const mockNext = jest.fn();
+
+const mockClaims = {
+    iss: 'https://clerk.issuer',
+    sub: 'subject',
+    sid: 'session_id',
+}
+const mockToken = jwt.sign(mockClaims, 'mock-secret');
 
 afterEach(() => {
     mockNext.mockReset();
 });
 
-jest.mock('cookies', () => {
-    return jest.fn().mockImplementation(() => {
-        return { get: mockGet };
-    });
-});
-
-test('expressWithSession with no session cookie or header', async () => {
-    mockGet.mockImplementationOnce(() => { return undefined; });
-
+test('expressWithSession with no session token', async () => {
     // @ts-ignore
     const req = {} as Request;
     const res = {} as Response;
@@ -31,9 +30,7 @@ test('expressWithSession with no session cookie or header', async () => {
     expect(mockNext).toHaveBeenCalledWith(); // 0 args
 });
 
-test('expressRequireSession with no session cookie or token', async () => {
-    mockGet.mockImplementationOnce(() => { return undefined; });
-
+test('expressRequireSession with no session token', async () => {
     // @ts-ignore
     const req = {} as Request;
     const res = {} as Response;
@@ -49,60 +46,42 @@ test('expressRequireSession with no session cookie or token', async () => {
     expect(mockNext.mock.calls[0][0]).toBeInstanceOf(Error);
 });
 
-test('expressWithSession with session token in header', async () => {
-    mockGet.mockImplementationOnce(() => { return 'foo'; });
-
+test('expressWithSession with Authorization header', async () => {
     // @ts-ignore
-    const req = { headers: { Authorization: 'bar' } } as Request;
+    const req = { headers: { Authorization: mockToken } } as Request;
     const res = {} as Response;
 
-    const claims = {
-        iss: 'https://clerk.issuer',
-        sub: 'subject',
-        sid: 'session_id',
-    }
-
     const clerk = Clerk.getInstance();
-    clerk.verifyToken = jest.fn().mockReturnValue(claims);
-    clerk.decodeToken = jest.fn().mockReturnValue(claims);
+    clerk.verifyToken = jest.fn().mockReturnValue(mockClaims);
 
     await clerk.expressWithSession()(req, res, mockNext as NextFunction);
 
     // @ts-ignore
-    expect(req.sessionClaims).toEqual(claims);
+    expect(req.sessionClaims).toEqual(mockClaims);
     // @ts-ignore
-    expect(req.session.id).toEqual(claims.sid)
+    expect(req.session.id).toEqual(mockClaims.sid)
     // @ts-ignore
-    expect(req.session.userId).toEqual(claims.sub)
+    expect(req.session.userId).toEqual(mockClaims.sub)
 
     expect(mockNext).toHaveBeenCalledWith(); // 0 args
 });
 
-test('expressRequireSession with session token in header', async () => {
-    mockGet.mockImplementationOnce(() => { return 'foo'; });
-
+test('expressWithSession with Authorization header in Bearer format', async () => {
     // @ts-ignore
-    const req = { headers: { Authorization: 'bar' } } as Request;
+    const req = { headers: { Authorization: `Bearer ${mockToken}` }} as Request;
     const res = {} as Response;
 
-    const claims = {
-        iss: 'https://clerk.issuer',
-        sub: 'subject',
-        sid: 'session_id',
-    }
-
     const clerk = Clerk.getInstance();
-    clerk.verifyToken = jest.fn().mockReturnValue(claims);
-    clerk.decodeToken = jest.fn().mockReturnValue(claims);
+    clerk.verifyToken = jest.fn().mockReturnValue(mockClaims);
 
-    await clerk.expressRequireSession()(req, res, mockNext as NextFunction);
+    await clerk.expressWithSession()(req, res, mockNext as NextFunction);
 
     // @ts-ignore
-    expect(req.sessionClaims).toEqual(claims);
+    expect(req.sessionClaims).toEqual(mockClaims);
     // @ts-ignore
-    expect(req.session.id).toEqual(claims.sid)
+    expect(req.session.id).toEqual(mockClaims.sid)
     // @ts-ignore
-    expect(req.session.userId).toEqual(claims.sub)
+    expect(req.session.userId).toEqual(mockClaims.sub)
 
     expect(mockNext).toHaveBeenCalledWith(); // 0 args
 });
