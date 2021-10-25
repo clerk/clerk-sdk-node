@@ -5,11 +5,7 @@ export default Clerk;
 export { WithSessionProp, RequireSessionProp, WithSessionClaimsProp, RequireSessionClaimsProp } from './Clerk';
 
 export { Nullable } from './resources/Nullable';
-export {
-  HttpError,
-  ClerkServerError,
-  ClerkServerErrorJSON,
-} from './utils/Errors';
+export { HttpError, ClerkServerError, ClerkServerErrorJSON } from './utils/Errors';
 import Logger from './utils/Logger';
 export { Logger };
 export { Client } from './resources/Client';
