@@ -1,6 +1,5 @@
 ﻿// libs
 import type { Request, Response, NextFunction } from 'express';
-import type { NextApiRequest, NextApiResponse } from 'next';
 import Cookies from 'cookies';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import jwks, { JwksClient } from 'jwks-rsa';
@@ -369,8 +368,8 @@ export default class Clerk {
   // Set the session on the request and then call provided handler
   withSession(handler: Function, { onError }: MiddlewareOptions = { onError: this.defaultOnError }) {
     return async (
-      req: WithSessionProp<NextApiRequest> | WithSessionClaimsProp<NextApiRequest>,
-      res: NextApiResponse
+      req: WithSessionProp<Request> | WithSessionClaimsProp<Request>,
+      res: Response
     ) => {
       try {
         await this._runMiddleware(req, res, this.expressWithSession({ onError }));
