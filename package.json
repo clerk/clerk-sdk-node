@@ -35,7 +35,6 @@
     "@types/jest": "^26.0.20",
     "husky": "^4.3.7",
     "jest": "^27.0.6",
-    "next": "^11.0.1",
     "nock": "^13.0.7",
     "ts-jest": "^26.5.0",
     "tsdx": "^0.14.1",
@@ -51,7 +50,8 @@
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^2.0.4",
     "lodash": "^4.17.21",
-    "snakecase-keys": "^3.2.1"
+    "snakecase-keys": "^3.2.1",
+    "next": "^11.0.1"
   },
   "description": "Clerk (clerk.dev) server SDK for usage with node",
   "directories": {
