@@ -385,16 +385,22 @@ export default class Clerk {
   withSession(handler: Function, { onError }: MiddlewareOptions = { onError: this.defaultOnError }) {
     return async (
       req: WithSessionProp<Request> | WithSessionClaimsProp<Request>,
-      res: Response
+      res: Response,
+      next: NextFunction
     ) => {
       try {
         await this._runMiddleware(req, res, this.expressWithSession({ onError }));
-        return handler(req, res);
+        return handler(req, res, next);
       } catch (error) {
         // @ts-ignore
-        res.statusCode = error.statusCode || 401;
+        const errorData = error.data || { error: error.message };
         // @ts-ignore
-        res.json(error.data || { error: error.message });
+        res.statusCode = error.statusCode || 401;
+        /** 
+         * Res.json is available in express-like environments.
+         * Res.send is available in express-like but also Fastify.
+         */
+        res.json ? res.json(errorData) : res.send(errorData);
         res.end();
       }
     };
