@@ -19,6 +19,7 @@ import { UserApi } from './apis/UserApi';
 import { Session } from './resources/Session';
 
 import { ClerkServerError } from './utils/Errors';
+import { SupportMessages } from './constants/SupportMessages';
 
 const defaultApiKey = process.env.CLERK_API_KEY || '';
 const defaultApiVersion = process.env.CLERK_API_VERSION || 'v1';
@@ -62,6 +63,11 @@ export default class Clerk {
     httpOptions?: object;
     jwksCacheMaxAge?: number;
   } = {}) {
+
+    if(!apiKey){
+      throw Error(SupportMessages.API_KEY_NOT_FOUND);
+    }
+
     this._restClient = new RestClient(
       apiKey,
       serverApiUrl,
