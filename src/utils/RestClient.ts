@@ -1,8 +1,8 @@
-import got, { HTTPAlias } from 'got';
 import deserialize from './Deserializer';
 import handleError from './ErrorHandler';
 import snakecaseKeys from 'snakecase-keys';
 import * as querystring from 'querystring';
+import fetch from 'node-fetch';
 import { LIB_NAME, LIB_VERSION } from '../info';
 
 const packageName = LIB_NAME;
@@ -11,8 +11,10 @@ const packageRepo = 'https://github.com/clerkinc/clerk-sdk-node';
 const userAgent = `${packageName}/${packageVersion} (${packageRepo})`;
 const contentType = 'application/x-www-form-urlencoded';
 
+declare type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'head' | 'delete';
+
 type RequestOptions = {
-  method: HTTPAlias;
+  method: HTTPMethod;
   path: string;
   queryParams?: object;
   bodyParams?: object;
@@ -37,7 +39,11 @@ export default class RestClient {
     this.httpOptions = httpOptions || {};
   }
 
-  makeRequest(requestOptions: RequestOptions) {
+  async makeRequest(requestOptions: RequestOptions) {
+    if (!requestOptions.responseType) {
+      requestOptions.responseType = 'json';
+    }
+
     let url = `${this.serverApiUrl}/${this.apiVersion}${requestOptions.path}`;
 
     if (requestOptions.queryParams) {
@@ -46,10 +52,8 @@ export default class RestClient {
       )}`;
     }
 
-    // FIXME remove 'any'
-    const gotOptions: any = {
+    const options: any = {
       method: requestOptions.method,
-      responseType: requestOptions.responseType || 'json',
       headers: {
         Authorization: `Bearer ${this.apiKey}`,
         'Content-type': contentType,
@@ -59,14 +63,20 @@ export default class RestClient {
     };
 
     if (requestOptions.bodyParams) {
-      gotOptions['form'] = snakecaseKeys(requestOptions.bodyParams);
+      const bodyParams = snakecaseKeys(requestOptions.bodyParams);
+
+      const params = new URLSearchParams();
+      Object.keys(bodyParams).forEach(key => params.append(key, bodyParams[key]));
+
+      options.body = params;
     }
 
     // TODO improve error handling
-    return got(url, gotOptions)
-      .then(data =>
-        gotOptions.responseType === 'json' ? deserialize(data.body) : data.body
-      )
-      .catch(error => handleError(error));
+    try {
+      const response = await fetch(url, options)
+      return requestOptions.responseType === 'json'? deserialize(await response.json()) : await response.text();
+    } catch (error) {
+      return handleError(error)
+    }
   }
 }
