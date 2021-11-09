@@ -27,7 +27,7 @@ interface UserListParams {
 }
 
 export class UserApi extends AbstractApi {
-  public async getUserList(params: UserListParams = {}): Promise<Array<User>> {
+  public async getUserList(params?: UserListParams): Promise<Array<User>> {
     return this._restClient.makeRequest({
       method: 'get',
       path: '/users',
