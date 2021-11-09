@@ -12,10 +12,11 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "tsdx build",
+    "build": "node ./scripts/info.js && tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "prepare": "tsdx build"
+    "prepare": "tsdx build",
+    "publishPackage": "node ./scripts/publish.js"
   },
   "prettier": {
     "printWidth": 80,
