@@ -169,8 +169,8 @@ const clerk = pkg.default;
 
 clerk.emails
   .createEmail({ fromEmailName, subject, body, emailAddressId })
-  .then((email) => console.log(email))
-  .catch((error) => console.error(error));
+  .then(email => console.log(email))
+  .catch(error => console.error(error));
 ```
 
 Or if you prefer a resource sub-api directly:
@@ -181,8 +181,8 @@ const { clients } = pkg;
 
 clients
   .getClient(clientId)
-  .then((client) => console.log(client))
-  .catch((error) => console.error(error));
+  .then(client => console.log(client))
+  .catch(error => console.error(error));
 ```
 
 #### Setters
@@ -229,8 +229,8 @@ const clerk = new Clerk({ apiKey: 'your-eyes-only' });
 
 clerk.smsMessages
   .createSMSMessage({ message, phoneNumberId })
-  .then((smsMessage) => console.log(smsMessage))
-  .catch((error) => console.error(error));
+  .then(smsMessage => console.log(smsMessage))
+  .catch(error => console.error(error));
 ```
 
 ### Examples
@@ -562,22 +562,22 @@ If you wish to have more control over what error code & message to respond with 
 
 ```ts
 export class HttpError extends Error {
-    statusCode: number;
+  statusCode: number;
 
-    constructor(message: string, statusCode: number) {
-        super(message);
+  constructor(message: string, statusCode: number) {
+    super(message);
 
-        // Set the prototype explicitly.
-        Object.setPrototypeOf(this, HttpError.prototype);
+    // Set the prototype explicitly.
+    Object.setPrototypeOf(this, HttpError.prototype);
 
-        this.statusCode = statusCode;
-    }
+    this.statusCode = statusCode;
+  }
 }
 
 export function onError(error: Error) {
-    // Ignore passed error, return a 401
-    console.log(error);
-    return new HttpError("Unauthorized", 401);
+  // Ignore passed error, return a 401
+  console.log(error);
+  return new HttpError('Unauthorized', 401);
 }
 ```
 
@@ -604,6 +604,14 @@ Please consult the following check-list for some potential quick fixes:
 
 Note: The strict middleware variants (i.e. the "require session" variants) will produce an erroneous response if the user is not signed in.
 Please ensure you are not mounting them on routes that are meant to be publicly accessible.
+
+## Publishing
+
+There are two ways to publish the package:
+
+1. Run the `publishPackage` [script](./scripts/publish.js) supplying the bump type you wish to do and the changes will happen automatically. Supported ones are `major|minor|patch`.
+   E.g. `yarn publishPackage minor`.
+2. Run the steps described in the [publish script](./scripts/publish.js) manually step by step.
 
 ## Feedback / Issue reporting
 
