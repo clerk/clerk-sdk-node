@@ -327,7 +327,16 @@ Retrieves user list:
 const users = await clerk.users.getUserList();
 ```
 
-Can also be filtered by the given email addresses and phone numbers:
+Retrieves user list that is ordered and filtered by the number of results:
+
+```ts
+const sessions = await clerk.users.getUserList({
+  orderBy: '-created_at',
+  limit: 10,
+});
+```
+
+Retrieves user list that is filtered by the given email addresses and phone numbers:
 
 ```ts
 const emailAddress = ['email1@clerk.dev', 'email2@clerk.dev'];

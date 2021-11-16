@@ -16,6 +16,14 @@ interface UserListParams {
   offset?: number;
   emailAddress?: string[];
   phoneNumber?: string[];
+  userId?: string[];
+  orderBy?:
+    | 'created_at'
+    | 'updated_at'
+    | '+created_at'
+    | '+updated_at'
+    | '-created_at'
+    | '-updated_at';
 }
 
 export class UserApi extends AbstractApi {
@@ -44,7 +52,10 @@ export class UserApi extends AbstractApi {
       params.publicMetadata = JSON.stringify(params.publicMetadata);
     }
 
-    if (params.privateMetadata && !(typeof params.privateMetadata == 'string')) {
+    if (
+      params.privateMetadata &&
+      !(typeof params.privateMetadata == 'string')
+    ) {
       params.privateMetadata = JSON.stringify(params.privateMetadata);
     }
 

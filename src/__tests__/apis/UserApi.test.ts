@@ -31,15 +31,10 @@ test('getUserList() with limit returns a list of users', async () => {
 
   expect(userList).toBeInstanceOf(Array);
   expect(userList.length).toEqual(1);
-
-  // const expected = new User();
-
-  // expect(userList[0]).toEqual(expected);
-
   expect(userList[0]).toBeInstanceOf(User);
 });
 
-test('getUserList() with limit returns a list of users', async () => {
+test('getUserList() with limit and offset returns a list of users', async () => {
   nock('https://api.clerk.dev')
     .get('/v1/users?limit=1&offset=1')
     .replyWithFile(200, __dirname + '/responses/getUserList.json', {
@@ -50,22 +45,33 @@ test('getUserList() with limit returns a list of users', async () => {
 
   expect(userList).toBeInstanceOf(Array);
   expect(userList.length).toEqual(1);
+  expect(userList[0]).toBeInstanceOf(User);
+});
 
-  // const expected = new User();
+test('getUserList() with ordering returns a list of users', async () => {
+  nock('https://api.clerk.dev')
+    .get('/v1/users?order_by=%2Bupdated_at')
+    .replyWithFile(200, __dirname + '/responses/getUserList.json', {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
 
-  // expect(userList[0]).toEqual(expected);
+  const userList = await users.getUserList({ orderBy: '+updated_at' });
 
+  expect(userList).toBeInstanceOf(Array);
+  expect(userList.length).toEqual(1);
   expect(userList[0]).toBeInstanceOf(User);
 });
 
 test('getUserList() with emails returns a list of users', async () => {
   nock('https://api.clerk.dev')
-      .get('/v1/users?email_address=email1&email_address=email2')
-      .replyWithFile(200, __dirname + '/responses/getUserList.json', {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      });
+    .get('/v1/users?email_address=email1&email_address=email2')
+    .replyWithFile(200, __dirname + '/responses/getUserList.json', {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
 
-  const userList = await users.getUserList({ emailAddress: ['email1', 'email2'] });
+  const userList = await users.getUserList({
+    emailAddress: ['email1', 'email2'],
+  });
 
   expect(userList).toBeInstanceOf(Array);
   expect(userList.length).toEqual(1);
@@ -74,12 +80,14 @@ test('getUserList() with emails returns a list of users', async () => {
 
 test('getUserList() with phone numbers returns a list of users', async () => {
   nock('https://api.clerk.dev')
-      .get('/v1/users?phone_number=phone1&phone_number=phone2')
-      .replyWithFile(200, __dirname + '/responses/getUserList.json', {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      });
+    .get('/v1/users?phone_number=phone1&phone_number=phone2')
+    .replyWithFile(200, __dirname + '/responses/getUserList.json', {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
 
-  const userList = await users.getUserList({ phoneNumber: ['phone1', 'phone2'] });
+  const userList = await users.getUserList({
+    phoneNumber: ['phone1', 'phone2'],
+  });
 
   expect(userList).toBeInstanceOf(Array);
   expect(userList.length).toEqual(1);
