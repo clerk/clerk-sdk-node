@@ -3,5 +3,7 @@
 .idea
 node_modules
 dist
+esm
+coverage
 .env
 .env.local
