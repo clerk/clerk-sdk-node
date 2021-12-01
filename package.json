@@ -4,10 +4,7 @@
   "main": "dist/index.js",
   "module": "esm/index.js",
   "typings": "dist/index.d.ts",
-  "exports": {
-    "import": "./esm/index.js",
-    "require": "./dist/index.js"
-  },
+  "files": ["dist", "esm", "instance.js", "instance.d.ts", "package.json"],
   "engines": {
     "node": ">=12"
   },
