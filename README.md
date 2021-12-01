@@ -212,7 +212,7 @@ warm fuzzy feeling of controlling instantiation yourself:
 #### ESM
 
 ```ts
-import { Clerk } from '@clerk/clerk-sdk-node';
+import Clerk from '@clerk/clerk-sdk-node/instance';
 
 const clerk = new Clerk({ apiKey: 'top-secret' });
 
@@ -222,8 +222,7 @@ const clientList = await clerk.clients.getClientList();
 #### CJS
 
 ```ts
-const pkg = require('@clerk/clerk-sdk-node');
-const { Clerk } = pkg;
+const Clerk = require('@clerk/clerk-sdk-node/instance').default;
 
 const clerk = new Clerk({ apiKey: 'your-eyes-only' });
 

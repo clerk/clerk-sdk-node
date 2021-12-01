@@ -1,8 +1,5 @@
 import Clerk from './instance';
 
-// Export as a named export in case the dev wishes to create Clerk instances as well
-export { Clerk };
-
 const singletonInstance = Clerk.getInstance();
 const clients = singletonInstance.clients;
 const emails = singletonInstance.emails;
