@@ -2,10 +2,19 @@ import Clerk from './Clerk';
 
 export default Clerk;
 
-export { WithSessionProp, RequireSessionProp, WithSessionClaimsProp, RequireSessionClaimsProp } from './Clerk';
+export {
+  WithSessionProp,
+  RequireSessionProp,
+  WithSessionClaimsProp,
+  RequireSessionClaimsProp,
+} from './Clerk';
 
 export { Nullable } from './resources/Nullable';
-export { HttpError, ClerkServerError, ClerkServerErrorJSON } from './utils/Errors';
+export {
+  HttpError,
+  ClerkServerError,
+  ClerkServerErrorJSON,
+} from './utils/Errors';
 import Logger from './utils/Logger';
 export { Logger };
 export { Client } from './resources/Client';
@@ -13,6 +22,7 @@ export { Email } from './resources/Email';
 export { EmailAddress } from './resources/EmailAddress';
 export { ExternalAccount } from './resources/ExternalAccount';
 export { IdentificationLink } from './resources/IdentificationLink';
+export { Invitation } from './resources/Invitation';
 export { PhoneNumber } from './resources/PhoneNumber';
 export { Session } from './resources/Session';
 export { SMSMessage } from './resources/SMSMessage';

@@ -6,7 +6,7 @@ This SDK allows you to call the Clerk server API from node / JS / TS code withou
 yourself.
 
 To gain a better understanding of the underlying API calls the SDK makes, feel free to consult
-the <a href="https://docs.clerk.dev/backend/introduction" target="_blank">official Clerk server API documentation</a>.
+the <a href="https://docs.clerk.dev/reference/backend-api-reference" target="_blank">official Clerk server API documentation</a>.
 
 ## Table of contents
 
@@ -30,6 +30,10 @@ the <a href="https://docs.clerk.dev/backend/introduction" target="_blank">offici
     - [getClientList()](#getclientlist)
     - [getClient(clientId)](#getclientclientid)
     - [verifyClient(sessionToken)](#verifyclientsessiontoken)
+  - [Invitation operations](#invitation-operations)
+    - [getInvitationList()](#getinvitationlist)
+    - [createInvitation(params)](#createinvitationparams)
+    - [revokeInvitation(invitationId)](#revokeinvitationinvitationId)
   - [Session operations](#session-operations)
     - [getSessionList({ clientId, userId })](#getsessionlist-clientid-userid-)
     - [getSession(sessionId)](#getsessionsessionid)
@@ -265,6 +269,40 @@ Retrieves a client for a given session token, if the session is active:
 ```ts
 const sessionToken = 'my-session-token';
 const client = await clerk.clients.verifyClient(sessionToken);
+```
+
+### Invitation operations
+
+Invitation operations are exposed by the `invitations` sub-api (`clerk.invitations`).
+
+#### getInvitationList()
+
+Retrieves a list of all non-revoked invitations for your application, sorted by descending creation date.
+
+```ts
+const invitations = await clerk.invitations.getInvitationList();
+```
+
+#### createInvitation(params)
+
+Creates a new invitation for the given email address and sends the invitation email.
+
+Keep in mind that you cannot create an invitation if there is already one for the given email address. Also, trying to create an invitation for an email address that already exists in your application will result in an error.
+
+```js
+const invitation = await clerk.invitations.createInvitation({
+  emailAddress: "invite@example.com",
+});
+```
+
+#### revokeInvitation(invitationId)
+
+Revokes the invitation with the provided `invitationId`. Revoking an invitation makes the invitation email link unusable. However, it doesn't prevent the user from signing up if they follow the sign up flow.
+
+Only active (i.e. non-revoked) invitations can be revoked.
+
+```js
+const invitation = await clerk.invitations.revokeInvitation("inv_some-id");
 ```
 
 ### Session operations

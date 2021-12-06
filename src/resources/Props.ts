@@ -52,6 +52,12 @@ export interface IdentificationLinkProps extends ClerkProps {
   type: Nullable<string>;
 }
 
+export interface InvitationProps extends ClerkProps {
+  emailAddress: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
 export interface PhoneNumberProps extends ClerkProps {
   phoneNumber: Nullable<string>;
   // verification: Nullable<VerificationProps>;

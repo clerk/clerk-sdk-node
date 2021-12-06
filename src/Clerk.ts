@@ -11,6 +11,7 @@ import Logger from './utils/Logger';
 // sub-apis
 import { ClientApi } from './apis/ClientApi';
 import { EmailApi } from './apis/EmailApi';
+import { InvitationApi } from './apis/InvitationApi';
 import { SessionApi } from './apis/SessionApi';
 import { SMSMessageApi } from './apis/SMSMessageApi';
 import { UserApi } from './apis/UserApi';
@@ -23,8 +24,9 @@ import { SupportMessages } from './constants/SupportMessages';
 
 const defaultApiKey = process.env.CLERK_API_KEY || '';
 const defaultApiVersion = process.env.CLERK_API_VERSION || 'v1';
-const defaultServerApiUrl = process.env.CLERK_API_URL || 'https://api.clerk.dev';
-const defaultJWKSCacheMaxAge = 3600000 // 1 hour
+const defaultServerApiUrl =
+  process.env.CLERK_API_URL || 'https://api.clerk.dev';
+const defaultJWKSCacheMaxAge = 3600000; // 1 hour
 
 export type MiddlewareOptions = {
   onError?: Function;
@@ -46,6 +48,7 @@ export default class Clerk {
   // private api instances
   private _clientApi?: ClientApi;
   private _emailApi?: EmailApi;
+  private _invitationApi?: InvitationApi;
   private _sessionApi?: SessionApi;
   private _smsMessageApi?: SMSMessageApi;
   private _userApi?: UserApi;
@@ -63,8 +66,7 @@ export default class Clerk {
     httpOptions?: object;
     jwksCacheMaxAge?: number;
   } = {}) {
-
-    if(!apiKey){
+    if (!apiKey) {
       throw Error(SupportMessages.API_KEY_NOT_FOUND);
     }
 
@@ -131,6 +133,13 @@ export default class Clerk {
     return this._emailApi;
   }
 
+  get invitations(): InvitationApi {
+    if (!this._invitationApi) {
+      this._invitationApi = new InvitationApi(this._restClient);
+    }
+    return this._invitationApi;
+  }
+
   get sessions(): SessionApi {
     if (!this._sessionApi) {
       this._sessionApi = new SessionApi(this._restClient);
@@ -158,28 +167,36 @@ export default class Clerk {
   // Utilities
 
   decodeToken(token: string): JwtPayload {
-    const decoded = jwt.decode(token)
+    const decoded = jwt.decode(token);
     if (!decoded) {
-      throw new Error(`Failed to decode token: ${token}`)
+      throw new Error(`Failed to decode token: ${token}`);
     }
 
-    return decoded as JwtPayload
+    return decoded as JwtPayload;
   }
 
-  async verifyToken(token: string, algorithms: string[] = ['RS256']): Promise<JwtPayload> {
-    const decoded = jwt.decode(token, { complete: true })
+  async verifyToken(
+    token: string,
+    algorithms: string[] = ['RS256']
+  ): Promise<JwtPayload> {
+    const decoded = jwt.decode(token, { complete: true });
     if (!decoded) {
-      throw new Error(`Failed to verify token: ${token}`)
+      throw new Error(`Failed to verify token: ${token}`);
     }
 
-    const key = await this._jwksClient.getSigningKey(decoded.header.kid)
-    const verified = jwt.verify(token, key.getPublicKey(), {algorithms: algorithms as jwt.Algorithm[]}) as JwtPayload
+    const key = await this._jwksClient.getSigningKey(decoded.header.kid);
+    const verified = jwt.verify(token, key.getPublicKey(), {
+      algorithms: algorithms as jwt.Algorithm[],
+    }) as JwtPayload;
 
-    if (!verified.hasOwnProperty('iss') || !(verified.iss?.lastIndexOf('https://clerk.', 0) === 0)) {
-        throw new Error(`Invalid issuer: ${verified.iss}`)
-      }
+    if (
+      !verified.hasOwnProperty('iss') ||
+      !(verified.iss?.lastIndexOf('https://clerk.', 0) === 0)
+    ) {
+      throw new Error(`Invalid issuer: ${verified.iss}`);
+    }
 
-    return verified
+    return verified;
   }
 
   // Middlewares
@@ -204,33 +221,38 @@ export default class Clerk {
     return error;
   }
 
-  expressWithSession({ onError }: MiddlewareOptions = { onError: this.defaultOnError }): (req: Request, res: Response, next: NextFunction) => Promise<void> {
-    function decodeToken(clerk: Clerk, token: string):JwtPayload | undefined {
+  expressWithSession(
+    { onError }: MiddlewareOptions = { onError: this.defaultOnError }
+  ): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+    function decodeToken(clerk: Clerk, token: string): JwtPayload | undefined {
       try {
-        return clerk.decodeToken(token)
-      } catch(e) {
-        return undefined
+        return clerk.decodeToken(token);
+      } catch (e) {
+        return undefined;
       }
     }
 
-    function verifyToken(clerk: Clerk, token: string | undefined):Promise<JwtPayload> | undefined {
+    function verifyToken(
+      clerk: Clerk,
+      token: string | undefined
+    ): Promise<JwtPayload> | undefined {
       if (!token) {
         return undefined;
       }
 
       try {
-        return clerk.verifyToken(token)
-      } catch(e) {
-        return undefined
+        return clerk.verifyToken(token);
+      } catch (e) {
+        return undefined;
       }
     }
 
     function isDevelopmentOrStaging(apiKey: string): boolean {
-      return apiKey.startsWith('test_')
+      return apiKey.startsWith('test_');
     }
 
     function isProduction(apiKey: string): boolean {
-      return !isDevelopmentOrStaging(apiKey)
+      return !isDevelopmentOrStaging(apiKey);
     }
 
     function isCrossOriginRequest(req: Request): boolean {
@@ -242,7 +264,10 @@ export default class Clerk {
 
       let initialHost = req.headers.host as string;
       // Need to append the protocol if not exists for URL parse to work correctly
-      if (!initialHost.startsWith('http://') && !initialHost.startsWith('https://')) {
+      if (
+        !initialHost.startsWith('http://') &&
+        !initialHost.startsWith('https://')
+      ) {
         initialHost = `https://${initialHost}`;
       }
 
@@ -266,7 +291,7 @@ export default class Clerk {
     }
 
     function signedOut() {
-      throw new Error('Unauthenticated')
+      throw new Error('Unauthenticated');
     }
 
     async function interstitial(res: Response, restClient: RestClient) {
@@ -274,18 +299,18 @@ export default class Clerk {
         method: 'get',
         path: '/internal/interstitial',
         responseType: 'text',
-      })
+      });
 
-      res.writeHead(401, { 'Content-Type': 'text/html'})
-      res.write(body)
+      res.writeHead(401, { 'Content-Type': 'text/html' });
+      res.write(body);
       res.end();
     }
 
     async function authenticate(
-        this: Clerk,
-        req: Request,
-        res: Response,
-        next: NextFunction
+      this: Clerk,
+      req: Request,
+      res: Response,
+      next: NextFunction
     ): Promise<any> {
       const cookies = new Cookies(req, res);
 
@@ -294,7 +319,8 @@ export default class Clerk {
         Logger.debug(`cookieToken: ${cookieToken}`);
         const clientUat = cookies.get('__client_uat');
         Logger.debug(`clientUat: ${clientUat}`);
-        let headerToken = (req.headers['Authorization'] || req.headers['authorization']) as string;
+        let headerToken = (req.headers['Authorization'] ||
+          req.headers['authorization']) as string;
         headerToken = headerToken?.replace('Bearer ', '');
         Logger.debug(`headerToken: ${headerToken}`);
 
@@ -308,7 +334,7 @@ export default class Clerk {
         }
 
         if (headerToken) {
-          const sessionClaims = await verifyToken(this, headerToken)
+          const sessionClaims = await verifyToken(this, headerToken);
           if (!sessionClaims) {
             return res.status(401).end();
           }
@@ -316,12 +342,18 @@ export default class Clerk {
           // @ts-ignore
           req.sessionClaims = sessionClaims;
           // @ts-ignore
-          req.session = new Session({id: sessionClaims.sid, userId: sessionClaims.sub});
+          req.session = new Session({
+            id: sessionClaims.sid,
+            userId: sessionClaims.sub,
+          });
           return next();
         }
 
         // COOKIE AUTHENTICATION
-        if (isDevelopmentOrStaging(this._restClient.apiKey) && (!req.headers.referer || isCrossOriginRequest(req))) {
+        if (
+          isDevelopmentOrStaging(this._restClient.apiKey) &&
+          (!req.headers.referer || isCrossOriginRequest(req))
+        ) {
           await interstitial(res, this._restClient);
           return;
         }
@@ -336,11 +368,19 @@ export default class Clerk {
 
         const sessionClaims = await verifyToken(this, cookieToken);
 
-        if (cookieToken && clientUat && sessionClaims?.iat && sessionClaims.iat >= Number(clientUat)) {
+        if (
+          cookieToken &&
+          clientUat &&
+          sessionClaims?.iat &&
+          sessionClaims.iat >= Number(clientUat)
+        ) {
           // @ts-ignore
           req.sessionClaims = sessionClaims;
           // @ts-ignore
-          req.session = new Session({id: sessionClaims.sid, userId: sessionClaims.sub});
+          req.session = new Session({
+            id: sessionClaims.sid,
+            userId: sessionClaims.sub,
+          });
           return next();
         }
 
@@ -366,7 +406,9 @@ export default class Clerk {
     return authenticate.bind(this);
   }
 
-  expressRequireSession({ onError }: MiddlewareOptions = { onError: this.strictOnError }) {
+  expressRequireSession(
+    { onError }: MiddlewareOptions = { onError: this.strictOnError }
+  ) {
     return this.expressWithSession({ onError });
   }
 
@@ -388,21 +430,28 @@ export default class Clerk {
   }
 
   // Set the session on the request and then call provided handler
-  withSession(handler: Function, { onError }: MiddlewareOptions = { onError: this.defaultOnError }) {
+  withSession(
+    handler: Function,
+    { onError }: MiddlewareOptions = { onError: this.defaultOnError }
+  ) {
     return async (
       req: WithSessionProp<Request> | WithSessionClaimsProp<Request>,
       res: Response,
       next: NextFunction
     ) => {
       try {
-        await this._runMiddleware(req, res, this.expressWithSession({ onError }));
+        await this._runMiddleware(
+          req,
+          res,
+          this.expressWithSession({ onError })
+        );
         return handler(req, res, next);
       } catch (error) {
         // @ts-ignore
         const errorData = error.data || { error: error.message };
         // @ts-ignore
         res.statusCode = error.statusCode || 401;
-        /** 
+        /**
          * Res.json is available in express-like environments.
          * Res.send is available in express-like but also Fastify.
          */
@@ -413,7 +462,10 @@ export default class Clerk {
   }
 
   // Stricter version, short-circuits if session can't be determined
-  requireSession(handler: Function, { onError }: MiddlewareOptions = { onError: this.strictOnError }) {
-    return this.withSession(handler, { onError })
+  requireSession(
+    handler: Function,
+    { onError }: MiddlewareOptions = { onError: this.strictOnError }
+  ) {
+    return this.withSession(handler, { onError });
   }
 }

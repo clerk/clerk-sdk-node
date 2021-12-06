@@ -2,6 +2,7 @@ import deserialize from '../../utils/Deserializer';
 
 import { Client } from '../../resources/Client';
 import { Email } from '../../resources/Email';
+import { Invitation } from '../../resources/Invitation';
 import { Session } from '../../resources/Session';
 import { SMSMessage } from '../../resources/SMSMessage';
 // import { User } from '../../resources/User';
@@ -24,9 +25,16 @@ const emailJSON = {
   to_email_address: 'accounting@cyberdyne.com',
   email_address_id: 'idn_snafu',
   subject: 'Business trip reimbursement',
-  body:
-    'Please find attached the invoices for expenses made during the visit to NY.',
+  body: 'Please find attached the invoices for expenses made during the visit to NY.',
   status: 'queued',
+};
+
+const invitationJSON = {
+  object: 'invitation',
+  id: 'inv_randomid',
+  email_address: 'invitation@example.com',
+  created_at: 1612378465,
+  updated_at: 1612378465,
 };
 
 const sessionJSON = {
@@ -65,6 +73,18 @@ test('deserializes an array of Client objects', () => {
 test('deserializes an Email object', () => {
   const email = deserialize(emailJSON);
   expect(email).toBeInstanceOf(Email);
+});
+
+test('deserializes an Invitation object', () => {
+  const invitation = deserialize(invitationJSON);
+  expect(invitation).toBeInstanceOf(Invitation);
+});
+
+test('deserializes an array of Invitation objects', () => {
+  const invitations = deserialize([invitationJSON]);
+  expect(invitations).toBeInstanceOf(Array);
+  expect(invitations.length).toBe(1);
+  expect(invitations[0]).toBeInstanceOf(Invitation);
 });
 
 test('deserializes a Session object', () => {
