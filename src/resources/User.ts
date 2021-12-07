@@ -25,7 +25,7 @@ export class User {
     'profileImageUrl', 'primaryEmailAddressId', 'primaryEmailAddressId', 'primaryPhoneNumberId',
     'passwordEnabled', 'twoFactorEnabled', 'passwordEnabled', 'passwordEnabled', 'passwordEnabled',
     'twoFactorEnabled', 'publicMetadata', 'privateMetadata', 'createdAt', 'updatedAt'];
-  
+
   static associations = {
     emailAddresses: Association.HasMany,
     phoneNumbers: Association.HasMany,

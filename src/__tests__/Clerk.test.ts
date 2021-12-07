@@ -1,6 +1,7 @@
 import Clerk from '../Clerk';
 import { ClientApi } from '../apis/ClientApi';
 import { EmailApi } from '../apis/EmailApi';
+import { InvitationApi } from '../apis/InvitationApi';
 import { SessionApi } from '../apis/SessionApi';
 import { SMSMessageApi } from '../apis/SMSMessageApi';
 import { UserApi } from '../apis/UserApi';
@@ -42,6 +43,17 @@ test('emails getter returns the same instance every time', () => {
   const emails = Clerk.getInstance().emails;
   const emails2 = Clerk.getInstance().emails;
   expect(emails2).toBe(emails);
+});
+
+test('invitations getter returns an Invation API instance', () => {
+  const invitations = Clerk.getInstance().invitations;
+  expect(invitations).toBeInstanceOf(InvitationApi);
+});
+
+test('invitations getter returns the same instance every time', () => {
+  const invitations = Clerk.getInstance().invitations;
+  const invitations2 = Clerk.getInstance().invitations;
+  expect(invitations2).toBe(invitations);
 });
 
 test('sessions getter returns a Session API instance', () => {

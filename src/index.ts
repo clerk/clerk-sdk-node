@@ -3,6 +3,7 @@ import Clerk from './instance';
 const singletonInstance = Clerk.getInstance();
 const clients = singletonInstance.clients;
 const emails = singletonInstance.emails;
+const invitations = singletonInstance.invitations;
 const sessions = singletonInstance.sessions;
 const smsMessages = singletonInstance.smsMessages;
 const users = singletonInstance.users;
@@ -11,7 +12,7 @@ const users = singletonInstance.users;
 export default singletonInstance;
 
 // Export sub-api objects
-export { clients, emails, sessions, smsMessages, users };
+export { clients, emails, invitations, sessions, smsMessages, users };
 
 // Export resources
 export {
@@ -21,6 +22,7 @@ export {
   EmailAddress,
   ExternalAccount,
   IdentificationLink,
+  Invitation,
   PhoneNumber,
   Session,
   SMSMessage,
@@ -29,12 +31,10 @@ export {
 } from './instance';
 
 // Export middleware functions
-const ClerkExpressWithSession = singletonInstance.expressWithSession.bind(
-  singletonInstance
-);
-const ClerkExpressRequireSession = singletonInstance.expressRequireSession.bind(
-  singletonInstance
-);
+const ClerkExpressWithSession =
+  singletonInstance.expressWithSession.bind(singletonInstance);
+const ClerkExpressRequireSession =
+  singletonInstance.expressRequireSession.bind(singletonInstance);
 const withSession = singletonInstance.withSession.bind(singletonInstance);
 const requireSession = singletonInstance.requireSession.bind(singletonInstance);
 export {
@@ -45,10 +45,19 @@ export {
 };
 
 // Export wrapper types for Next.js requests
-export { WithSessionProp, RequireSessionProp, WithSessionClaimsProp, RequireSessionClaimsProp } from './instance';
+export {
+  WithSessionProp,
+  RequireSessionProp,
+  WithSessionClaimsProp,
+  RequireSessionClaimsProp,
+} from './instance';
 
 // Export Errors
-export { HttpError, ClerkServerError, ClerkServerErrorJSON } from './utils/Errors';
+export {
+  HttpError,
+  ClerkServerError,
+  ClerkServerErrorJSON,
+} from './utils/Errors';
 
 // Export Logger
 import Logger from './utils/Logger';
