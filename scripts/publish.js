@@ -21,7 +21,7 @@ async function publish(publishType) {
     /* 3.  Git actions */
     await exec('git add -A');
     await exec(`git commit -am "build: ${require('../package.json').version}"`);
-    await exec(`git tag -a v${require('../package.json').version}`);
+    await exec(`git tag -a v${require('../package.json').version} -m 'v${require('../package.json').version}'`);
     await exec('git push && git push --tags');
 
     /* 4. Publish to npm */
