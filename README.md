@@ -26,6 +26,10 @@ the <a href="https://docs.clerk.dev/reference/backend-api-reference" target="_bl
     - [ESM](#esm)
     - [CJS](#cjs)
   - [Examples](#examples)
+  - [Allowlist operations](#allowlist-operations)
+    - [getAllowlistIdentifierList()](#getallowlistidentifierlist)
+    - [createAllowlistIdentifier(params)](#createallowlistidentifierparams)
+    - [deleteAllowlistIdentifier(allowlistIdentifierId)](#deleteallowlistidentifierallowlistidentifierid)
   - [Client operations](#client-operations)
     - [getClientList()](#getclientlist)
     - [getClient(clientId)](#getclientclientid)
@@ -240,6 +244,45 @@ clerk.smsMessages
 
 You also consult the [examples folder](https://github.com/clerkinc/clerk-sdk-node/tree/main/examples) for further hints
 on usage.
+
+### Allowlist operations
+
+Allowlist operations are exposed by the `allowlistIdentifiers` sub-api (`clerk.allowlistIdentifiers`).
+
+#### getAllowlistIdentifierList()
+
+Retrieves the list of allowlist identifiers.
+
+```ts
+const allowlistIdentifiers = await clerk.allowlistIdentifiers.getAllowlistIdentifierList();
+```
+
+#### createAllowlistIdentifier(params)
+
+Adds a new identifier to the allowlist.
+
+Accepts an `identifier` parameter, which can be:
+
+- A phone number in international ([E.164](https://en.wikipedia.org/wiki/E.164)) format.
+- An email address.
+- A wildcard email address (`*.domain.com`). Use this `identifier` value to allow any email address in a particular email domain.
+
+You can also control if you want to notify the owner of the `identifier`, by setting the `notify` property to `true`. The `notify` property is not available for wildcard identifiers.
+
+```ts
+const allowlistIdentifier = await createAllowlistIdentifier({
+  identifier: "test@example.com",
+  notify: false,
+});
+```
+
+#### deleteAllowlistIdentifier(allowlistIdentifierId)
+
+Deletes an allowlist identifier, specified by the `allowlistIdentifierId` parameter.
+
+```ts
+await deleteAllowlistIdentifier("alid_randomid");
+```
 
 ### Client operations
 

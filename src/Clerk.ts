@@ -9,6 +9,7 @@ import RestClient from './utils/RestClient';
 import Logger from './utils/Logger';
 
 // sub-apis
+import { AllowlistIdentifierApi } from './apis/AllowlistIdentifierApi';
 import { ClientApi } from './apis/ClientApi';
 import { EmailApi } from './apis/EmailApi';
 import { InvitationApi } from './apis/InvitationApi';
@@ -46,6 +47,7 @@ export default class Clerk {
 
   // TODO we may not need to instantiate these any more if they keep no state
   // private api instances
+  private _allowlistIdentifierApi?: AllowlistIdentifierApi;
   private _clientApi?: ClientApi;
   private _emailApi?: EmailApi;
   private _invitationApi?: InvitationApi;
@@ -116,6 +118,15 @@ export default class Clerk {
   }
 
   // Lazy sub-api getters
+
+  get allowlistIdentifiers(): AllowlistIdentifierApi {
+    if (!this._allowlistIdentifierApi) {
+      this._allowlistIdentifierApi = new AllowlistIdentifierApi(
+        this._restClient
+      );
+    }
+    return this._allowlistIdentifierApi;
+  }
 
   get clients(): ClientApi {
     if (!this._clientApi) {

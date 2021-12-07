@@ -1,4 +1,5 @@
 import { ObjectType } from '../resources/JSON';
+import { AllowlistIdentifier } from '../resources/AllowlistIdentifier';
 import { Client } from '../resources/Client';
 import { Email } from '../resources/Email';
 import { Invitation } from '../resources/Invitation';
@@ -20,6 +21,8 @@ export default function deserialize(data: any): any {
 // item must have 'object' key
 function jsonToObject(item: any): any {
   switch (item.object) {
+    case ObjectType.AllowlistIdentifier:
+      return AllowlistIdentifier.fromJSON(item);
     case ObjectType.Client:
       return Client.fromJSON(item);
     case ObjectType.Email:
