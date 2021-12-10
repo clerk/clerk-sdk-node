@@ -17,6 +17,7 @@ export {
 } from './utils/Errors';
 import Logger from './utils/Logger';
 export { Logger };
+export { AllowlistIdentifier } from './resources/AllowlistIdentifier';
 export { Client } from './resources/Client';
 export { Email } from './resources/Email';
 export { EmailAddress } from './resources/EmailAddress';

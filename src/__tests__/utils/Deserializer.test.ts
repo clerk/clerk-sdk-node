@@ -1,11 +1,20 @@
 import deserialize from '../../utils/Deserializer';
 
+import { AllowlistIdentifier } from '../../resources/AllowlistIdentifier';
 import { Client } from '../../resources/Client';
 import { Email } from '../../resources/Email';
 import { Invitation } from '../../resources/Invitation';
 import { Session } from '../../resources/Session';
 import { SMSMessage } from '../../resources/SMSMessage';
 // import { User } from '../../resources/User';
+
+const allowlistIdentifierJSON = {
+  object: 'allowlist_identifier',
+  id: 'alid_wxyz',
+  identifier: 'test@example.com',
+  created_at: 1612378465,
+  updated_at: 1612378465,
+};
 
 const clientJSON = {
   object: 'client',
@@ -57,6 +66,18 @@ const smsMessageJSON = {
   message: "Don't forget to bring a towel",
   status: 'queued',
 };
+
+test('deserializes an AllowlistIdentifier object', () => {
+  const allowlistIdentifier = deserialize(allowlistIdentifierJSON);
+  expect(allowlistIdentifier).toBeInstanceOf(AllowlistIdentifier);
+});
+
+test('deserializes an array of AllowlistIdentifier objects', () => {
+  const allowlistIdentifiers = deserialize([allowlistIdentifierJSON]);
+  expect(allowlistIdentifiers).toBeInstanceOf(Array);
+  expect(allowlistIdentifiers.length).toBe(1);
+  expect(allowlistIdentifiers[0]).toBeInstanceOf(AllowlistIdentifier);
+});
 
 test('deserializes a Client object', () => {
   const client = deserialize(clientJSON);

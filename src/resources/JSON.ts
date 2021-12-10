@@ -8,6 +8,7 @@ import {
 } from './Enums';
 
 export enum ObjectType {
+  AllowlistIdentifier = 'allowlist_identifier',
   Client = 'client',
   Email = 'email',
   EmailAddress = 'email_address',
@@ -26,6 +27,13 @@ export enum ObjectType {
 export interface ClerkResourceJSON {
   object: ObjectType;
   id: string;
+}
+
+export interface AllowlistIdentifierJSON extends ClerkResourceJSON {
+  object: ObjectType.AllowlistIdentifier;
+  identifier: string;
+  created_at: number;
+  updated_at: number;
 }
 
 export interface ClientJSON extends ClerkResourceJSON {

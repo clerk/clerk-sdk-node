@@ -1,4 +1,5 @@
 import Clerk from '../Clerk';
+import { AllowlistIdentifierApi } from '../apis/AllowlistIdentifierApi';
 import { ClientApi } from '../apis/ClientApi';
 import { EmailApi } from '../apis/EmailApi';
 import { InvitationApi } from '../apis/InvitationApi';
@@ -21,6 +22,17 @@ test('separate Clerk instances are not the same object', () => {
   const clerk = new Clerk();
   const clerk2 = new Clerk();
   expect(clerk2).not.toBe(clerk);
+});
+
+test('allowlistIdentifiers getter returns an AllowlistIdentifier API instance', () => {
+  const allowlistIdentifiers = Clerk.getInstance().allowlistIdentifiers;
+  expect(allowlistIdentifiers).toBeInstanceOf(AllowlistIdentifierApi);
+});
+
+test('allowlistIdentifiers getter returns the same instance every time', () => {
+  const allowlistIdentifiers = Clerk.getInstance().allowlistIdentifiers;
+  const allowlistIdentifiers2 = Clerk.getInstance().allowlistIdentifiers;
+  expect(allowlistIdentifiers2).toBe(allowlistIdentifiers);
 });
 
 test('clients getter returns a Client API instance', () => {

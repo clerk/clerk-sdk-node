@@ -3,7 +3,7 @@
 // To run:
 // node --require dotenv/config dist/clients.js
 
-import { Clerk, setClerkServerApiUrl, clients } from '@clerk/clerk-sdk-node';
+import clerk, { setClerkServerApiUrl, clients } from '@clerk/clerk-sdk-node';
 
 const serverApiUrl = process.env.CLERK_API_URL || '';
 const clientId = process.env.CLIENT_ID || '';
@@ -37,9 +37,8 @@ try {
 
 try {
   console.log('Get client list with invalid API key');
-  const apiKey = 'snafu';
-  const clerk2 = new Clerk({ apiKey, serverApiUrl });
-  let invalidClients = await clerk2.clients.getClientList();
+  clerk.apiKey = 'snafu';
+  let invalidClients = await clerk.clients.getClientList();
   console.log(invalidClients);
 } catch (error) {
   console.log(error);

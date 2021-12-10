@@ -13,6 +13,12 @@ export interface ClerkProps {
   id: Nullable<string>;
 }
 
+export interface AllowlistIdentifierProps extends ClerkProps {
+  identifier: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
 export interface ClientProps extends ClerkProps {
   sessionIds: string[];
   // sessions: SessionProps[];
