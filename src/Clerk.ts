@@ -336,15 +336,11 @@ export default class Clerk {
         Logger.debug(`headerToken: ${headerToken}`);
 
         // HEADER AUTHENTICATION
-        if (headerToken && !decodeToken(this, headerToken)) {
-          return signedOut();
-        }
-
-        if (!headerToken && isCrossOriginRequest(req)) {
-          return signedOut();
-        }
-
         if (headerToken) {
+          if (!decodeToken(this, headerToken)) {
+            return signedOut();
+          }
+
           const sessionClaims = await verifyToken(this, headerToken);
           if (!sessionClaims) {
             return res.status(401).end();
@@ -358,6 +354,19 @@ export default class Clerk {
             userId: sessionClaims.sub,
           });
           return next();
+        }
+
+        // In development or staging environments only, based on the request's
+        // User Agent, detect non-browser requests (e.g. scripts). If there
+        // is no Authorization header, consider the user as signed out and
+        // prevent interstitial rendering
+        if (isDevelopmentOrStaging(this._restClient.apiKey) && !req.headers['user-agent']?.startsWith('Mozilla/')) {
+          return signedOut();
+        }
+
+        // In cross-origin requests the use of Authorization header is mandatory
+        if (isCrossOriginRequest(req)) {
+          return signedOut();
         }
 
         // COOKIE AUTHENTICATION

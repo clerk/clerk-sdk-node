@@ -85,3 +85,16 @@ test('expressWithSession with Authorization header in Bearer format', async () =
 
     expect(mockNext).toHaveBeenCalledWith(); // 0 args
 });
+
+test('expressWithSession non-browser request (curl)', async () => {
+    // @ts-ignore
+    const req = { headers: { 'User-Agent': 'curl/7.64.1' }} as Request;
+    const res = {} as Response;
+
+    const clerk = Clerk.getInstance();
+    await clerk.expressWithSession()(req, res, mockNext as NextFunction);
+
+    // @ts-ignore
+    expect(req.session).toBeUndefined();
+    expect(mockNext).toHaveBeenCalledWith(); // 0 args
+});
