@@ -330,13 +330,12 @@ export default class Clerk {
         Logger.debug(`cookieToken: ${cookieToken}`);
         const clientUat = cookies.get('__client_uat');
         Logger.debug(`clientUat: ${clientUat}`);
-        let headerToken = (req.headers['Authorization'] ||
-          req.headers['authorization']) as string;
+        let headerToken = req.headers.authorization;
         headerToken = headerToken?.replace('Bearer ', '');
         Logger.debug(`headerToken: ${headerToken}`);
 
         // HEADER AUTHENTICATION
-        if (headerToken) {
+        if (headerToken !== undefined) {
           if (!decodeToken(this, headerToken)) {
             return signedOut();
           }
