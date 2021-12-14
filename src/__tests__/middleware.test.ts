@@ -48,7 +48,7 @@ test('expressRequireSession with no session token', async () => {
 
 test('expressWithSession with Authorization header', async () => {
     // @ts-ignore
-    const req = { headers: { Authorization: mockToken } } as Request;
+    const req = { headers: { authorization: mockToken } } as Request;
     const res = {} as Response;
 
     const clerk = Clerk.getInstance();
@@ -68,7 +68,7 @@ test('expressWithSession with Authorization header', async () => {
 
 test('expressWithSession with Authorization header in Bearer format', async () => {
     // @ts-ignore
-    const req = { headers: { Authorization: `Bearer ${mockToken}` }} as Request;
+    const req = { headers: { authorization: `Bearer ${mockToken}` }} as Request;
     const res = {} as Response;
 
     const clerk = Clerk.getInstance();
@@ -89,6 +89,19 @@ test('expressWithSession with Authorization header in Bearer format', async () =
 test('expressWithSession non-browser request (curl)', async () => {
     // @ts-ignore
     const req = { headers: { 'User-Agent': 'curl/7.64.1' }} as Request;
+    const res = {} as Response;
+
+    const clerk = Clerk.getInstance();
+    await clerk.expressWithSession()(req, res, mockNext as NextFunction);
+
+    // @ts-ignore
+    expect(req.session).toBeUndefined();
+    expect(mockNext).toHaveBeenCalledWith(); // 0 args
+});
+
+test('expressWithSession with empty Authorization header', async () => {
+    // @ts-ignore
+    const req = { headers: { authorization: '' } } as Request;
     const res = {} as Response;
 
     const clerk = Clerk.getInstance();
