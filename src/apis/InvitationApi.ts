@@ -5,6 +5,7 @@ const basePath = '/invitations';
 
 type CreateParams = {
   emailAddress: string;
+  redirectUrl?: string;
 };
 
 export class InvitationApi extends AbstractApi {

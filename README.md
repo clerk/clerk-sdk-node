@@ -332,9 +332,12 @@ Creates a new invitation for the given email address and sends the invitation em
 
 Keep in mind that you cannot create an invitation if there is already one for the given email address. Also, trying to create an invitation for an email address that already exists in your application will result in an error.
 
+You can optionally pass a `redirectUrl` parameter when creating the invitation and the invitee will be redirected there after they click the invitation email link.
+
 ```js
 const invitation = await clerk.invitations.createInvitation({
   emailAddress: "invite@example.com",
+  redirectUrl: "https://optionally-redirect-here",
 });
 ```
 
