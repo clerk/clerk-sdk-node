@@ -36,6 +36,7 @@ export class UserApi extends AbstractApi {
   }
 
   public async getUser(userId: string): Promise<User> {
+    this.requireId(userId);
     return this._restClient.makeRequest({
       method: 'get',
       path: `/users/${userId}`,
@@ -46,8 +47,9 @@ export class UserApi extends AbstractApi {
     userId: string,
     params: UserParams = {}
   ): Promise<User> {
-    // The Clerk server API requires metadata fields to be stringified
+    this.requireId(userId);
 
+    // The Clerk server API requires metadata fields to be stringified
     if (params.publicMetadata && !(typeof params.publicMetadata == 'string')) {
       params.publicMetadata = JSON.stringify(params.publicMetadata);
     }
@@ -67,6 +69,7 @@ export class UserApi extends AbstractApi {
   }
 
   public async deleteUser(userId: string): Promise<User> {
+    this.requireId(userId);
     return this._restClient.makeRequest({
       method: 'delete',
       path: `/users/${userId}`,

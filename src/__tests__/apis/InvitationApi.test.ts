@@ -97,3 +97,9 @@ test('revokeInvitation() revokes an invitation', async () => {
     })
   );
 });
+
+test('revokeInvitation() throws an error without invitation ID', async () => {
+  await expect(invitations.revokeInvitation('')).rejects.toThrow(
+    'A valid ID is required.'
+  );
+});

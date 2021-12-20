@@ -25,6 +25,7 @@ export class InvitationApi extends AbstractApi {
   }
 
   public async revokeInvitation(invitationId: string): Promise<Invitation> {
+    this.requireId(invitationId);
     return this._restClient.makeRequest({
       method: 'post',
       path: `${basePath}/${invitationId}/revoke`,

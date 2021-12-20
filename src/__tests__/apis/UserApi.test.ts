@@ -118,3 +118,17 @@ test('getUser() returns a single user', async () => {
   const expectedPublicMetadata = { zodiac_sign: 'leo', ascendant: 'scorpio' };
   expect(user.publicMetadata).toEqual(expectedPublicMetadata);
 });
+
+test('getUser() throws an error without user ID', async () => {
+  await expect(users.getUser('')).rejects.toThrow('A valid ID is required.');
+});
+
+test('updateUser() throws an error without user ID', async () => {
+  await expect(users.updateUser('', {})).rejects.toThrow(
+    'A valid ID is required.'
+  );
+});
+
+test('deleteUser() throws an error without user ID', async () => {
+  await expect(users.deleteUser('')).rejects.toThrow('A valid ID is required.');
+});
