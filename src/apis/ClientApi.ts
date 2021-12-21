@@ -10,6 +10,7 @@ export class ClientApi extends AbstractApi {
   }
 
   public async getClient(clientId: string): Promise<Client> {
+    this.requireId(clientId);
     return this._restClient.makeRequest({
       method: 'get',
       path: `/clients/${clientId}`,

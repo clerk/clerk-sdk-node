@@ -278,7 +278,7 @@ const allowlistIdentifier = await createAllowlistIdentifier({
 
 #### deleteAllowlistIdentifier(allowlistIdentifierId)
 
-Deletes an allowlist identifier, specified by the `allowlistIdentifierId` parameter.
+Deletes an allowlist identifier, specified by the `allowlistIdentifierId` parameter. Throws an error if the `allowlistIdentifierId` parameter is invalid.
 
 ```ts
 await deleteAllowlistIdentifier("alid_randomid");
@@ -298,7 +298,7 @@ const clients = await clerk.clients.getClientList();
 
 #### getClient(clientId)
 
-Retrieves a single client by its id:
+Retrieves a single client by its id, if the id is valid. Throws an error otherwise.
 
 ```ts
 const clientID = 'my-client-id';
@@ -343,7 +343,9 @@ const invitation = await clerk.invitations.createInvitation({
 
 #### revokeInvitation(invitationId)
 
-Revokes the invitation with the provided `invitationId`. Revoking an invitation makes the invitation email link unusable. However, it doesn't prevent the user from signing up if they follow the sign up flow.
+Revokes the invitation with the provided `invitationId`. Throws an error if `invitationId` is invalid.
+
+Revoking an invitation makes the invitation email link unusable. However, it doesn't prevent the user from signing up if they follow the sign up flow.
 
 Only active (i.e. non-revoked) invitations can be revoked.
 
@@ -373,7 +375,7 @@ const sessions = await clerk.sessions.getSessionList({ clientId, sessionId });
 
 #### getSession(sessionId)
 
-Retrieves a single session by its id:
+Retrieves a single session by its id, if the id is valid. Throws an error otherwise.
 
 ```ts
 const session = await clerk.sessions.getSession(sessionId);
@@ -381,7 +383,9 @@ const session = await clerk.sessions.getSession(sessionId);
 
 #### revokeSession(sessionId)
 
-Revokes a session given its id. User will be signed out from the particular client the referred to:
+Revokes a session given its id, if the id is valid. Throws an error otherwise.
+
+User will be signed out from the particular client the referred to.
 
 ```ts
 const sessionId = 'my-session-id';
@@ -390,7 +394,7 @@ const session = await clerk.sessions.revokeSession(sessionId);
 
 #### verifySession(sessionId, sessionToken)
 
-Verifies whether a session with a given id corresponds to the provided session token:
+Verifies whether a session with a given id corresponds to the provided session token. Throws an error if the provided id is invalid.
 
 ```ts
 const sessionId = 'my-session-id';
@@ -431,7 +435,7 @@ If these filters are included, the response will contain only users that own any
 
 #### getUser(userId)
 
-Retrieves a single user by their id:
+Retrieves a single user by their id, if the id is valid. Throws an error otherwise.
 
 ```ts
 const userId = 'my-user-id';
@@ -440,7 +444,9 @@ const user = await clerk.users.getUser(userId);
 
 #### updateUser(userId, params)
 
-Updates a user with a given id with attribute values provided in a params object:
+Updates a user with a given id with attribute values provided in a params object.
+
+The provided id must be valid, otherwise an error will be thrown.
 
 ```ts
 const userId = 'my-user-id';
@@ -462,7 +468,7 @@ Supported user attributes for update are:
 
 #### deleteUser(userId)
 
-Deletes a user given their id:
+Deletes a user given their id, if the id is valid. Throws an error otherwise.
 
 ```ts
 const userId = 'my-user-id';
