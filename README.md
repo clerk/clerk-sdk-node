@@ -46,6 +46,7 @@ the <a href="https://docs.clerk.dev/reference/backend-api-reference" target="_bl
   - [User operations](#user-operations)
     - [getUserList()](#getuserlist)
     - [getUser(userId)](#getuseruserid)
+    - [createUser(params)](#createuserparams)
     - [updateUser(userId, params)](#updateuseruserid-params)
     - [deleteUser(userId)](#deleteuseruserid)
   - [Email operations](#email-operations)
@@ -441,6 +442,24 @@ Retrieves a single user by their id, if the id is valid. Throws an error otherwi
 const userId = 'my-user-id';
 const user = await clerk.users.getUser(userId);
 ```
+
+#### createUser(params)
+
+Creates a user. Your user management settings determine how you should setup your user model.
+
+Any email address and phone number created using this method will be automatically marked as verified.
+
+Available parameters are:
+ - _externalId_ The ID of the user you use in in your external systems. Must be unique across your instance.
+ - _emailAddress[]_ Email addresses to add to the user.  Must be unique across your instance.  The first email address will be set as the users primary email address.
+ - _phoneNumber[]_ Phone numbers that will be added to the user.  Must be unique across your instance.  The first phone number will be set as the users primary phone number.
+ - _username_ The username to give to the user.  It must be unique across your instance.
+ - _password_ The plaintext password to give the user.
+ - _firstName_ User's first name.
+ - _lastName_ User's last name.
+ - _publicMetadata_ Metadata saved on the user, that is visible to both your Frontend and Backend APIs.
+ - _privateMetadata_ Metadata saved on the user, that is only visible to your Backend API.
+ - _unsafeMetadata_ Metadata saved on the user, that can be updated from both the Frontend and Backend APIs. Note: Since this data can be modified from the frontend, it is not guaranteed to be safe.
 
 #### updateUser(userId, params)
 
