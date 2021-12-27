@@ -1,5 +1,6 @@
 import nock from 'nock';
 import snakecaseKeys from 'snakecase-keys';
+import querystring from 'querystring';
 import { emails, Email } from '../../index';
 
 test('createEmail() sends an email', async () => {
@@ -9,14 +10,14 @@ test('createEmail() sends an email', async () => {
   const body =
     'Click <a href="https://www.knowyourmeme.com/">here</a> to see your most recent transactions.';
 
-  const encodedBody = new URLSearchParams(
+  const encodedBody = querystring.stringify(
     snakecaseKeys({
       fromEmailName,
       emailAddressId,
       subject,
       body,
     })
-  ).toString();
+  );
 
   nock('https://api.clerk.dev')
     .post('/v1/emails', encodedBody)
