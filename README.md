@@ -46,7 +46,7 @@ the <a href="https://docs.clerk.dev/reference/backend-api-reference" target="_bl
   - [User operations](#user-operations)
     - [getUserList()](#getuserlist)
     - [getUser(userId)](#getuseruserid)
-    - [createUser(params)](#updateuseruserid-params)
+    - [createUser(params)](#createuserparams)
     - [updateUser(userId, params)](#updateuseruserid-params)
     - [deleteUser(userId)](#deleteuseruserid)
   - [Email operations](#email-operations)
