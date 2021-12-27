@@ -27,6 +27,16 @@ interface UserListParams {
 }
 
 export class UserApi extends AbstractApi {
+  private stringifyMetadata(metadata: Record<string, unknown> | string): string {
+    // The Clerk server API requires metadata fields to be stringified
+    // If not already a string, stringify it
+    if (metadata && !(typeof metadata == 'string')) {
+      return JSON.stringify(metadata);
+    } else {
+      return metadata;
+    }
+  }
+
   public async getUserList(params: UserListParams = {}): Promise<Array<User>> {
     return this._restClient.makeRequest({
       method: 'get',
@@ -50,20 +60,35 @@ export class UserApi extends AbstractApi {
     this.requireId(userId);
 
     // The Clerk server API requires metadata fields to be stringified
-    if (params.publicMetadata && !(typeof params.publicMetadata == 'string')) {
-      params.publicMetadata = JSON.stringify(params.publicMetadata);
+    if (params.publicMetadata) {
+      params.publicMetadata = this.stringifyMetadata(params.publicMetadata);
     }
 
-    if (
-      params.privateMetadata &&
-      !(typeof params.privateMetadata == 'string')
-    ) {
-      params.privateMetadata = JSON.stringify(params.privateMetadata);
+    if (params.privateMetadata) {
+      params.privateMetadata = this.stringifyMetadata(params.privateMetadata);
     }
 
     return this._restClient.makeRequest({
       method: 'patch',
       path: `/users/${userId}`,
+      bodyParams: params,
+    });
+  }
+
+  public async createUser(
+    params: UserParams = {}
+  ): Promise<User> {
+    if (params.publicMetadata) {
+      params.publicMetadata = this.stringifyMetadata(params.publicMetadata);
+    }
+
+    if (params.privateMetadata) {
+      params.privateMetadata = this.stringifyMetadata(params.privateMetadata);
+    }
+
+    return this._restClient.makeRequest({
+      method: 'post',
+      path: `/users`,
       bodyParams: params,
     });
   }

@@ -46,6 +46,7 @@ the <a href="https://docs.clerk.dev/reference/backend-api-reference" target="_bl
   - [User operations](#user-operations)
     - [getUserList()](#getuserlist)
     - [getUser(userId)](#getuseruserid)
+    - [createUser(params)](#updateuseruserid-params)
     - [updateUser(userId, params)](#updateuseruserid-params)
     - [deleteUser(userId)](#deleteuseruserid)
   - [Email operations](#email-operations)
@@ -442,6 +443,27 @@ const userId = 'my-user-id';
 const user = await clerk.users.getUser(userId);
 ```
 
+#### createUser(params)
+
+Creates a new user and returns that user.
+
+```ts
+const params = { firstName = 'John', lastName: 'Wick' }; // See below for all supported keys
+const user = await clerk.users.createUser(params);
+```
+
+Supported user attributes for update are:
+
+|       Attribute       |        Data type        |
+| :-------------------: | :---------------------: |
+|       firstName       |         string          |
+|       lastName        |         string          |
+|       password        |         string          |
+| primaryEmailAddressID |         string          |
+| primaryPhoneNumberID  |         string          |
+|    publicMetadata     | Record<string, unknown> |
+|    privateMetadata    | Record<string, unknown> |
+
 #### updateUser(userId, params)
 
 Updates a user with a given id with attribute values provided in a params object.
@@ -451,7 +473,7 @@ The provided id must be valid, otherwise an error will be thrown.
 ```ts
 const userId = 'my-user-id';
 const params = { firstName = 'John', lastName: 'Wick' }; // See below for all supported keys
-const user = await clerk.users.update(userId, params);
+const user = await clerk.users.updateUser(userId, params);
 ```
 
 Supported user attributes for update are:
