@@ -1,14 +1,15 @@
 import nock from 'nock';
 import snakecaseKeys from 'snakecase-keys';
+import querystring from 'querystring';
 import { smsMessages, SMSMessage } from '../../index';
 
 test('createSMSMessage() sends an SMS message', async () => {
   const phoneNumberId = 'idn_random';
   const message = 'Press F to pay pespects';
 
-  const encodedBody = new URLSearchParams(
+  const encodedBody = querystring.stringify(
     snakecaseKeys({ phoneNumberId, message })
-  ).toString();
+  );
 
   nock('https://api.clerk.dev')
     .post('/v1/sms_messages', encodedBody)

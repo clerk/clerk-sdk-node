@@ -59,14 +59,16 @@ export default class RestClient {
     };
 
     if (requestOptions.bodyParams) {
-      gotOptions['form'] = snakecaseKeys(requestOptions.bodyParams);
+      gotOptions['body'] = querystring.stringify(
+        snakecaseKeys(requestOptions.bodyParams)
+      );
     }
 
     // TODO improve error handling
     return got(url, gotOptions)
-      .then(data =>
+      .then((data) =>
         gotOptions.responseType === 'json' ? deserialize(data.body) : data.body
       )
-      .catch(error => handleError(error));
+      .catch((error) => handleError(error));
   }
 }
