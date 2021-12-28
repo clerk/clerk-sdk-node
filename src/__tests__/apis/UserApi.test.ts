@@ -1,4 +1,6 @@
 import nock from 'nock';
+import snakecaseKeys from 'snakecase-keys';
+import * as querystring from 'querystring';
 import { users, User } from '../../index';
 
 test('getUserList() returns a list of users', async () => {
@@ -131,4 +133,23 @@ test('updateUser() throws an error without user ID', async () => {
 
 test('deleteUser() throws an error without user ID', async () => {
   await expect(users.deleteUser('')).rejects.toThrow('A valid ID is required.');
+});
+
+test('createUser() creates a user', async () => {
+  const params = {
+    emailAddress: ['boss@clerk.dev'],
+    phoneNumber: ['+15555555555'],
+    password: '123456',
+    firstName: 'Boss',
+    lastName: 'Clerk',
+  };
+
+  nock('https://api.clerk.dev')
+    .post('/v1/users', querystring.stringify(snakecaseKeys(params)))
+    .replyWithFile(200, __dirname + '/responses/createUser.json', {
+      'Content-Type': '',
+    });
+
+  const user = await users.createUser(params);
+  expect(user.firstName).toEqual('Boss');
 });

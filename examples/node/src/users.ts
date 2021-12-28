@@ -11,6 +11,27 @@ const userIdToDelete = process.env.USER_ID_TO_DELETE || '';
 
 setClerkServerApiUrl(serverApiUrl);
 
+console.log('Create user');
+const createdUser = await users.createUser({
+  emailAddress: ['test@example.com'],
+  phoneNumber: ['+15555555555'],
+  externalId: 'a-unique-id',
+  firstName: 'Test',
+  lastName: 'Test',
+  username: 'test001',
+  publicMetadata: {
+    gender: 'female',
+  },
+  privateMetadata: {
+    middleName: 'Test',
+  },
+  unsafeMetadata: {
+    unsafe: 'metadata',
+  },
+  password: '123456+ABCd',
+});
+console.log(createdUser);
+
 console.log('Get user list');
 let userList = await users.getUserList();
 console.log(userList);
@@ -30,9 +51,6 @@ try {
       ascendant: 'scorpio',
     },
   });
-
-  // let updatedUser = await users.updateUser(userId, { firstName: 'John', lastName: 'Connor' });
-  // let updatedUser = await users.updateUser(userId, { firstName: 'Peter', lastName: 'Silberman' });
 
   console.log(updatedUser);
 } catch (error) {

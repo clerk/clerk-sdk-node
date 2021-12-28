@@ -26,6 +26,34 @@ interface UserListParams {
     | '-updated_at';
 }
 
+const userMetadataKeys = [
+  'publicMetadata',
+  'privateMetadata',
+  'unsafeMetadata',
+];
+
+type UserMetadataParams = {
+  publicMetadata?: Record<string, unknown>;
+  privateMetadata?: Record<string, unknown>;
+  unsafeMetadata?: Record<string, unknown>;
+};
+
+type CreateUserParams = {
+  externalId?: string;
+  emailAddress?: string[];
+  phoneNumber?: string[];
+  username?: string;
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+} & UserMetadataParams;
+
+type UserMetadataRequestBody = {
+  publicMetadata?: string;
+  privateMetadata?: string;
+  unsafeMetadata?: string;
+};
+
 export class UserApi extends AbstractApi {
   public async getUserList(params: UserListParams = {}): Promise<Array<User>> {
     return this._restClient.makeRequest({
@@ -41,6 +69,22 @@ export class UserApi extends AbstractApi {
       method: 'get',
       path: `/users/${userId}`,
     });
+  }
+
+  public async createUser(params: CreateUserParams): Promise<User> {
+    const { publicMetadata, privateMetadata, unsafeMetadata } = params;
+    return this._restClient.makeRequest({
+      method: 'post',
+      path: '/users',
+      bodyParams: {
+        ...params,
+        ...sanitizeMetadataParams({
+          publicMetadata,
+          privateMetadata,
+          unsafeMetadata,
+        }),
+      },
+    }) as Promise<User>;
   }
 
   public async updateUser(
@@ -75,4 +119,20 @@ export class UserApi extends AbstractApi {
       path: `/users/${userId}`,
     });
   }
+}
+
+function sanitizeMetadataParams(
+  params: UserMetadataParams & {
+    [key: string]: Record<string, unknown> | undefined;
+  }
+): UserMetadataRequestBody {
+  return userMetadataKeys.reduce(
+    (res: Record<string, string>, key: string): Record<string, string> => {
+      if (params[key]) {
+        res[key] = JSON.stringify(params[key]);
+      }
+      return res;
+    },
+    {}
+  );
 }
