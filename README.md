@@ -542,7 +542,7 @@ For usage with <a href="https://github.com/expressjs/express" target="_blank">Ex
 middlewares that can be used in the standard manner:
 
 ```ts
-import { ClerkWithSession } from 'sdk-server-node';
+import { ClerkWithSession } from '@clerk/clerk-sdk-node';
 
 // Initialize express app the usual way
 
@@ -565,7 +565,7 @@ Where `clerk` is your own instance.
 If you prefer that the middleware renders a 401 (Unauthenticated) itself, you can use the following variant instead:
 
 ```ts
-import { ClerkExpressRequireSession } from 'sdk-server-node';
+import { ClerkExpressRequireSession } from '@clerk/clerk-sdk-node';
 
 app.use(ClerkExpressRequireSession());
 ```
