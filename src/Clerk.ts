@@ -284,12 +284,12 @@ export default class Clerk {
 
       const hostURL = new URL(initialHost);
 
-      let host = (req.headers['X-Forwarded-Host'] as string)?.trim();
+      let host = (req.headers['x-forwarded-host'] as string)?.trim();
       if (!host) {
         host = hostURL.hostname;
       }
 
-      let port = (req.headers['X-Forwarded-Port'] as string)?.trim();
+      let port = (req.headers['x-forwarded-port'] as string)?.trim();
       if (!port) {
         port = hostURL.port;
       }
