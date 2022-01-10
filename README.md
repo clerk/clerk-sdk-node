@@ -8,6 +8,14 @@ yourself.
 To gain a better understanding of the underlying API calls the SDK makes, feel free to consult
 the <a href="https://docs.clerk.dev/reference/backend-api-reference" target="_blank">official Clerk server API documentation</a>.
 
+---
+
+**Clerk is Hiring!**
+
+Would you like to work on Open Source software and help maintain this repository? Apply today https://apply.workable.com/clerk-dev/.
+
+---
+
 ## Table of contents
 
 - [Internal implementation details](#internal-implementation-details)
@@ -178,8 +186,8 @@ const clerk = pkg.default;
 
 clerk.emails
   .createEmail({ fromEmailName, subject, body, emailAddressId })
-  .then(email => console.log(email))
-  .catch(error => console.error(error));
+  .then((email) => console.log(email))
+  .catch((error) => console.error(error));
 ```
 
 Or if you prefer a resource sub-api directly:
@@ -190,8 +198,8 @@ const { clients } = pkg;
 
 clients
   .getClient(clientId)
-  .then(client => console.log(client))
-  .catch(error => console.error(error));
+  .then((client) => console.log(client))
+  .catch((error) => console.error(error));
 ```
 
 #### Setters
@@ -237,8 +245,8 @@ const clerk = new Clerk({ apiKey: 'your-eyes-only' });
 
 clerk.smsMessages
   .createSMSMessage({ message, phoneNumberId })
-  .then(smsMessage => console.log(smsMessage))
-  .catch(error => console.error(error));
+  .then((smsMessage) => console.log(smsMessage))
+  .catch((error) => console.error(error));
 ```
 
 ### Examples
@@ -255,7 +263,8 @@ Allowlist operations are exposed by the `allowlistIdentifiers` sub-api (`clerk.a
 Retrieves the list of allowlist identifiers.
 
 ```ts
-const allowlistIdentifiers = await clerk.allowlistIdentifiers.getAllowlistIdentifierList();
+const allowlistIdentifiers =
+  await clerk.allowlistIdentifiers.getAllowlistIdentifierList();
 ```
 
 #### createAllowlistIdentifier(params)
@@ -272,7 +281,7 @@ You can also control if you want to notify the owner of the `identifier`, by set
 
 ```ts
 const allowlistIdentifier = await createAllowlistIdentifier({
-  identifier: "test@example.com",
+  identifier: 'test@example.com',
   notify: false,
 });
 ```
@@ -282,7 +291,7 @@ const allowlistIdentifier = await createAllowlistIdentifier({
 Deletes an allowlist identifier, specified by the `allowlistIdentifierId` parameter. Throws an error if the `allowlistIdentifierId` parameter is invalid.
 
 ```ts
-await deleteAllowlistIdentifier("alid_randomid");
+await deleteAllowlistIdentifier('alid_randomid');
 ```
 
 ### Client operations
@@ -337,8 +346,8 @@ You can optionally pass a `redirectUrl` parameter when creating the invitation a
 
 ```js
 const invitation = await clerk.invitations.createInvitation({
-  emailAddress: "invite@example.com",
-  redirectUrl: "https://optionally-redirect-here",
+  emailAddress: 'invite@example.com',
+  redirectUrl: 'https://optionally-redirect-here',
 });
 ```
 
@@ -351,7 +360,7 @@ Revoking an invitation makes the invitation email link unusable. However, it doe
 Only active (i.e. non-revoked) invitations can be revoked.
 
 ```js
-const invitation = await clerk.invitations.revokeInvitation("inv_some-id");
+const invitation = await clerk.invitations.revokeInvitation('inv_some-id');
 ```
 
 ### Session operations
@@ -450,16 +459,17 @@ Creates a user. Your user management settings determine how you should setup you
 Any email address and phone number created using this method will be automatically marked as verified.
 
 Available parameters are:
- - _externalId_ The ID of the user you use in in your external systems. Must be unique across your instance.
- - _emailAddress[]_ Email addresses to add to the user.  Must be unique across your instance.  The first email address will be set as the users primary email address.
- - _phoneNumber[]_ Phone numbers that will be added to the user.  Must be unique across your instance.  The first phone number will be set as the users primary phone number.
- - _username_ The username to give to the user.  It must be unique across your instance.
- - _password_ The plaintext password to give the user.
- - _firstName_ User's first name.
- - _lastName_ User's last name.
- - _publicMetadata_ Metadata saved on the user, that is visible to both your Frontend and Backend APIs.
- - _privateMetadata_ Metadata saved on the user, that is only visible to your Backend API.
- - _unsafeMetadata_ Metadata saved on the user, that can be updated from both the Frontend and Backend APIs. Note: Since this data can be modified from the frontend, it is not guaranteed to be safe.
+
+- _externalId_ The ID of the user you use in in your external systems. Must be unique across your instance.
+- _emailAddress[]_ Email addresses to add to the user. Must be unique across your instance. The first email address will be set as the users primary email address.
+- _phoneNumber[]_ Phone numbers that will be added to the user. Must be unique across your instance. The first phone number will be set as the users primary phone number.
+- _username_ The username to give to the user. It must be unique across your instance.
+- _password_ The plaintext password to give the user.
+- _firstName_ User's first name.
+- _lastName_ User's last name.
+- _publicMetadata_ Metadata saved on the user, that is visible to both your Frontend and Backend APIs.
+- _privateMetadata_ Metadata saved on the user, that is only visible to your Backend API.
+- _unsafeMetadata_ Metadata saved on the user, that can be updated from both the Frontend and Backend APIs. Note: Since this data can be modified from the frontend, it is not guaranteed to be safe.
 
 #### updateUser(userId, params)
 
