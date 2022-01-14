@@ -1,3 +1,4 @@
+import type { OptionsOfUnknownResponseBody } from 'got';
 import Clerk from './instance';
 
 const singletonInstance = Clerk.getInstance();
@@ -88,6 +89,6 @@ export function setClerkApiVersion(value: string) {
   Clerk.getInstance().apiVersion = value;
 }
 
-export function setClerkHttpOptions(value: object) {
+export function setClerkHttpOptions(value: OptionsOfUnknownResponseBody) {
   Clerk.getInstance().httpOptions = value;
 }

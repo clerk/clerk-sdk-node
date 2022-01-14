@@ -1,9 +1,10 @@
-import got, { HTTPAlias } from 'got';
+import got, { Method, OptionsOfUnknownResponseBody, ResponseType } from 'got';
 import deserialize from './Deserializer';
 import handleError from './ErrorHandler';
 import snakecaseKeys from 'snakecase-keys';
 import * as querystring from 'querystring';
 import { LIB_NAME, LIB_VERSION } from '../info';
+import deepmerge from 'deepmerge';
 
 const packageName = LIB_NAME;
 const packageVersion = LIB_VERSION;
@@ -12,24 +13,25 @@ const userAgent = `${packageName}/${packageVersion} (${packageRepo})`;
 const contentType = 'application/x-www-form-urlencoded';
 
 type RequestOptions = {
-  method: HTTPAlias;
+  method: Method;
   path: string;
   queryParams?: object;
   bodyParams?: object;
-  responseType?: string;
+  responseType?: ResponseType;
 };
 
 export default class RestClient {
   apiKey: string;
   serverApiUrl: string;
   apiVersion: string;
-  httpOptions?: object;
+  // TODO: Disallow certain header values
+  httpOptions: OptionsOfUnknownResponseBody;
 
   constructor(
     apiKey: string,
     serverApiUrl: string,
     apiVersion: string,
-    httpOptions?: object
+    httpOptions: OptionsOfUnknownResponseBody = {}
   ) {
     this.apiKey = apiKey;
     this.serverApiUrl = serverApiUrl;
@@ -46,8 +48,7 @@ export default class RestClient {
       )}`;
     }
 
-    // FIXME remove 'any'
-    const gotOptions: any = {
+    const gotOptions = deepmerge(this.httpOptions, {
       method: requestOptions.method,
       responseType: requestOptions.responseType || 'json',
       headers: {
@@ -55,8 +56,7 @@ export default class RestClient {
         'Content-type': contentType,
         'user-agent': userAgent,
       },
-      ...this.httpOptions,
-    };
+    });
 
     if (requestOptions.bodyParams) {
       gotOptions['body'] = querystring.stringify(

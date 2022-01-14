@@ -22,6 +22,7 @@ import { Session } from './resources/Session';
 
 import { ClerkServerError } from './utils/Errors';
 import { SupportMessages } from './constants/SupportMessages';
+import type { OptionsOfUnknownResponseBody } from 'got';
 
 const defaultApiKey = process.env.CLERK_API_KEY || '';
 const defaultApiVersion = process.env.CLERK_API_VERSION || 'v1';
@@ -65,7 +66,7 @@ export default class Clerk {
     apiKey?: string;
     serverApiUrl?: string;
     apiVersion?: string;
-    httpOptions?: object;
+    httpOptions?: OptionsOfUnknownResponseBody;
     jwksCacheMaxAge?: number;
   } = {}) {
     if (!apiKey) {
@@ -113,7 +114,7 @@ export default class Clerk {
     this._restClient.apiVersion = value;
   }
 
-  set httpOptions(value: object) {
+  set httpOptions(value: OptionsOfUnknownResponseBody) {
     this._restClient.httpOptions = value;
   }
 
