@@ -199,10 +199,13 @@ export default class Clerk {
     const key = await this._jwksClient.getSigningKey(decoded.header.kid);
     const verified = jwt.verify(token, key.getPublicKey(), {
       algorithms: algorithms as jwt.Algorithm[],
-    }) as JwtPayload;
+    });
+
+    if(typeof verified === 'string' || !verified.iss){
+      throw new Error('Malformed token');
+    }
 
     if (
-      !verified.hasOwnProperty('iss') ||
       !(verified.iss?.lastIndexOf('https://clerk.', 0) === 0)
     ) {
       throw new Error(`Invalid issuer: ${verified.iss}`);
