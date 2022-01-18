@@ -460,7 +460,7 @@ export default class Clerk {
     return async (
       req: WithSessionProp<Request> | WithSessionClaimsProp<Request>,
       res: Response,
-      next: NextFunction
+      next?: NextFunction
     ) => {
       try {
         await this._runMiddleware(
