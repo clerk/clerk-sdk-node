@@ -187,10 +187,7 @@ export default class Clerk {
     return decoded as JwtPayload;
   }
 
-  async verifyToken(
-    token: string,
-    algorithms: string[] = ['RS256']
-  ): Promise<JwtPayload> {
+  async verifyToken(token: string): Promise<JwtPayload> {
     const decoded = jwt.decode(token, { complete: true });
     if (!decoded) {
       throw new Error(`Failed to verify token: ${token}`);
@@ -198,7 +195,7 @@ export default class Clerk {
 
     const key = await this._jwksClient.getSigningKey(decoded.header.kid);
     const verified = jwt.verify(token, key.getPublicKey(), {
-      algorithms: algorithms as jwt.Algorithm[],
+      algorithms: ['RS256'],
     });
 
     if(typeof verified === 'string' || !verified.iss){
