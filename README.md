@@ -1,3 +1,6 @@
+
+⚠️ **The Clerk SDK Node(@clerk/clerk-sdk-node) package has moved to https://github.com/clerkinc/javascript**
+
 # Clerk node SDK
 
 Thank you for choosing [Clerk](https://clerk.dev/) for your authentication, session & user management needs!
